@@ -129,6 +129,15 @@ namespace StatementConverter.ExpressionInterpreter
                     var member = instanceType.GetMostSuitableMember(memberName);
                     var rightExpression = expressionInterpreterHandler.GetExpression(statement.Right);
 
+                    if(member is FieldInfo fi && fi.FieldType != rightExpression.Type)
+                    {
+                        rightExpression = Expression.Convert(rightExpression, fi.FieldType);
+                    }
+                    else if(member is PropertyInfo pi && pi.PropertyType != rightExpression.Type)
+                    {
+                        rightExpression = Expression.Convert(rightExpression, pi.PropertyType);
+                    }
+
                     membersInitalizer.Add(Expression.Bind(member, rightExpression));
                 }
                 return Expression.MemberInit(ctorExpression, membersInitalizer);

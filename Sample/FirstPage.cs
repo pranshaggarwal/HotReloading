@@ -18,7 +18,8 @@ namespace Sample
             {
                 Text = "Click Me1",
                 TextColor = Color.Red,
-                FontAttributes = FontAttributes.Italic
+                FontAttributes = FontAttributes.Italic,
+                FontSize = 24
             };
 
             Content = button;
