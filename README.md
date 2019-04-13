@@ -1,2 +1,4 @@
-# HotReloading
-This repository is meant to check all the possibility to create HotReloading tooling in .Net framework. Although this will support all major .net framework but my initial focus will be on #Xamarin.Forms 
+# Hot-Reloading tool for .Net Platforms
+This tool is suppose to work on all the .net platform which support dynamic code execution but currently all the testing is done on Xamarin.Forms
+
+![preview](/gif/preview.gif)
