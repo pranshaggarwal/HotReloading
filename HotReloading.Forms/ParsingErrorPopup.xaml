@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+                 x:Class="HotReloading.Forms.ParsingErrorPopup">
+    <Frame VerticalOptions="End" BackgroundColor="#ffcc00" Padding="10">
+        <StackLayout>
+            <Label Text="Parsing Error" FontAttributes="Bold" FontSize="20" HorizontalOptions="Center" />
+            <Label Text="Unable to parse code change. Please redeploy to see the changes" />
+        </StackLayout>
+    </Frame>
+</pages:PopupPage>

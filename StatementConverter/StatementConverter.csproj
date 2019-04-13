@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Class1.cs" />
+    <Compile Remove="ExpressionInterpreter.cs" />
+    <Compile Remove="ExpressionInterpreter\Invocation\StaticInvocationExpressionInterpreter.cs" />
+    <Compile Remove="ExpressionInterpreter\Invocation\InstanceInvocationExpressionInterpreter.cs" />
+    <Compile Remove="ExpressionInterpreter\IdentifierNamedExpressionInterpreter.cs" />
+    <Compile Remove="ExpressionInterpreter\FieldExpressionInterpreter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="StatementInterpreter\" />
+    <Folder Include="ExpressionInterpreter\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="ExpressionInterpreter\Invocation\" />
+    <Folder Include="StatementInterpreter\Invocation\" />
+    <Folder Include="ExpressionInterpreter\Unary\" />
+    <Folder Include="ExpressionInterpreter\Constant\" />
+    <Folder Include="ExpressionInterpreter\Declaration\" />
+    <Folder Include="ExpressionInterpreter\Identifier\" />
+    <Folder Include="ExpressionInterpreter\Initialisation\" />
+    <Folder Include="ExpressionInterpreter\MemberAccess\" />
+    <Folder Include="StatementInterpreter\Assignment\" />
+    <Folder Include="StatementInterpreter\Constant\" />
+    <Folder Include="StatementInterpreter\Declaration\" />
+    <Folder Include="StatementInterpreter\Identifier\" />
+    <Folder Include="StatementInterpreter\Initialisation\" />
+    <Folder Include="StatementInterpreter\MemberAccess\" />
+    <Folder Include="StatementInterpreter\Binary\" />
+    <Folder Include="ExpressionInterpreter\Binary\" />
+    <Folder Include="ExpressionInterpreter\Branch\" />
+    <Folder Include="StatementInterpreter\Block\" />
+    <Folder Include="StatementInterpreter\Branch\" />
+    <Folder Include="ExpressionInterpreter\Keyword\" />
+    <Folder Include="StatementInterpreter\Keyword\" />
+    <Folder Include="StatementInterpreter\Pattern\" />
+    <Folder Include="ExpressionInterpreter\Pattern\" />
+    <Folder Include="StatementInterpreter\Unary\" />
+    <Folder Include="ExpressionInterpreter\Array\" />
+    <Folder Include="StatementInterpreter\Array\" />
+    <Folder Include="ExpressionInterpreter\Loop\" />
+    <Folder Include="StatementInterpreter\Loop\" />
+    <Folder Include="ExpressionInterpreter\Using\" />
+    <Folder Include="StatementInterpreter\Using\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HotReloading.Core\HotReloading.Core.csproj" />
+    <ProjectReference Include="..\CSharpExpression\CSharpExpressions\CSharpExpressions.csproj" />
+    <ProjectReference Include="..\CSharpExpression\Debugging\Debugging.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.10.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.10.0" />
+  </ItemGroup>
+</Project>

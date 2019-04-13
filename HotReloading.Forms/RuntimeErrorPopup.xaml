@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+                 x:Class="HotReloading.Forms.RuntimeErrorPopup">
+    <StackLayout BackgroundColor="White" Padding="10">
+        <Label Text="Runtime Error" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" />
+
+        <Frame BorderColor="Black" VerticalOptions="FillAndExpand" BackgroundColor="#d5d5d5" HasShadow="false">
+            <ScrollView>
+                <Label x:Name="StackTraceLabel" />
+            </ScrollView>
+        </Frame>
+
+        <Button Text="Close" BackgroundColor="Transparent" TextColor="Blue" HorizontalOptions="End" />
+    </StackLayout>
+</pages:PopupPage>

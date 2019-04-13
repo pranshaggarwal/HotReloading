@@ -1,0 +1,136 @@
+﻿Existing gaps in C# expression tree support
+===========================================
+
+Obtained by `findstr ExpressionTree` in Compilers\CSharp\Portable\CSharpResources.resx
+See Compilers\CSharp\Portable\Lowering\DiagnosticsPass_ExpressionTrees.cs for usages of these
+
+TODO
+----
+
+* Should we have interfaces in a LINQ companion assembly to provide semantic insight in extension nodes?
+  - Scoped constructions, e.g. using/for/foreach/block which need scope tracking during visits
+  - Block constructions, e.g. to perform optimizations that can unflatten these
+  - Lambda functions, e.g. to reason about closure boundaries
+  - Pure nodes, e.g. custom lambda nodes, so optimizations can reason about those
+  - Checked behavior, e.g. for checked/unchecked scope tracking in printers
+  These can be used for optimizers, pretty printers, etc. and make extension nodes less opaque.
+
+Open
+----
+
+(Sorted roughly by priority)
+
+Expressions
+~~~~~~~~~~~
+
+ERR_ExtensionCollectionElementInitializerInExpressionTree
+- Can be lifted by adding new nodes; trickiness with ListInit / ElementInit not being extensible
+- C# 6.0 feature addition, but applies to existing parent node types
+
+ERR_ExpressionTreeContainsBadCoalesce
+- () => null ?? "bar"
+- Strange restriction, to be investigated
+
+ERR_ByRefParameterInExpressionTree
+- (ref int x) => ...
+- Likely exists because the ByRef support was only added in DLR
+
+ERR_ExpressionTreeContainsIndexedProperty
+- Reasonable restriction; applies to COM interop only?
+- May be easy to lift with existing (and new named/optional) Index factories
+
+
+Statements
+~~~~~~~~~~
+
+ERR_ExpressionTreeContainsAnonymousMethod
+- () => X(delegate { ... })
+- To be revisited if/when we add statement support
+
+ERR_AnonymousMethodToExpressionTree
+- Expression<F> f = delegate { ... }
+- To be revisited if/when we add statement support
+
+
+C# 7.x and beyond
+~~~~~~~~~~~~~~~~~
+
+ERR_ExpressionTreeContainsLocalFunction
+ERR_ExpressionTreeContainsIsMatch
+ERR_ExpressionTreeContainsTupleLiteral
+ERR_ExpressionTreeContainsTupleConversion
+ERR_ExpressionTreeContainsOutVariable
+ERR_ExpressionTreeContainsTupleBinOp
+
+
+Done
+----
+
+ERR_ExpressionTreeContainsMultiDimensionalArrayInitializer
+- () => new int[2, 2] { { 1, 2 }, { 3, 4 } }
+
+ERR_BadAsyncExpressionTree
+- async () => await x
+
+ERR_ExpressionTreeContainsNamedArgument
+- () => Bar(x: 1)
+
+ERR_ExpressionTreeContainsOptionalArgument
+- () => Bar(/*omitted argument*/)
+
+ERR_NullPropagatingOpInExpressionTree
+- s => s?.Foo()
+
+ERR_DictionaryInitializerInExpressionTree
+- Can be lifted by adding new nodes; trickiness with MemberInit / MemberBinding not being extensible
+- C# 6.0 feature addition but applies to existing parent node type
+
+ERR_ExpressionTreeContainsDynamicOperation
+- (dynamic d) => d.Foo()
+
+ERR_ExpressionTreeContainsAssignment
+- () => a = 42
+
+ERR_StatementLambdaToExpressionTree
+- () => { ... }
+
+ERR_ExpressionTreeContainsThrowExpression
+- (string s) => s ?? throw new Exception();
+
+ERR_ExpressionTreeContainsDiscard
+- _ = foo()
+- int.TryParse(s, out int _)
+
+
+Ignored
+-------
+
+ERR_PartialMethodInExpressionTree
+- () => PartialMethod()
+- Valid restriction
+
+ERR_ExpressionTreeContainsBaseAccess
+- () => base.Foo()
+- Valid restriction
+
+ERR_ExpressionTreeMustHaveDelegate
+- Expression<int> f = ...
+- Valid restriction
+
+ERR_ExpressionTreeContainsPointerOp
+- () => &x
+- Valid restriction
+
+ERR_VarArgsInExpressionTree
+- Reasonable restriction
+
+ERR_MemGroupInExpressionTree
+- () => Console.WriteLine
+- Reasonable restriction; has no type of its own
+
+ERR_ComRefCallInExpressionTree
+- Resonable restriction
+
+ERR_FeatureNotValidInExpressionTree
+- Applies for any of those: __reftype, __refvalue, __makeref
+- Reasonable restriction

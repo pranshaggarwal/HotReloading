@@ -1,0 +1,8 @@
+bin
+obj
+.vs
+*.user
+packages
+.mfractor
+.DS_Store
+.sonarqube

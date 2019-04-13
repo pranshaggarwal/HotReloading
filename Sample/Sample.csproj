@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Forms" Version="3.4.0.1008975" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Global.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HotReloading.Forms\HotReloading.Forms.csproj" />
+    <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
+  </ItemGroup>
+
+  <UsingTask TaskName="MethodInjector" AssemblyFile="..\Build\HotReloading.BuildTask\bin\$(Configuration)\HotReloading.BuildTask.dll" />
+
+  <Target Name="MethodInjector" AfterTargets="AfterCompile" Condition="Exists('@(IntermediateAssembly)') And $(DesignTimeBuild) != true" Inputs="@(IntermediateAssembly);$(ProjectWeaverXml)" Outputs="$(TargetPath)">
+    <MethodInjector AssemblyFile="@(IntermediateAssembly)" ProjectDirectory="$(MSBuildProjectDirectory)" DebugSymbols="$(DebugSymbols)" DebugType="$(DebugType)" />
+  </Target>
+</Project>

@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.10.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
+    <PackageReference Include="FluentAssertions" Version="5.6.0" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestCodes\" />
+    <Folder Include="Tests\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CSharpCodeAnalysis\CSharpCodeAnalysis.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestCodes\Test_NewMethodAddedToClass.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <EmbeddedResource Include="TestCodes\Test_NewMethodAddedToClass.Old.cs" />
+    <EmbeddedResource Include="TestCodes\Test_MethodUpdate_NewLine.Old.cs" />
+    <EmbeddedResource Include="TestCodes\Test_MethodUpdate_NewLine.cs" />
+    <EmbeddedResource Include="TestCodes\Test_MethodUpdate_UpdateLine.cs" />
+    <EmbeddedResource Include="TestCodes\Test_MethodUpdate_UpdateLine.Old.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <EmbeddedResource Include="TestCodes\Test_NewClassAddedToExistingFile.Old.cs" />
+    <EmbeddedResource Include="TestCodes\Test_NewClassAddedToExistingFile.cs" />
+    <EmbeddedResource Include="TestCodes\Test_NewClassAddedToNewFile.cs" />
+    <EmbeddedResource Include="TestCodes\Test_NewFieldAdded.cs" />
+    <EmbeddedResource Include="TestCodes\Test_NewFieldAdded.Old.cs" />
+    <EmbeddedResource Include="TestCodes\Test_NewPropertyAdded.cs" />
+    <EmbeddedResource Include="TestCodes\Test_NewPropertyAdded.Old.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="TestCodes\Test_MethodUpdate_NewLine.cs" />
+    <Compile Remove="TestCodes\Test_MethodUpdate_NewLine.Old.cs" />
+    <Compile Remove="TestCodes\Test_MethodUpdate_UpdateLine.cs" />
+    <Compile Remove="TestCodes\Test_MethodUpdate_UpdateLine.Old.cs" />
+    <Compile Remove="TestCodes\Test_NewClassAddedToExistingFile.cs" />
+    <Compile Remove="TestCodes\Test_NewClassAddedToExistingFile.Old.cs" />
+    <Compile Remove="TestCodes\Test_NewClassAddedToNewFile.cs" />
+    <Compile Remove="TestCodes\Test_NewFieldAdded.cs" />
+    <Compile Remove="TestCodes\Test_NewFieldAdded.Old.cs" />
+    <Compile Remove="TestCodes\Test_NewMethodAddedToClass.cs" />
+    <Compile Remove="TestCodes\Test_NewMethodAddedToClass.Old.cs" />
+    <Compile Remove="TestCodes\Test_NewPropertyAdded.cs" />
+    <Compile Remove="TestCodes\Test_NewPropertyAdded.Old.cs" />
+  </ItemGroup>
+</Project>

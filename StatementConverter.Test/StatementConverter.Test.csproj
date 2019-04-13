@@ -1,0 +1,76 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.10.0" />
+    <PackageReference Include="FluentAssertions" Version="5.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StatementConverter\StatementConverter.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestCodes\ParameterTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\AssignmentTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\InvocationTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\LocalVariableTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\ObjectCreationTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\TypeTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\BinaryTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\ConditionalTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\RandomTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\AsyncAwaitTestClass.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <EmbeddedResource Include="TestCodes\LoopTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\UsingTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\UnaryTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\ArrayTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\ListDictionaryTestClass.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="IntegrationTests\" />
+    <Folder Include="UnitTests\" />
+    <Folder Include="IntegrationTests\Invocation\" />
+    <Folder Include="TestCodes\" />
+    <Folder Include="IntegrationTests\LocalVariableDeclaration\" />
+    <Folder Include="IntegrationTests\Assignment\" />
+    <Folder Include="IntegrationTests\Parameter\" />
+    <Folder Include="IntegrationTests\ObjectCreation\" />
+    <Folder Include="UnitTests\ExpressionInterpreter\" />
+    <Folder Include="UnitTests\ExpressionInterpreter\Invocation\" />
+    <Folder Include="UnitTests\TypeExtensions\" />
+    <Folder Include="IntegrationTests\Binary\" />
+    <Folder Include="IntegrationTests\Branch\" />
+    <Folder Include="IntegrationTests\Unary\" />
+    <Folder Include="IntegrationTests\Array\" />
+    <Folder Include="IntegrationTests\ListDictionary\" />
+    <Folder Include="IntegrationTests\Loop\" />
+    <Folder Include="IntegrationTests\Using\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="TestCodes\AssignmentTestClass.cs" />
+    <Compile Remove="TestCodes\AsyncAwaitTestClass.cs" />
+    <Compile Remove="TestCodes\BinaryTestClass.cs" />
+    <Compile Remove="TestCodes\ConditionalTestClass.cs" />
+    <Compile Remove="TestCodes\GenericTestClass.cs" />
+    <Compile Remove="TestCodes\InvocationTestClass.cs" />
+    <Compile Remove="TestCodes\LocalVariableTestClass.cs" />
+    <Compile Remove="TestCodes\LoopTestClass.cs" />
+    <Compile Remove="TestCodes\ObjectCreationTestClass.cs" />
+    <Compile Remove="TestCodes\ParameterTestClass.cs" />
+    <Compile Remove="TestCodes\RandomTestClass.cs" />
+    <Compile Remove="TestCodes\TypeTestClass.cs" />
+    <Compile Remove="TestCodes\UsingTestClass.cs" />
+    <Compile Remove="TestCodes\UnaryTestClass.cs" />
+    <Compile Remove="TestCodes\ArrayTestClass.cs" />
+    <Compile Remove="TestCodes\ListDictionaryTestClass.cs" />
+  </ItemGroup>
+</Project>

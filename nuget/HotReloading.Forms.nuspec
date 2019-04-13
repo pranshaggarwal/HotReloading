@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>HotReloading.Forms</id>
+    <version>1.0.0</version>
+    <title>.Net HotReloading</title>
+    <authors>Pranshu Aggarwal</authors>
+    <owners>Pranshu Aggarwal</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>.Net HotReloading</description>
+    <summary>Provide HotReloading features to your .Net project.</summary>
+    <releaseNotes></releaseNotes>
+    <copyright>Xenolt</copyright>
+    <projectUrl>https://github.com/pranshaggarwal/HotReloading</projectUrl>
+    <repository type="git" url="https://github.com/pranshaggarwal/HotReloading"/>
+    <licenseUrl>https://github.com/pranshaggarwal/HotReloading/blob/master/LICENSE</licenseUrl>
+    <language>C#</language>
+    <tags>.Net DotNet HotReload xamarin wpf asp.net CSharp XAML live-reload livexaml</tags>
+    <dependencies>
+        <dependency id="Xamarin.Forms" version="3.4.0.1008975" />
+        <dependency id="Rg.Plugins.Popup" version="1.1.5.188" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="../HotReloading.Forms/bin/Debug/netstandard2.0/HotReloading.Forms.dll" target="lib/netstandard2.0/HotReloading.Forms.dll" />
+    <file src="../HotReloading.Forms/bin/Debug/netstandard2.0/HotReloading.Forms.pdb" target="lib/netstandard2.0/HotReloading.Forms.pdb" />
+    <file src="../HotReloading.Forms/bin/Debug/netstandard2.0/HotReloading.Forms.dll" target="lib/Xamarin.iOS10/HotReloading.Forms.dll" />
+    <file src="../HotReloading.Forms/bin/Debug/netstandard2.0/HotReloading.Forms.pdb" target="lib/Xamarin.iOS10/HotReloading.Forms.pdb" />
+    <file src="../HotReloading.Forms/bin/Debug/netstandard2.0/HotReloading.Forms.dll" target="lib/MonoAndroid10/HotReloading.Forms.dll" />
+    <file src="../HotReloading.Forms/bin/Debug/netstandard2.0/HotReloading.Forms.pdb" target="lib/MonoAndroid10/HotReloading.Forms.pdb" />
+    <file src="../HotReloading.iOS/bin/Debug/HotReloading.iOS.dll" target="lib/Xamarin.iOS10/HotReloading.iOS.dll" />
+    <file src="../HotReloading.iOS/bin/Debug/HotReloading.iOS.pdb" target="lib/Xamarin.iOS10/HotReloading.iOS.pdb" />
+    <file src="../HotReloading.Android/bin/Debug/HotReloading.Android.dll" target="lib/MonoAndroid10/HotReloading.Android.dll" />
+    <file src="../HotReloading.Android/bin/Debug/HotReloading.Android.pdb" target="lib/MonoAndroid10/HotReloading.Android.pdb" />
+  </files>
+  </package>

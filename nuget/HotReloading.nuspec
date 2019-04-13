@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>HotReloading</id>
+    <version>1.0.0</version>
+    <title>.Net HotReloading</title>
+    <authors>Pranshu Aggarwal</authors>
+    <owners>Pranshu Aggarwal</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>.Net HotReloading</description>
+    <summary>Provide HotReloading features to your .Net project.</summary>
+    <releaseNotes></releaseNotes>
+    <copyright>Xenolt</copyright>
+    <projectUrl>https://github.com/pranshaggarwal/HotReloading</projectUrl>
+    <repository type="git" url="https://github.com/pranshaggarwal/HotReloading"/>
+    <licenseUrl>https://github.com/pranshaggarwal/HotReloading/blob/master/LICENSE</licenseUrl>
+    <language>C#</language>
+    <tags>.Net DotNet HotReload xamarin wpf asp.net CSharp XAML live-reload livexaml</tags>
+    <dependencies>
+        <dependency id="Newtonsoft.Json" version="12.0.1" />
+        <dependency id="Microsoft.CodeAnalysis.CSharp" version="2.10.0" />
+        <dependency id="Microsoft.CodeAnalysis.CSharp.Workspaces" version="2.10.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="../HotReloading/bin/Debug/netstandard2.0/HotReloading.dll" target="lib/netstandard2.0/HotReloading.dll" />
+    <file src="../HotReloading/bin/Debug/netstandard2.0/HotReloading.pdb" target="lib/netstandard2.0/HotReloading.pdb" />
+    <file src="../HotReloading/bin/Debug/netstandard2.0/HotReloading.Core.dll" target="lib/netstandard2.0/HotReloading.Core.dll" />
+    <file src="../HotReloading/bin/Debug/netstandard2.0/HotReloading.Core.pdb" target="lib/netstandard2.0/HotReloading.Core.pdb" />
+    <file src="../HotReloading/bin/Debug/netstandard2.0/StatementConverter.dll" target="lib/netstandard2.0/StatementConverter.dll" />
+    <file src="../HotReloading/bin/Debug/netstandard2.0/StatementConverter.pdb" target="lib/netstandard2.0/StatementConverter.pdb" />
+    <file src="../HotReloading/bin/Debug/netstandard2.0/CSharpExpressions.dll" target="lib/netstandard2.0/CSharpExpressions.dll" />
+    <file src="../HotReloading/bin/Debug/netstandard2.0/CSharpExpressions.pdb" target="lib/netstandard2.0/CSharpExpressions.pdb" />
+    <file src="../HotReloading/bin/Debug/netstandard2.0/Debugging.dll" target="lib/netstandard2.0/Debugging.dll" />
+    <file src="../HotReloading/bin/Debug/netstandard2.0/Debugging.pdb" target="lib/netstandard2.0/Debugging.pdb" />
+    <file src="../Build/HotReloading.targets" target="build/HotReloading.targets" />
+    <file src="../packages/Mono.Cecil.0.10.3/lib/net40/Mono.Cecil.dll" target="build\Mono.Cecil.dll" />
+    <file src="../HotReloading/bin/Debug/netstandard2.0/HotReloading.dll" target="build/HotReloading.dll" />
+    <file src="../Build/HotReloading.BuildTask/bin/Debug/HotReloading.BuildTask.dll" target="build/HotReloading.BuildTask.dll" />
+    <file src="../HotReloading/bin/Debug/netstandard2.0/CSharpExpressions.dll" target="build/CSharpExpressions.dll" />
+  </files>
+  </package>

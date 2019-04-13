@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+                 x:Class="HotReloading.Forms.CompileErrorPopup">
+    <Frame VerticalOptions="End" BackgroundColor="Red" Padding="10">
+        <StackLayout>
+            <Label Text="Compilation Error" FontAttributes="Bold" FontSize="20" HorizontalOptions="Center"
+                   TextColor="White" />
+            <ScrollView HeightRequest="100">
+                <Label x:Name="ErrorLabel" TextColor="White" />
+            </ScrollView>
+        </StackLayout>
+    </Frame>
+</pages:PopupPage>

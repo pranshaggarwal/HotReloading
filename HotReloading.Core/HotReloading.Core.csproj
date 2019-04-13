@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Statements\Identifier\" />
+    <Folder Include="Statements\MemberAccess\" />
+    <Folder Include="Statements\Declaration\" />
+    <Folder Include="Statements\Initialisation\" />
+    <Folder Include="Statements\Assignment\" />
+    <Folder Include="Statements\Invocation\" />
+    <Folder Include="Statements\Constant\" />
+    <Folder Include="Statements\Branch\" />
+    <Folder Include="Statements\Keyword\" />
+    <Folder Include="Statements\Pattern\" />
+    <Folder Include="Statements\Binary\" />
+    <Folder Include="Statements\Unary\" />
+    <Folder Include="Statements\Array\" />
+    <Folder Include="Statements\Loop\" />
+    <Folder Include="Statements\Using\" />
+  </ItemGroup>
+</Project>

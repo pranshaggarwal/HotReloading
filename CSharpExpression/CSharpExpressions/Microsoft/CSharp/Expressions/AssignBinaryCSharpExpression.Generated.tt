@@ -1,0 +1,114 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#
+var nodes = new[] { "AddAssign", "SubtractAssign", "MultiplyAssign", "DivideAssign", "ModuloAssign", "AndAssign", "OrAssign", "ExclusiveOrAssign", "LeftShiftAssign", "RightShiftAssign", "AddAssignChecked", "MultiplyAssignChecked", "SubtractAssignChecked" };
+#>
+// Prototyping extended expression trees for C#.
+//
+// bartde - November 2015
+
+using System.Dynamic.Utils;
+using System.Linq.Expressions;
+using System.Reflection;
+
+namespace Microsoft.CSharp.Expressions
+{
+    partial class AssignBinaryCSharpExpression
+    {
+        private static ExpressionType ConvertNodeType(CSharpExpressionType nodeType)
+        {
+            // NB: Only used for ToCSharp pretty printing; maybe we can remove it?
+
+            switch (nodeType)
+            {
+                case CSharpExpressionType.Assign: return ExpressionType.Assign;
+<#
+foreach (var node in nodes)
+{
+#>
+                case CSharpExpressionType.<#=node#>: return ExpressionType.<#=node#>;
+<#
+}
+#>
+                default:
+                    throw ContractUtils.Unreachable;
+            }
+        }
+    }
+
+    partial class CSharpExpression
+    {
+        /// <summary>
+        /// Creates a <see cref="AssignBinaryCSharpExpression" /> that represents an assignment.
+        /// </summary>
+        /// <returns>A <see cref="AssignBinaryCSharpExpression" /> that represents the operation.</returns>
+        /// <param name="left">An <see cref="Expression" /> to set the <see cref="BinaryCSharpExpression.Left" /> property equal to.</param>
+        /// <param name="right">An <see cref="Expression" /> to set the <see cref="BinaryCSharpExpression.Right" /> property equal to.</param>
+        public static new AssignBinaryCSharpExpression Assign(Expression left, Expression right)
+        {
+            return MakeBinaryAssignCore(CSharpExpressionType.Assign, left, right, null, null, null);
+        }
+
+<#
+foreach (var node in nodes)
+{
+#>
+        /// <summary>
+        /// Creates a <see cref="AssignBinaryCSharpExpression" /> that represents a compound assignment of type <#=node#>.
+        /// </summary>
+        /// <returns>A <see cref="AssignBinaryCSharpExpression" /> that represents the operation.</returns>
+        /// <param name="left">An <see cref="Expression" /> to set the <see cref="BinaryCSharpExpression.Left" /> property equal to.</param>
+        /// <param name="right">An <see cref="Expression" /> to set the <see cref="BinaryCSharpExpression.Right" /> property equal to.</param>
+        public static new AssignBinaryCSharpExpression <#=node#>(Expression left, Expression right)
+        {
+            return <#=node#>(left, right, null, null, null);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="AssignBinaryCSharpExpression" /> that represents a compound assignment of type <#=node#>.
+        /// </summary>
+        /// <returns>A <see cref="AssignBinaryCSharpExpression" /> that represents the operation.</returns>
+        /// <param name="left">An <see cref="Expression" /> to set the <see cref="BinaryCSharpExpression.Left" /> property equal to.</param>
+        /// <param name="right">An <see cref="Expression" /> to set the <see cref="BinaryCSharpExpression.Right" /> property equal to.</param>
+        /// <param name="method">A <see cref="MethodInfo" /> to set the <see cref="AssignBinaryCSharpExpression.Method" /> property equal to.</param>
+        public static new AssignBinaryCSharpExpression <#=node#>(Expression left, Expression right, MethodInfo method)
+        {
+            return <#=node#>(left, right, method, null, null);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="AssignBinaryCSharpExpression" /> that represents a compound assignment of type <#=node#>.
+        /// </summary>
+        /// <returns>A <see cref="AssignBinaryCSharpExpression" /> that represents the operation.</returns>
+        /// <param name="left">An <see cref="Expression" /> to set the <see cref="BinaryCSharpExpression.Left" /> property equal to.</param>
+        /// <param name="right">An <see cref="Expression" /> to set the <see cref="BinaryCSharpExpression.Right" /> property equal to.</param>
+        /// <param name="method">A <see cref="MethodInfo" /> to set the <see cref="AssignBinaryCSharpExpression.Method" /> property equal to.</param>
+        /// <param name="conversion">A <see cref="LambdaExpression" /> to set the <see cref="AssignBinaryCSharpExpression.LeftConversion" /> property equal to.</param>
+        public static new AssignBinaryCSharpExpression <#=node#>(Expression left, Expression right, MethodInfo method, LambdaExpression conversion)
+        {
+            return <#=node#>(left, right, method, conversion, null);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="AssignBinaryCSharpExpression" /> that represents a compound assignment of type <#=node#>.
+        /// </summary>
+        /// <returns>A <see cref="AssignBinaryCSharpExpression" /> that represents the operation.</returns>
+        /// <param name="left">An <see cref="Expression" /> to set the <see cref="BinaryCSharpExpression.Left" /> property equal to.</param>
+        /// <param name="right">An <see cref="Expression" /> to set the <see cref="BinaryCSharpExpression.Right" /> property equal to.</param>
+        /// <param name="method">A <see cref="MethodInfo" /> to set the <see cref="AssignBinaryCSharpExpression.Method" /> property equal to.</param>
+        /// <param name="finalConversion">A <see cref="LambdaExpression" /> to set the <see cref="AssignBinaryCSharpExpression.FinalConversion" /> property equal to.</param>
+        /// <param name="leftConversion">A <see cref="LambdaExpression" /> to set the <see cref="AssignBinaryCSharpExpression.LeftConversion" /> property equal to.</param>
+        public static AssignBinaryCSharpExpression <#=node#>(Expression left, Expression right, MethodInfo method, LambdaExpression finalConversion, LambdaExpression leftConversion)
+        {
+            return MakeBinaryAssignCore(CSharpExpressionType.<#=node#>, left, right, method, finalConversion, leftConversion);
+        }
+
+<#
+}
+#>
+    }
+}

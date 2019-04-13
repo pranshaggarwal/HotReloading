@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Class1.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Forms" Version="3.4.0.1008975" />
+    <PackageReference Include="Rg.Plugins.Popup" Version="1.1.5.188" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HotReloading\HotReloading.csproj" />
+  </ItemGroup>
+</Project>
