@@ -8,5 +8,10 @@
         {
             LastValue = value;
         }
+
+        public static void Reset()
+        {
+            LastValue = null;
+        }
     }
 }

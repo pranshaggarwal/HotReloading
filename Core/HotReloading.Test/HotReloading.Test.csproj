@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HotReloading\HotReloading.csproj" />
+    <ProjectReference Include="..\StatementConverter\StatementConverter.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TestCodes\" />

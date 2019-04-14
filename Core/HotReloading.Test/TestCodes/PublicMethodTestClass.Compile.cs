@@ -5,11 +5,12 @@ namespace HotReloading.Test.TestCodes
     {
         public static void UpdateStaticMethod()
         {
-            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass), nameof(MethodWithNoParameterNoReturnValue));
+            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass), nameof(UpdateStaticMethod));
 
             if (@delegate != null)
             {
                 @delegate.DynamicInvoke();
+                return;
             }
 
             Tracker.Call("default");
