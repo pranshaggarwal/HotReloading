@@ -44,17 +44,20 @@ namespace HotReloading
         public static Dictionary<Type, Dictionary<string, CSharpLamdaExpression>> ProtectedInternalInstanceMethods =
             new Dictionary<Type, Dictionary<string, CSharpLamdaExpression>>();
 
-        public static void HandleRequest(CodeChangeRequest request)
+        public static void HandleCodeChange(CodeChange codeChange)
         {
-            foreach (var oldMethodRequest in request.UpdateMethods) NewMethodRequest(oldMethodRequest);
+            foreach (var method in codeChange.Methods)
+            {
+                HandleMethodChange(method);
+            }
         }
 
-        private static void NewMethodRequest(Method methodRequest)
+        private static void HandleMethodChange(Method method)
         {
-            if (methodRequest.IsStatic)
-                StaticMethodRequest(methodRequest);
+            if (method.IsStatic)
+                StaticMethodRequest(method);
             else
-                InstanceMethodRequest(methodRequest);
+                InstanceMethodRequest(method);
         }
 
         private static void StaticMethodRequest(Method methodRequest)

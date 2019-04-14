@@ -16,4 +16,13 @@
   <ItemGroup>
     <ProjectReference Include="..\HotReloading\HotReloading.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestCodes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="TestCodes\PublicMethodTestClass.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestCodes\PublicMethodTestClass.cs" />
+  </ItemGroup>
 </Project>
