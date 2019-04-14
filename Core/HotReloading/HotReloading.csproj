@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HotReloading.Core\HotReloading.Core.csproj" />
+    <ProjectReference Include="..\StatementConverter\StatementConverter.csproj" />
+    <ProjectReference Include="..\ExpressionFuture\Debugging\Debugging.csproj" />
+    <ProjectReference Include="..\ExpressionFuture\CSharpExpressions\CSharpExpressions.csproj" />
+  </ItemGroup>
+</Project>
