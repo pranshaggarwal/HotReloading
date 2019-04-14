@@ -76,7 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\HotReloading\HotReloading.csproj">
-      <Project>{F22483C4-C6C7-4D46-A64A-C7D3E1003333}</Project>
+      <Project>{6C3867A5-2BD6-469A-A529-183469120BAD}</Project>
       <Name>HotReloading</Name>
     </ProjectReference>
   </ItemGroup>

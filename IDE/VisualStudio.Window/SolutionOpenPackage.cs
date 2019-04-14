@@ -32,7 +32,6 @@ namespace VisualStudio.Window
 
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            Test.Init(this);
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             var componentModel = (IComponentModel)GetGlobalService(typeof(SComponentModel));
             workspace = componentModel.GetService<Microsoft.VisualStudio.LanguageServices.VisualStudioWorkspace>();
