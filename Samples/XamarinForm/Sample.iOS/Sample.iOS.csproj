@@ -155,7 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Forms\HotReloading.Forms\HotReloading.Forms.csproj">
-      <Project>{551CACF0-6DF1-4308-A519-AE0F4B9F9B35}</Project>
+      <Project>{EB266A87-1C6D-4D29-B2AC-B655B888F56E}</Project>
       <Name>HotReloading.Forms</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Forms\HotReloading.iOS\HotReloading.iOS.csproj">
@@ -163,7 +163,7 @@
       <Name>HotReloading.iOS</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sample\Sample.csproj">
-      <Project>{27E52E55-0CC2-46F8-98FA-82AFCC35F8AB}</Project>
+      <Project>{E625B690-0A9A-404F-BD8C-14BCBF89EEBF}</Project>
       <Name>Sample</Name>
     </ProjectReference>
   </ItemGroup>
