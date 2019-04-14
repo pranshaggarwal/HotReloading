@@ -49,23 +49,6 @@ namespace StatementConverter.Test
             }
         }
 
-        public static CSharpLamdaExpression GetAsyncLambdaExpression(string codeFile, string methodName)
-        {
-            var syntaxTree = Helper.GetSyntaxTree(codeFile);
-
-            var mds = Helper.GetMethodDeclarationSyntax((CompilationUnitSyntax)syntaxTree.GetRoot(), methodName);
-
-            var semanticModel = Helper.GetSemanticModel(syntaxTree);
-            var statementInterpreterHandler = new StatementInterpreterHandler(mds, semanticModel);
-
-            var method = statementInterpreterHandler.GetMethod();
-
-            var interpreterHandler = new ExpressionInterpreterHandler(method);
-
-            var lamdaExpression = interpreterHandler.GetLamdaExpression();
-            return lamdaExpression;
-        }
-
         public static CSharpLamdaExpression GetLamdaExpression(string codeFile, string methodName)
         {
             var syntaxTree = Helper.GetSyntaxTree(codeFile);
