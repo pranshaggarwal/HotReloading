@@ -23,10 +23,14 @@ namespace Sample
             };
 
             Content = button;
+
+            var type = Type.GetType("Acr.UserDialogs.IUserDialogs, Acr.UserDialogs");
         }
 
         protected override void OnAppearing()
         {
+            //Acr.UserDialogs.UserDialogs.Instance.ShowLoading();
+
             var person = new Sample.Core.Person();
             TestAsync();
         }

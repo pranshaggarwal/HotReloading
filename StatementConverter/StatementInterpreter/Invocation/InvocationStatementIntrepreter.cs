@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using HotReloading.Core.Statements;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using StatementConverter.Extensions;
 
 namespace StatementConverter.StatementInterpreter
 {
@@ -22,14 +24,46 @@ namespace StatementConverter.StatementInterpreter
         public Statement GetStatement()
         {
             var method = statementInterpreterHandler.GetStatement(ies.Expression);
-            var arguments = ies.ArgumentList.Arguments.Select(x => statementInterpreterHandler.GetStatement(x));
 
-            if(method is NameOfStatement)
+            if (method is NameOfStatement)
             {
-                return new ConstantStatement(arguments.Cast<IdentifierStatement>().First().Name);
+                //nameof()
+                var arguments1 = ies.ArgumentList.Arguments.Select(x => statementInterpreterHandler.GetStatement(x));
+                return new ConstantStatement(arguments1.Cast<IdentifierStatement>().First().Name);
             }
 
             var invocationStatement = new InvocationStatement();
+
+            var methodSymbolInfo = semanticModel.GetSymbolInfo(ies.Expression);
+
+            var arguments = new List<Statement>();
+
+            if (methodSymbolInfo.Symbol is IMethodSymbol methodSymbol)
+            {
+                for (int i = 0; i < methodSymbol.Parameters.Length; i++)
+                {
+                    var parameter = methodSymbol.Parameters[i];
+                    if(!parameter.IsOptional)
+                        arguments.Add(statementInterpreterHandler.GetStatement(ies.ArgumentList.Arguments[i]));
+                    else
+                    {
+                        var argumentSyntax = ies.ArgumentList.Arguments.FirstOrDefault(x => x.NameColon != null && x.NameColon.Name.Identifier.ValueText == parameter.Name);
+                        if(argumentSyntax == null)
+                        {
+                            if(ies.ArgumentList.Arguments.Count <= i)
+                            {
+                                //use default value
+                                arguments.Add(new ConstantStatement(parameter.ExplicitDefaultValue));
+                            }
+                            else
+                                arguments.Add(statementInterpreterHandler.GetStatement(ies.ArgumentList.Arguments[i]));
+                        }
+                        else
+                            arguments.Add(statementInterpreterHandler.GetStatement(argumentSyntax));
+                    }
+                }
+                invocationStatement.ParametersSignature = methodSymbol.Parameters.Select(x => x.Type.GetClassType()).ToArray();
+            }
 
             invocationStatement.Method = method as MethodMemberStatement;
             invocationStatement.Arguments.AddRange(arguments);

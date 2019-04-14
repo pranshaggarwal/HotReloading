@@ -8,6 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="3.4.0.1008975" />
+    <PackageReference Include="Acr.UserDialogs" Version="7.0.4" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Global.config" />

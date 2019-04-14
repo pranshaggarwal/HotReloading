@@ -24,6 +24,7 @@ namespace Sample.iOS
             Initialiser.Init();
 
             Forms.Init();
+            var ignore = Acr.UserDialogs.UserDialogs.Instance;
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);

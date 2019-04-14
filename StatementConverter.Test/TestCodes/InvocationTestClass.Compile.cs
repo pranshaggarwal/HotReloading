@@ -14,6 +14,25 @@ namespace StatementConverter.Test
         {
         }
 
+        public void OptionalParameterMethod1(string str = null)
+        {
+            if(str == null)
+            {
+                Tracker.Call("hello");
+            }
+        }
+
+        public void OptionalParameterMethod2(string str = "default")
+        {
+            Tracker.Call("default");
+        }
+
+        public void OptionalNamedParameterMethod(string str = "", int i = 0)
+        {
+            Tracker.Call(str + i);
+        }
+
+
 
         public InvocationTestClass(string field)
         {

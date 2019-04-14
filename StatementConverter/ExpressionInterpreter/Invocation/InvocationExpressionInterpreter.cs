@@ -24,11 +24,11 @@ namespace StatementConverter.ExpressionInterpreter
             var arguments = invocationStatement.Arguments
                 .Select(x => expressionInterpreterHandler.GetExpression(x)).ToArray();
 
-            var argumentTypes = arguments.Select(x => x.Type).ToArray();
+            var parameterTypes = invocationStatement.ParametersSignature.Select(x => (Type)x).ToArray();
 
             var methodInfo =
                 ((Type) invocationStatement.Method.ParentType).GetMethod(invocationStatement.Method.Name,
-                    argumentTypes);
+                    parameterTypes);
 
             Expression[] convertedArguments = new Expression[arguments.Length];
 
@@ -51,7 +51,7 @@ namespace StatementConverter.ExpressionInterpreter
             if (invocationStatement.Method is InstanceMethodMemberStatement instanceStatement)
                 return Expression.Call(
                     expressionInterpreterHandler.GetExpression(instanceStatement.Parent),
-                    methodInfo, arguments);
+                    methodInfo, convertedArguments);
 
             return Expression.Call(methodInfo, convertedArguments);
         }

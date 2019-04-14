@@ -101,6 +101,48 @@ namespace StatementConverter.Test
         }
 
         [Test]
+        public void InvokeOptionalParameterMethod1()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("InvocationTestClass", "InvokeOptionalParameterMethod1");
+
+            var del = lamdaExpression.Compile();
+
+            var instance = new InvocationTestClass();
+
+            del.DynamicInvoke(instance);
+
+            Tracker.LastValue.Should().Be("hello");
+        }
+
+        [Test]
+        public void InvokeOptionalParameterMethod2()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("InvocationTestClass", "InvokeOptionalParameterMethod2");
+
+            var del = lamdaExpression.Compile();
+
+            var instance = new InvocationTestClass();
+
+            del.DynamicInvoke(instance);
+
+            Tracker.LastValue.Should().Be("default");
+        }
+
+        [Test]
+        public void InvokeOptionalNamedParameterMethod()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("InvocationTestClass", "InvokeOptionalNamedParameterMethod");
+
+            var del = lamdaExpression.Compile();
+
+            var instance = new InvocationTestClass();
+
+            del.DynamicInvoke(instance);
+
+            Tracker.LastValue.Should().Be("hello1");
+        }
+
+        [Test]
         public void WhenInvokeStaticMethodWithConstantArgument()
         {
             var lamdaExpression = Helper.GetLamdaExpression("InvocationTestClass", "InvokeStaticMethodWithConstantArgument");

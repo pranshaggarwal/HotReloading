@@ -74,6 +74,33 @@ namespace StatementConverter.Test
             this.InstanceMemberMethod();
         }
 
+        public void InvokeOptionalParameterMethod1()
+        {
+            OptionalParameterMethod1();
+        }
+
+        public void OptionalParameterMethod1(string str = null)
+        {
+        }
+
+        public void InvokeOptionalParameterMethod2()
+        {
+            OptionalParameterMethod2();
+        }
+
+        public void OptionalParameterMethod2(string str = "default")
+        {
+        }
+
+        public void InvokeOptionalNamedParameterMethod()
+        {
+            OptionalNamedParameterMethod(i: 1, str: "hello");
+        }
+
+        public void OptionalNamedParameterMethod(string str = "", int i = 0)
+        {
+        }
+
         public void InstanceMemberMethod()
         {
             Tracker.Call(field);
