@@ -19,6 +19,14 @@ namespace CSharpExpressions.Microsoft.CSharp
             this.asyncLambdaCSharpExpression = asyncLambdaCSharpExpression;
         }
 
+        public Expression GetExpression()
+        {
+            if (lambdaExpression != null)
+                return lambdaExpression;
+
+            return asyncLambdaCSharpExpression;
+        }
+
         public Delegate Compile()
         {
             if (lambdaExpression != null)

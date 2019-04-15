@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,7 +13,7 @@ using StatementConverter.StatementInterpreter;
 
 namespace HotReloading.Test
 {
-    public class Helper
+    public static class Helper
     {
         public static Method GetMethod(string codeFile, string methodName)
         {
@@ -61,6 +62,11 @@ namespace HotReloading.Test
                             .AddSyntaxTrees(syntaxTree);
 
             return compilation.GetSemanticModel(syntaxTree);
+        }
+
+        public static void ResetCodeChangeHandler()
+        {
+            CodeChangeHandler.Methods.Clear();
         }
     }
 }

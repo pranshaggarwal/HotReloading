@@ -11,6 +11,8 @@ namespace HotReloading.Test
         public void Setup()
         {
             Tracker.Reset();
+            Helper.ResetCodeChangeHandler();
+            StatementConverter.CodeChangeHandler.GetMethod = CodeChangeHandler.GetMethod;
         }
 
         [Test]
@@ -39,9 +41,23 @@ namespace HotReloading.Test
             Tracker.LastValue.Should().Be("change");
         }
 
+        [Test]
         public void AddedStaticMethodAndCalledFromSameClass()
         {
+            var existingMethod = Helper.GetMethod("PublicMethodTestClass", "AddedStaticMethodAndCalledFromSameClass1");
+            var newMethod = Helper.GetMethod("PublicMethodTestClass", "AddedStaticMethodAndCalledFromSameClass2");
 
+            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            {
+                Methods = new System.Collections.Generic.List<Core.Method>
+                {
+                    newMethod, existingMethod
+                }
+            });
+
+            PublicMethodTestClass.AddedStaticMethodAndCalledFromSameClass1();
+
+            Tracker.LastValue.Should().Be("change");
         }
 
         public void AddedStaticMethodAndCalledFromAnotherClass()

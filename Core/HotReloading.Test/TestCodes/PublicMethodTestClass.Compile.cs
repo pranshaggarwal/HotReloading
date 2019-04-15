@@ -15,5 +15,16 @@ namespace HotReloading.Test.TestCodes
 
             Tracker.Call("default");
         }
+
+        public static void AddedStaticMethodAndCalledFromSameClass1()
+        {
+            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass), nameof(AddedStaticMethodAndCalledFromSameClass1));
+
+            if (@delegate != null)
+            {
+                @delegate.DynamicInvoke();
+                return;
+            }
+        }
     }
 }

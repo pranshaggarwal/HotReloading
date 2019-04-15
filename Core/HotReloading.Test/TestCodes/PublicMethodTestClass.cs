@@ -7,9 +7,14 @@
             Tracker.Call("change");
         }
 
-        public void AddedStaticMethodAndCalledFromSameClass()
+        public static void AddedStaticMethodAndCalledFromSameClass1()
         {
+            AddedStaticMethodAndCalledFromSameClass2();
+        }
 
+        public static void AddedStaticMethodAndCalledFromSameClass2()
+        {
+            Tracker.Call("change");
         }
 
         public void AddedStaticMethodAndCalledFromAnotherClass()
