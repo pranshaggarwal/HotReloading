@@ -14,21 +14,6 @@ namespace HotReloading
     {
         private static List<IInstanceClass> instanceClasses = new List<IInstanceClass>();
 
-        public static Dictionary<Type, Dictionary<string, CSharpLamdaExpression>> PrivateInstanceMethods =
-            new Dictionary<Type, Dictionary<string, CSharpLamdaExpression>>();
-
-        public static Dictionary<Type, Dictionary<string, CSharpLamdaExpression>> PublicInstanceMethods =
-            new Dictionary<Type, Dictionary<string, CSharpLamdaExpression>>();
-
-        public static Dictionary<Type, Dictionary<string, CSharpLamdaExpression>> InternalInstanceMethods =
-            new Dictionary<Type, Dictionary<string, CSharpLamdaExpression>>();
-
-        public static Dictionary<Type, Dictionary<string, CSharpLamdaExpression>> ProtectedInstanceMethods =
-            new Dictionary<Type, Dictionary<string, CSharpLamdaExpression>>();
-
-        public static Dictionary<Type, Dictionary<string, CSharpLamdaExpression>> ProtectedInternalInstanceMethods =
-            new Dictionary<Type, Dictionary<string, CSharpLamdaExpression>>();
-
         public static void HandleCodeChange(CodeChange codeChange)
         {
             foreach (var method in codeChange.Methods)
@@ -79,68 +64,6 @@ namespace HotReloading
             if(Methods.ContainsKey(parentType))
                 return Methods[parentType].FirstOrDefault(x => x.Method.Name == methodName).GetDelegate();
             return null;
-        }
-
-        private static void InstanceMethodRequest(Method methodRequest)
-        {
-            var instanceMethodDictionary = GetInstanceMethodDictionary(methodRequest);
-
-            var expressionInterpreterHandler = new ExpressionInterpreterHandler(methodRequest);
-
-            var instanceMethod = expressionInterpreterHandler.GetLamdaExpression();
-
-            if (instanceMethodDictionary.ContainsKey(methodRequest.ParentType))
-            {
-                var membersDictionary = instanceMethodDictionary[methodRequest.ParentType];
-                if (membersDictionary.ContainsKey(methodRequest.Name))
-                    membersDictionary[methodRequest.Name] = instanceMethod;
-                else
-                    membersDictionary.Add(methodRequest.Name, instanceMethod);
-            }
-            else
-            {
-                var membersDictionary = new Dictionary<string, CSharpLamdaExpression>();
-                membersDictionary.Add(methodRequest.Name, instanceMethod);
-                instanceMethodDictionary.Add(methodRequest.ParentType, membersDictionary);
-            }
-
-            foreach(var list in instanceClasses.Where(x => x.GetType() == methodRequest.ParentType))
-            {
-                if (list.InstanceMethods.ContainsKey(methodRequest.Name))
-                {
-                    list.InstanceMethods[methodRequest.Name] = instanceMethod.Compile();
-                }
-                else
-                    list.InstanceMethods.Add(methodRequest.Name, instanceMethod.Compile());
-            }
-        }
-
-        public static Dictionary<string, CSharpLamdaExpression> GetInstanceMethods(Type type)
-        {
-            if (PublicInstanceMethods.ContainsKey(type))
-                return PublicInstanceMethods[type];
-
-            return new Dictionary<string, CSharpLamdaExpression>();
-        }
-
-        private static Dictionary<Type, Dictionary<string, CSharpLamdaExpression>> GetInstanceMethodDictionary(
-            Method methodRequest)
-        {
-            switch (methodRequest.AccessModifier)
-            {
-                case AccessModifier.Private:
-                    return PrivateInstanceMethods;
-                case AccessModifier.Public:
-                    return PublicInstanceMethods;
-                case AccessModifier.Internal:
-                    return InternalInstanceMethods;
-                case AccessModifier.Protected:
-                    return ProtectedInstanceMethods;
-                case AccessModifier.ProtectedInternal:
-                    return ProtectedInternalInstanceMethods;
-                default:
-                    throw new ArgumentOutOfRangeException("This access modifier is not supported");
-            }
         }
 
         public static CSharpLamdaExpression GetMethod(Type @class, string name)
