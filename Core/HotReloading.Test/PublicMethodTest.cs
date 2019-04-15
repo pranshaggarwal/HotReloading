@@ -158,9 +158,42 @@ namespace HotReloading.Test
             Tracker.LastValue.Should().Be("default");
         }
 
-        public void MethodOverload()
+        [Test]
+        public void MethodOverload1()
         {
+            var method1 = Helper.GetMethod("PublicMethodTestClass", HotReloading.CodeChangeHandler.GetMethodKey("MethodOverload"));
+            var method2 = Helper.GetMethod("PublicMethodTestClass",  HotReloading.CodeChangeHandler.GetMethodKey("MethodOverload", typeof(string)));
 
+            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            {
+                Methods = new System.Collections.Generic.List<Core.Method>
+                {
+                    method1, method2
+                }
+            });
+
+            PublicMethodTestClass.MethodOverload();
+
+            Tracker.LastValue.Should().Be("overload1");
+        }
+
+        [Test]
+        public void MethodOverload2()
+        {
+            var method1 = Helper.GetMethod("PublicMethodTestClass", HotReloading.CodeChangeHandler.GetMethodKey("MethodOverload"));
+            var method2 = Helper.GetMethod("PublicMethodTestClass", HotReloading.CodeChangeHandler.GetMethodKey("MethodOverload", typeof(string)));
+
+            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            {
+                Methods = new System.Collections.Generic.List<Core.Method>
+                {
+                    method1, method2
+                }
+            });
+
+            PublicMethodTestClass.MethodOverload("test");
+
+            Tracker.LastValue.Should().Be("overload2");
         }
     }
 }

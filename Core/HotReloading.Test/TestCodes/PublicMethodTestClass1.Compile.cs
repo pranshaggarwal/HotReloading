@@ -21,7 +21,8 @@ namespace HotReloading.Test.TestCodes
 
         public static void AddedStaticMethodAndCalledFromAnotherClass()
         {
-            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass1), nameof(AddedStaticMethodAndCalledFromAnotherClass));
+            var methodKey = CodeChangeHandler.GetMethodKey(nameof(AddedStaticMethodAndCalledFromAnotherClass));
+            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass1), methodKey);
 
             if (@delegate != null)
             {

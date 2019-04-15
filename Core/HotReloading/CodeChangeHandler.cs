@@ -33,7 +33,9 @@ namespace HotReloading
 
             var methods = Methods[method.ParentType];
 
-            var existingMethod = methods.FirstOrDefault(x => x.Method.Name == method.Name);
+            var methodKey = GetMethodKey(method);
+
+            var existingMethod = methods.SingleOrDefault(x => GetMethodKey(x.Method) == methodKey);
 
             if(existingMethod != null)
             {
@@ -47,30 +49,47 @@ namespace HotReloading
             {
                 foreach (var list in instanceClasses.Where(x => x.GetType() == method.ParentType))
                 {
-                    if (list.InstanceMethods.ContainsKey(method.Name))
+                    if (list.InstanceMethods.ContainsKey(methodKey))
                     {
-                        list.InstanceMethods[method.Name] = container.GetDelegate();
+                        list.InstanceMethods[methodKey] = container.GetDelegate();
                     }
                     else
-                        list.InstanceMethods.Add(method.Name, container.GetDelegate());
+                        list.InstanceMethods.Add(methodKey, container.GetDelegate());
                 }
             }
         }
 
-        public static Delegate GetMethodDelegate(Type parentType, string methodName)
+        public static string GetMethodKey(string methodName, params Type[] parameterTypes)
+        {
+            string key = methodName;
+
+            foreach (var parameter in parameterTypes)
+            {
+                key += $"`{(parameter).FullName}";
+            }
+
+            return key;
+        }
+
+        private static string GetMethodKey(Method method)
+        {
+            return GetMethodKey(method.Name, method.Parameters.Select(x => (Type)x.Type).ToArray());
+        }
+
+        public static Delegate GetMethodDelegate(Type parentType, string key)
         {
             Debug.WriteLine("GetMethodDelegate called");
 
             if(Methods.ContainsKey(parentType))
-                return Methods[parentType].FirstOrDefault(x => x.Method.Name == methodName).GetDelegate();
+                return Methods[parentType].SingleOrDefault(x => GetMethodKey(x.Method) == key).GetDelegate();
             return null;
         }
 
-        public static CSharpLamdaExpression GetMethod(Type @class, string name)
+        public static CSharpLamdaExpression GetMethod(Type @class, string key)
         {
             if(Methods.ContainsKey(@class))
             {
-                var method = Methods[@class].FirstOrDefault(x => x.Method.Name == name);
+                var method = Methods[@class].SingleOrDefault(x => GetMethodKey(x.Method) == key);
                 if (method != null)
                     return method.GetExpression();
             }
@@ -87,7 +106,7 @@ namespace HotReloading
 
             if (Methods.ContainsKey(type))
                 foreach (var instanceMethod in Methods[type])
-                    instanceMethods.Add(instanceMethod.Method.Name, instanceMethod.GetDelegate());
+                    instanceMethods.Add(GetMethodKey(instanceMethod.Method), instanceMethod.GetDelegate());
 
             return instanceMethods;
         }

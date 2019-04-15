@@ -43,15 +43,14 @@
             Tracker.Call("change");
         }
 
-        public void AddedInstanceMethodAndCalledFromAnotherClass()
+        public static void MethodOverload()
         {
-
+            Tracker.Call("overload1");
         }
 
-        public void MethodOverload()
+        public static void MethodOverload(string str)
         {
-
+            Tracker.Call("overload2");
         }
-
     }
 }

@@ -21,7 +21,8 @@ namespace HotReloading.Test.TestCodes
 
         public static void UpdateStaticMethod()
         {
-            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass), nameof(UpdateStaticMethod));
+            var methodKey = CodeChangeHandler.GetMethodKey(nameof(UpdateStaticMethod));
+            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass), methodKey);
 
             if (@delegate != null)
             {
@@ -34,7 +35,8 @@ namespace HotReloading.Test.TestCodes
 
         public static void AddedStaticMethodAndCalledFromSameClass1()
         {
-            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass), nameof(AddedStaticMethodAndCalledFromSameClass1));
+            var methodKey = CodeChangeHandler.GetMethodKey(nameof(AddedStaticMethodAndCalledFromSameClass1));
+            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass), methodKey);
 
             if (@delegate != null)
             {
@@ -71,6 +73,30 @@ namespace HotReloading.Test.TestCodes
             if ((object)instanceMethod != null)
             {
                 instanceMethod.DynamicInvoke(this);
+                return;
+            }
+        }
+
+        public static void MethodOverload()
+        {
+            var methodKey = CodeChangeHandler.GetMethodKey(nameof(MethodOverload));
+            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass), nameof(MethodOverload));
+
+            if (@delegate != null)
+            {
+                @delegate.DynamicInvoke();
+                return;
+            }
+        }
+
+        public static void MethodOverload(string str)
+        {
+            var methodKey = CodeChangeHandler.GetMethodKey(nameof(MethodOverload), typeof(string));
+            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass), methodKey);
+
+            if (@delegate != null)
+            {
+                @delegate.DynamicInvoke(str);
                 return;
             }
         }

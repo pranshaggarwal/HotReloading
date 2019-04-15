@@ -26,7 +26,9 @@ namespace StatementConverter.ExpressionInterpreter
 
             var parameterTypes = invocationStatement.ParametersSignature.Select(x => (Type)x).ToArray();
 
-            var lamdaExpression = CodeChangeHandler.GetMethod(invocationStatement.Method.ParentType, invocationStatement.Method.Name);
+            var methodKey = GetMethodKey();
+
+            var lamdaExpression = CodeChangeHandler.GetMethod(invocationStatement.Method.ParentType, methodKey);
 
             if(lamdaExpression != null)
             {
@@ -66,6 +68,17 @@ namespace StatementConverter.ExpressionInterpreter
                     methodInfo, convertedArguments);
 
             return Expression.Call(methodInfo, convertedArguments);
+        }
+
+        private string GetMethodKey()
+        {
+            string key = invocationStatement.Method.Name;
+
+            foreach (var type in invocationStatement.ParametersSignature)
+            {
+                key += $"`{((Type)type).FullName}";
+            }
+            return key;
         }
     }
 }
