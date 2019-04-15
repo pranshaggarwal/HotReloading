@@ -65,6 +65,16 @@ namespace HotReloading.Test.TestCodes
             }
         }
 
+        public void AddedStaticMethodAndCalledFromInstanceMethod()
+        {
+            Delegate instanceMethod = GetInstanceMethod(nameof(AddedStaticMethodAndCalledFromInstanceMethod));
+            if ((object)instanceMethod != null)
+            {
+                instanceMethod.DynamicInvoke(this);
+                return;
+            }
+        }
+
         protected Delegate GetInstanceMethod(string methodName)
         {
             if (InstanceMethods.ContainsKey(methodName))

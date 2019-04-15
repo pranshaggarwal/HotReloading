@@ -12,7 +12,7 @@ namespace HotReloading
 {
     public static class CodeChangeHandler
     {
-        private static List<IInstanceClass> instanceClasses = new List<IInstanceClass>();
+        public static List<IInstanceClass> instanceClasses = new List<IInstanceClass>();
 
         public static void HandleCodeChange(CodeChange codeChange)
         {

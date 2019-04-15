@@ -17,10 +17,6 @@
             Tracker.Call("change");
         }
 
-        public void AddedStaticMethodAndCalledFromAnotherClass()
-        {
-
-        }
 
         public void UpdateInstanceMethod()
         {
@@ -33,6 +29,16 @@
         }
 
         public void AddedInstanceMethodAndCalledFromSameClass1()
+        {
+            Tracker.Call("change");
+        }
+
+        public void AddedStaticMethodAndCalledFromInstanceMethod()
+        {
+            AddedStaticMethodAndCalledFromInstanceMethod1();
+        }
+
+        public static void AddedStaticMethodAndCalledFromInstanceMethod1()
         {
             Tracker.Call("change");
         }

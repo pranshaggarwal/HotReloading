@@ -68,6 +68,7 @@ namespace HotReloading.Test
         {
             Tracker.Reset();
             CodeChangeHandler.Methods.Clear();
+            CodeChangeHandler.instanceClasses.Clear();
             StatementConverter.CodeChangeHandler.GetMethod = CodeChangeHandler.GetMethod;
         }
     }

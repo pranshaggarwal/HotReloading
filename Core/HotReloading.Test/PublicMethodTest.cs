@@ -117,6 +117,27 @@ namespace HotReloading.Test
             Tracker.LastValue.Should().Be("change");
         }
 
+        [Test]
+        public void AddedStaticMethodAndCalledFromInstanceMethod()
+        {
+            var instanceMethod = Helper.GetMethod("PublicMethodTestClass", "AddedStaticMethodAndCalledFromInstanceMethod");
+            var newMethod = Helper.GetMethod("PublicMethodTestClass", "AddedStaticMethodAndCalledFromInstanceMethod1");
+
+            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            {
+                Methods = new System.Collections.Generic.List<Core.Method>
+            {
+                instanceMethod, newMethod
+            }
+            });
+
+            var instance = new PublicMethodTestClass();
+
+            instance.AddedStaticMethodAndCalledFromInstanceMethod();
+
+            Tracker.LastValue.Should().Be("change");
+        }
+
         public void AddedInstanceMethodAndCalledFromAnotherClass()
         {
 
