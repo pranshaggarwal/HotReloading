@@ -64,9 +64,11 @@ namespace HotReloading.Test
             return compilation.GetSemanticModel(syntaxTree);
         }
 
-        public static void ResetCodeChangeHandler()
+        public static void Setup()
         {
+            Tracker.Reset();
             CodeChangeHandler.Methods.Clear();
+            StatementConverter.CodeChangeHandler.GetMethod = CodeChangeHandler.GetMethod;
         }
     }
 }

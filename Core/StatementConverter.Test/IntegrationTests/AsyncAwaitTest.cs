@@ -11,9 +11,9 @@ namespace StatementConverter.Test
         [SetUp]
         public void Setup()
         {
-            Tracker.Reset();
+            Helper.Setup();
         }
-
+        
         [Test]
         public async Task TestAwaitTaskCall()
         {

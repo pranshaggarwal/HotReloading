@@ -78,5 +78,12 @@ namespace StatementConverter.Test
 
             return (ITypeSymbol)semanticModel.GetSymbolInfo(statement.Declaration.Type).Symbol;
         }
+
+        public static void Setup()
+        {
+            Tracker.Reset();
+            HotReloading.CodeChangeHandler.Methods.Clear();
+            CodeChangeHandler.GetMethod = HotReloading.CodeChangeHandler.GetMethod;
+        }
     }
 }

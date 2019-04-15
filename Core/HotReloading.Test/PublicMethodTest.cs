@@ -10,9 +10,7 @@ namespace HotReloading.Test
         [SetUp]
         public void Setup()
         {
-            Tracker.Reset();
-            Helper.ResetCodeChangeHandler();
-            StatementConverter.CodeChangeHandler.GetMethod = CodeChangeHandler.GetMethod;
+            Helper.Setup();
         }
 
         [Test]

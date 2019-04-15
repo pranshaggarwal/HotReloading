@@ -10,9 +10,9 @@ namespace StatementConverter.Test
         [SetUp]
         public void Setup()
         {
-            Tracker.Reset();
+            Helper.Setup();
         }
-
+        
         [Test]
         public void WhenLocalVariableAssign()
         {
