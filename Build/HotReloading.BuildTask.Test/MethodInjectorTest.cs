@@ -1,22 +1,41 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using FluentAssertions;
 using Xunit;
 
 namespace HotReloading.BuildTask.Test
 {
     public class MethodInjectorTest
     {
-        public MethodInjectorTest()
-        {
-            methodInjectorTask = new MethodInjector(new TestLogger());
-            methodInjectorTask.ProjectDirectory = "/Users/pranshuaggarwal/Xenolt/HotReloading/Build/BuildSample";
-            methodInjectorTask.AssemblyFile = "obj/Debug/netstandard2.0/BuildSample.dll";
-        }
-
-        private readonly MethodInjector methodInjectorTask;
+        private static readonly string assemblyLocation = System.IO.Directory.GetCurrentDirectory();
 
         [Fact]
-        public void Execute_Test()
+        public void Test()
         {
-            methodInjectorTask.Execute();
+            var methodInjectorTask = new MethodInjector(new TestLogger());
+
+            var assemblyPath = Path.Combine(assemblyLocation, "InterfaceImplementationTestAssembly.dll");
+
+            var newAssemblyPath = methodInjectorTask.InjectCode(assemblyPath, "InterfaceImplementationTestAssembly.InterfaceImplmentationTestClass");
+
+            var assembly = Assembly.LoadFrom(newAssemblyPath);
+
+            var type = assembly.GetType("InterfaceImplementationTestAssembly.InterfaceImplmentationTestClass");
+
+            var interface1 = type.GetInterfaces();
+
+            var obj = Activator.CreateInstance(type);
+            var instanceClass = obj.Should().BeAssignableTo<IInstanceClass>().Subject;
+
+            instanceClass.InstanceMethods.Count();
         }
+
+        //[Fact]
+        //public void Execute_Test()
+        //{
+        //    methodInjectorTask.Execute();
+        //}
     }
 }

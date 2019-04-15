@@ -33,11 +33,20 @@ namespace HotReloading.BuildTask
 
         public override bool Execute()
         {
-            var filePath = Path.Combine(ProjectDirectory, AssemblyFile);
+            var assemblyPath = Path.Combine(ProjectDirectory, AssemblyFile);
+            var tempAssemblyPath = InjectCode(assemblyPath);
 
+            File.Replace(tempAssemblyPath, assemblyPath, tempAssemblyPath + "1");
+
+            Logger.LogMessage("Injection done");
+            return true;
+        }
+
+        public string InjectCode(string assemblyPath, string classToInjectCode = null)
+        {
             var debug = DebugSymbols || !string.IsNullOrEmpty(DebugType) && DebugType.ToLowerInvariant() != "none";
 
-            var ad = AssemblyDefinition.ReadAssembly(filePath, new ReaderParameters
+            var ad = AssemblyDefinition.ReadAssembly(assemblyPath, new ReaderParameters
             {
                 ReadWrite = true,
                 ReadSymbols = true
@@ -51,6 +60,8 @@ namespace HotReloading.BuildTask
 
             foreach (var type in types)
             {
+                if (classToInjectCode != null && type.FullName != classToInjectCode)
+                    continue;
                 var methods = type.Methods;
 
                 PropertyDefinition instanceMethods = null;
@@ -62,12 +73,7 @@ namespace HotReloading.BuildTask
 
                 var hasImplementedIInstanceClass = type.HasImplementedIInstanceClass(iInstanceClassType, out getInstanceMethod, out instanceMethodGetters);
 
-                if (!type.IsAbstract && !hasImplementedIInstanceClass)
-                {
-                    type.Interfaces.Add(new InterfaceImplementation(md.ImportReference(typeof(IInstanceClass))));
-                    CreateInstanceMethodsProperty(md, type, out instanceMethods, out instanceMethodGetters);
-                    getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods);
-                }
+                ImplementIInstanceClass(md, type, ref instanceMethods, ref getInstanceMethod, ref instanceMethodGetters, hasImplementedIInstanceClass);
 
                 foreach (var method in methods)
                 {
@@ -82,25 +88,33 @@ namespace HotReloading.BuildTask
 
                     Logger.LogMessage("Weaving Method " + method.Name);
 
-                    if (method.IsConstructor && !type.IsAbstract && !method.IsStatic)
-                        AddInstanceMethodInitialiser(md, type, instanceMethods, method);
-                    else
-                        WrapMethod(md, type, method, getInstanceMethod);
+                    WrapMethod(md, type, method, getInstanceMethod);
                 }
 
-                if (!type.IsAbstract & !hasImplementedIInstanceClass) 
+                if (!type.IsAbstract & !hasImplementedIInstanceClass)
                     methods.Add(getInstanceMethod);
             }
 
-            ad.Write(new WriterParameters
+            var tempAssemblyPath = Path.Combine(Path.GetDirectoryName(assemblyPath), $"{Path.GetFileNameWithoutExtension(assemblyPath)}.temp.{Path.GetExtension(assemblyPath)}");
+
+            ad.Write(tempAssemblyPath, new WriterParameters
             {
                 WriteSymbols = debug
             });
 
             ad.Dispose();
 
-            Logger.LogMessage("Injection done");
-            return true;
+            return tempAssemblyPath;
+        }
+
+        private static void ImplementIInstanceClass(ModuleDefinition md, TypeDefinition type, ref PropertyDefinition instanceMethods, ref MethodDefinition getInstanceMethod, ref MethodDefinition instanceMethodGetters, bool hasImplementedIInstanceClass)
+        {
+            if (!type.IsAbstract && !hasImplementedIInstanceClass)
+            {
+                type.Interfaces.Add(new InterfaceImplementation(md.ImportReference(typeof(IInstanceClass))));
+                CreateInstanceMethodsProperty(md, type, out instanceMethods, out instanceMethodGetters);
+                getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods);
+            }
         }
 
         private static void CreateInstanceMethodsProperty(ModuleDefinition md, TypeDefinition type, out PropertyDefinition instanceMethods, out MethodDefinition instanceMethodGetters)
@@ -368,39 +382,6 @@ namespace HotReloading.BuildTask
             if (loadInstructionForReturn.OpCode == OpCodes.Ldloc)
                 return Instruction.Create(OpCodes.Stloc, (VariableDefinition)loadInstructionForReturn.Operand);
             throw new Exception("Unable to get store locationn for opcode: " + loadInstructionForReturn.OpCode);
-        }
-
-        private static void AddInstanceMethodInitialiser(ModuleDefinition md, TypeDefinition type,
-            PropertyDefinition instanceMethods, MethodDefinition method)
-        {
-            return;
-            var composer = new InstructionComposer(md)
-                .LoadArg_0()
-                .StaticCall(new Method
-                {
-                    ParentType = typeof(CodeChangeHandler),
-                    MethodName = nameof(CodeChangeHandler.GetInitialInstanceMethods),
-                    ParameterSignature = new[] { typeof(IInstanceClass) }
-                })
-                .NoOperation();
-
-            var ilProcessor = method.Body.GetILProcessor();
-
-            var baseConstructorCall = method.Body.Instructions.Where(x => x.OpCode == OpCodes.Call)
-                .FirstOrDefault(x =>
-                {
-                    if (x.Operand is MethodReference methodReference)
-                        return methodReference.Name == ".ctor";
-                    return false;
-                });
-
-            var last = baseConstructorCall;
-
-            foreach (var instruction in composer.Instructions)
-            {
-                ilProcessor.InsertAfter(last, instruction);
-                last = instruction;
-            }
         }
     }
 }

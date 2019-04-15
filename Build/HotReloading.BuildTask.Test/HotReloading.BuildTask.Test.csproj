@@ -58,6 +58,11 @@
       <HintPath>..\..\packages\Microsoft.Build.Utilities.Core.15.9.20\lib\net46\Microsoft.Build.Utilities.Core.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration" />
+    <Reference Include="FluentAssertions">
+      <HintPath>..\..\packages\FluentAssertions.5.6.0\lib\net47\FluentAssertions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MethodInjectorTest.cs" />
@@ -70,6 +75,18 @@
     <ProjectReference Include="..\HotReloading.BuildTask\HotReloading.BuildTask.csproj">
       <Project>{7556F489-417B-4D29-8FF7-4041B6DCA0D3}</Project>
       <Name>HotReloading.BuildTask</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuildSample\BuildSample.csproj">
+      <Project>{55C5FC73-60CD-47AF-A342-E39EC7AD6B4C}</Project>
+      <Name>BuildSample</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\InterfaceImplementationTestAssembly\InterfaceImplementationTestAssembly.csproj">
+      <Project>{7E5B8566-C492-4599-AE8A-C3EFEA0D64F5}</Project>
+      <Name>InterfaceImplementationTestAssembly</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\HotReloading\HotReloading.csproj">
+      <Project>{F22483C4-C6C7-4D46-A64A-C7D3E1003333}</Project>
+      <Name>HotReloading</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
