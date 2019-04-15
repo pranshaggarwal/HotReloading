@@ -34,16 +34,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="IntegrationTests\" />
-    <Folder Include="UnitTests\" />
     <Folder Include="IntegrationTests\Invocation\" />
     <Folder Include="TestCodes\" />
     <Folder Include="IntegrationTests\LocalVariableDeclaration\" />
     <Folder Include="IntegrationTests\Assignment\" />
     <Folder Include="IntegrationTests\Parameter\" />
     <Folder Include="IntegrationTests\ObjectCreation\" />
-    <Folder Include="UnitTests\ExpressionInterpreter\" />
-    <Folder Include="UnitTests\ExpressionInterpreter\Invocation\" />
-    <Folder Include="UnitTests\TypeExtensions\" />
     <Folder Include="IntegrationTests\Binary\" />
     <Folder Include="IntegrationTests\Branch\" />
     <Folder Include="IntegrationTests\Unary\" />
@@ -72,5 +68,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StatementConverter\StatementConverter.csproj" />
+    <ProjectReference Include="..\HotReloading\HotReloading.csproj" />
   </ItemGroup>
 </Project>

@@ -24,24 +24,24 @@ namespace HotReloading
         public static event Action<string> CompileError;
         public static event Action RequestHandled;
 
-        private void HandleDataReceived(object sender, string request)
+        private void HandleDataReceived(object sender, string messageJson)
         {
             try
             {
-                var methodRequest = Serializer.DeserializeJson<CodeChangeRequest>(request);
+                var message = Serializer.DeserializeJson<CodeChangeMessage>(messageJson);
 
-                if (methodRequest.ParsingError != null)
+                if(message.Error == null)
                 {
-                    ParsingError?.Invoke(methodRequest.ParsingError);
-                }
-                else if (methodRequest.CompileError != null)
-                {
-                    CompileError?.Invoke(methodRequest.CompileError);
-                }
-                else
-                {
-                    CodeChangeHandler.HandleRequest(methodRequest);
+                    CodeChangeHandler.HandleCodeChange(message.CodeChange);
                     RequestHandled?.Invoke();
+                }
+                else if (message.Error.ParsingError != null)
+                {
+                    ParsingError?.Invoke(message.Error.ParsingError);
+                }
+                else if (message.Error.CompileError != null)
+                {
+                    CompileError?.Invoke(message.Error.CompileError);
                 }
             }
             catch (Exception ex)
@@ -53,6 +53,7 @@ namespace HotReloading
 
         public static async Task<bool> Run(string ideIP = "127.0.0.1", int idePort = Constants.DEFAULT_PORT)
         {
+            StatementConverter.CodeChangeHandler.GetMethod = CodeChangeHandler.GetMethod;
             Instance = new HotReloadingClient();
             return await Instance.RunInternal(ideIP, idePort);
         }

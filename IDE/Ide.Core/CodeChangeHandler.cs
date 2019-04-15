@@ -39,7 +39,7 @@ namespace Ide.Core
 
         private async void Ide_DocumentSaved(object sender, DocumentSavedEventArgs e)
         {
-            CodeChangeRequest request;
+            CodeChangeMessage request = new CodeChangeMessage();
             try
             {
                 var oldDocument = currentDocument;
@@ -55,7 +55,7 @@ namespace Ide.Core
 
                 if (diagnostics.Count() == 0)
                 {
-                    request = CompareTree(newSynctaxTree, oldSyntaxTree, semanticModel);
+                    request.CodeChange = CompareTree(newSynctaxTree, oldSyntaxTree, semanticModel);
                     currentDocument = newDocument;
                 }
                 else
@@ -72,7 +72,7 @@ namespace Ide.Core
                         compileError += ": " + diagnostic.Location.GetLineSpan().StartLinePosition;
                     }
 
-                    request = new CodeChangeRequest
+                    request.Error = new Error
                     {
                         CompileError = compileError
                     };
@@ -80,34 +80,38 @@ namespace Ide.Core
             }
             catch (Exception ex)
             {
-                request = new CodeChangeRequest();
-                request.ParsingError = ex.Message;
+                request.Error = new Error
+                {
+                    ParsingError = ex.Message,
+                };
             }
 
             await server.Send(request);
         }
 
-        public CodeChangeRequest CompareTree(SyntaxTree newSyntaxTree, SyntaxTree oldSyntaxTree,
+        public CodeChange CompareTree(SyntaxTree newSyntaxTree, SyntaxTree oldSyntaxTree,
             SemanticModel semanticModel)
         {
             var codeChangesVisitor = new CodeChangesVisitor();
 
             codeChangesVisitor.Visit(newSyntaxTree, oldSyntaxTree);
 
-            var updateMethods = new List<Method>();
+            var updatedMethods = new List<Method>();
 
             foreach (var mds in codeChangesVisitor.UpdatedMethods)
             {
                 var interpreterHandler = new StatementInterpreterHandler(mds, semanticModel);
 
                 var method = interpreterHandler.GetMethod();
-                updateMethods.Add(method);
+                updatedMethods.Add(method);
             }
 
-            var request = new CodeChangeRequest();
-            request.UpdateMethods = updateMethods;
+            var request = new CodeChangeMessage();
 
-            return request;
+            return new CodeChange
+            {
+                Methods = updatedMethods
+            };
         }
     }
 }

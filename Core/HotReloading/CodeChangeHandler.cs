@@ -10,24 +10,9 @@ using StatementConverter.ExpressionInterpreter;
 
 namespace HotReloading
 {
-    public class CodeChangeHandler
+    public static class CodeChangeHandler
     {
         private static List<IInstanceClass> instanceClasses = new List<IInstanceClass>();
-
-        public static Dictionary<Type, Dictionary<string, Delegate>> PrivateStaticMethods =
-            new Dictionary<Type, Dictionary<string, Delegate>>();
-
-        public static Dictionary<Type, Dictionary<string, Delegate>> PublicStaticMethods =
-            new Dictionary<Type, Dictionary<string, Delegate>>();
-
-        public static Dictionary<Type, Dictionary<string, Delegate>> InternalStaticMethods =
-            new Dictionary<Type, Dictionary<string, Delegate>>();
-
-        public static Dictionary<Type, Dictionary<string, Delegate>> ProtectedStaticMethods =
-            new Dictionary<Type, Dictionary<string, Delegate>>();
-
-        public static Dictionary<Type, Dictionary<string, Delegate>> ProtectedInternalStaticMethods =
-            new Dictionary<Type, Dictionary<string, Delegate>>();
 
         public static Dictionary<Type, Dictionary<string, CSharpLamdaExpression>> PrivateInstanceMethods =
             new Dictionary<Type, Dictionary<string, CSharpLamdaExpression>>();
@@ -44,49 +29,44 @@ namespace HotReloading
         public static Dictionary<Type, Dictionary<string, CSharpLamdaExpression>> ProtectedInternalInstanceMethods =
             new Dictionary<Type, Dictionary<string, CSharpLamdaExpression>>();
 
-        public static void HandleRequest(CodeChangeRequest request)
+        public static void HandleCodeChange(CodeChange codeChange)
         {
-            foreach (var oldMethodRequest in request.UpdateMethods) NewMethodRequest(oldMethodRequest);
+            foreach (var method in codeChange.Methods)
+            {
+                HandleMethodChange(method);
+            }
         }
 
-        private static void NewMethodRequest(Method methodRequest)
+        public static Dictionary<Type, List<MethodContainer>> Methods { get; private set; } = new Dictionary<Type, List<MethodContainer>>();
+
+        private static void HandleMethodChange(Method method)
         {
-            if (methodRequest.IsStatic)
-                StaticMethodRequest(methodRequest);
-            else
-                InstanceMethodRequest(methodRequest);
-        }
+            if (!method.IsStatic)
+                InstanceMethodRequest(method);
 
-        private static void StaticMethodRequest(Method methodRequest)
-        {
-            var staticMethodDictionary = GetStaticMethodDictionary(methodRequest);
-
-            var expressionInterpreterHandler = new ExpressionInterpreterHandler(methodRequest);
-
-            var compiledMethod = expressionInterpreterHandler.GetLamdaExpression().Compile();
-
-            if (staticMethodDictionary.ContainsKey(methodRequest.ParentType))
+            if(!Methods.ContainsKey(method.ParentType))
             {
-                var membersDictionary = staticMethodDictionary[methodRequest.ParentType];
-                if (membersDictionary.ContainsKey(methodRequest.Name))
-                    membersDictionary[methodRequest.Name] = compiledMethod;
-                else
-                    membersDictionary.Add(methodRequest.Name, compiledMethod);
+                Methods.Add(method.ParentType, new List<MethodContainer>());
             }
-            else
+
+            var methods = Methods[method.ParentType];
+
+            var existingMethod = methods.FirstOrDefault(x => x.Method.Name == method.Name);
+
+            if(existingMethod != null)
             {
-                var membersDictionary = new Dictionary<string, Delegate>();
-                membersDictionary.Add(methodRequest.Name, compiledMethod);
-                staticMethodDictionary.Add(methodRequest.ParentType, membersDictionary);
+                methods.Remove(existingMethod);
             }
+
+            methods.Add(new MethodContainer(method));
         }
 
         public static Delegate GetMethodDelegate(Type parentType, string methodName)
         {
             Debug.WriteLine("GetMethodDelegate called");
-            if (PublicStaticMethods.ContainsKey(parentType) && PublicStaticMethods[parentType].ContainsKey(methodName))
-                return PublicStaticMethods[parentType][methodName];
 
+            if(Methods.ContainsKey(parentType))
+                return Methods[parentType].FirstOrDefault(x => x.Method.Name == methodName).GetDelegate();
             return null;
         }
 
@@ -152,23 +132,16 @@ namespace HotReloading
             }
         }
 
-        private static Dictionary<Type, Dictionary<string, Delegate>> GetStaticMethodDictionary(Method methodRequest)
+        public static CSharpLamdaExpression GetMethod(Type @class, string name)
         {
-            switch (methodRequest.AccessModifier)
+            if(Methods.ContainsKey(@class))
             {
-                case AccessModifier.Private:
-                    return PrivateStaticMethods;
-                case AccessModifier.Public:
-                    return PublicStaticMethods;
-                case AccessModifier.Internal:
-                    return InternalStaticMethods;
-                case AccessModifier.Protected:
-                    return ProtectedStaticMethods;
-                case AccessModifier.ProtectedInternal:
-                    return ProtectedInternalStaticMethods;
-                default:
-                    throw new ArgumentOutOfRangeException("This access modifier is not supported");
+                var method = Methods[@class].FirstOrDefault(x => x.Method.Name == name);
+                if (method != null)
+                    return method.GetExpression();
             }
+
+            return null;
         }
 
         public static Dictionary<string, Delegate> GetInitialInstanceMethods(IInstanceClass instanceClass)

@@ -11,13 +11,13 @@ namespace StatementConverter.Test
         [SetUp]
         public void Setup()
         {
-            Tracker.Reset();
+            Helper.Setup();
         }
-
+        
         [Test]
         public async Task TestAwaitTaskCall()
         {
-            var lamdaExpression = Helper.GetAsyncLambdaExpression("AsyncAwaitTestClass", "TestAwaitTaskCall");
+            var lamdaExpression = Helper.GetLamdaExpression("AsyncAwaitTestClass", "TestAwaitTaskCall");
 
             var del = lamdaExpression.Compile();
 
@@ -33,7 +33,7 @@ namespace StatementConverter.Test
         [Test]
         public async Task TestAwaitTaskStringCall()
         {
-            var lamdaExpression = Helper.GetAsyncLambdaExpression("AsyncAwaitTestClass", "TestAwaitTaskStringCall");
+            var lamdaExpression = Helper.GetLamdaExpression("AsyncAwaitTestClass", "TestAwaitTaskStringCall");
 
             var del = lamdaExpression.Compile();
 
@@ -49,7 +49,7 @@ namespace StatementConverter.Test
         [Test]
         public async Task TestAwaitReturnStringCall()
         {
-            var lamdaExpression = Helper.GetAsyncLambdaExpression("AsyncAwaitTestClass", "TestAwaitReturnStringCall");
+            var lamdaExpression = Helper.GetLamdaExpression("AsyncAwaitTestClass", "TestAwaitReturnStringCall");
 
             var del = lamdaExpression.Compile();
 

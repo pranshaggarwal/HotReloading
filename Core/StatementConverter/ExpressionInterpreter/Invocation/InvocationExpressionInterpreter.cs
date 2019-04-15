@@ -26,6 +26,13 @@ namespace StatementConverter.ExpressionInterpreter
 
             var parameterTypes = invocationStatement.ParametersSignature.Select(x => (Type)x).ToArray();
 
+            var lamdaExpression = CodeChangeHandler.GetMethod(invocationStatement.Method.ParentType, invocationStatement.Method.Name);
+
+            if(lamdaExpression != null)
+            {
+                return Expression.Invoke(lamdaExpression.GetExpression(), arguments);
+            }
+
             var methodInfo =
                 ((Type) invocationStatement.Method.ParentType).GetMethod(invocationStatement.Method.Name,
                     parameterTypes);

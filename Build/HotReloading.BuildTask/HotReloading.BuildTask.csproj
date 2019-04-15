@@ -74,11 +74,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AnotherTestProject\AnotherTestProject.csproj">
-      <Project>{ADBE38B8-DDF9-4A62-84AE-3FD75BF43130}</Project>
+      <Project>{39CD2977-58A7-4ADC-BB6A-B7EA6392FFC2}</Project>
       <Name>AnotherTestProject</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Core\HotReloading\HotReloading.csproj">
-      <Project>{6C3867A5-2BD6-469A-A529-183469120BAD}</Project>
+      <Project>{F22483C4-C6C7-4D46-A64A-C7D3E1003333}</Project>
       <Name>HotReloading</Name>
     </ProjectReference>
   </ItemGroup>

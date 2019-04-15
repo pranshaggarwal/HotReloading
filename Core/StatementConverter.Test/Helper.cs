@@ -49,30 +49,13 @@ namespace StatementConverter.Test
             }
         }
 
-        public static CSharpLamdaExpression GetAsyncLambdaExpression(string codeFile, string methodName)
-        {
-            var syntaxTree = Helper.GetSyntaxTree(codeFile);
-
-            var mds = Helper.GetMethodDeclarationSyntax((CompilationUnitSyntax)syntaxTree.GetRoot(), methodName);
-
-            var semanticModel = Helper.GetSemanticModel(syntaxTree);
-            var statementInterpreterHandler = new StatementInterpreterHandler(mds, semanticModel);
-
-            var method = statementInterpreterHandler.GetMethod();
-
-            var interpreterHandler = new ExpressionInterpreterHandler(method);
-
-            var lamdaExpression = interpreterHandler.GetLamdaExpression();
-            return lamdaExpression;
-        }
-
         public static CSharpLamdaExpression GetLamdaExpression(string codeFile, string methodName)
         {
-            var syntaxTree = Helper.GetSyntaxTree(codeFile);
+            var syntaxTree = GetSyntaxTree(codeFile);
 
-            var mds = Helper.GetMethodDeclarationSyntax((CompilationUnitSyntax)syntaxTree.GetRoot(), methodName);
+            var mds = GetMethodDeclarationSyntax((CompilationUnitSyntax)syntaxTree.GetRoot(), methodName);
 
-            var semanticModel = Helper.GetSemanticModel(syntaxTree);
+            var semanticModel = GetSemanticModel(syntaxTree);
             var statementInterpreterHandler = new StatementInterpreterHandler(mds, semanticModel);
 
             var method = statementInterpreterHandler.GetMethod();
@@ -85,15 +68,22 @@ namespace StatementConverter.Test
 
         public static ITypeSymbol GetTypeSymbol(string codeFile, string methodName)
         {
-            var syntaxTree = Helper.GetSyntaxTree(codeFile);
+            var syntaxTree = GetSyntaxTree(codeFile);
 
-            var mds = Helper.GetMethodDeclarationSyntax((CompilationUnitSyntax)syntaxTree.GetRoot(), methodName);
-            var semanticModel = Helper.GetSemanticModel(syntaxTree);
+            var mds = GetMethodDeclarationSyntax((CompilationUnitSyntax)syntaxTree.GetRoot(), methodName);
+            var semanticModel = GetSemanticModel(syntaxTree);
 
             var statement = (LocalDeclarationStatementSyntax)mds.Body.Statements.FirstOrDefault();
             var test = semanticModel.GetSymbolInfo(statement.Declaration.Type).Symbol;
 
             return (ITypeSymbol)semanticModel.GetSymbolInfo(statement.Declaration.Type).Symbol;
+        }
+
+        public static void Setup()
+        {
+            Tracker.Reset();
+            HotReloading.CodeChangeHandler.Methods.Clear();
+            CodeChangeHandler.GetMethod = HotReloading.CodeChangeHandler.GetMethod;
         }
     }
 }

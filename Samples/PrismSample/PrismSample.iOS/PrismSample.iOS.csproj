@@ -194,7 +194,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PrismSample\PrismSample.csproj">
-      <Project>{6A7601AE-C33E-40A3-A3DF-696C4A5BD337}</Project>
+      <Project>{8ABB0DE7-84F9-4EB4-ABBD-99BCD595986D}</Project>
       <Name>PrismSample</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Forms\HotReloading.iOS\HotReloading.iOS.csproj">
