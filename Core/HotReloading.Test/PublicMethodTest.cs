@@ -76,9 +76,24 @@ namespace HotReloading.Test
             Tracker.LastValue.Should().Be("default");
         }
 
+        [Test]
         public void UpdateInstanceMethod()
         {
+            var method = Helper.GetMethod("PublicMethodTestClass", "UpdateInstanceMethod");
 
+            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            {
+                Methods = new System.Collections.Generic.List<Core.Method>
+                {
+                    method
+                }
+            });
+
+            var instance = new PublicMethodTestClass();
+
+            instance.UpdateInstanceMethod();
+
+            Tracker.LastValue.Should().Be("change");
         }
 
         public void AddedInstanceMethodAndCalledFromSameClass()

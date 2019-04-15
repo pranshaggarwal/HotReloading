@@ -24,7 +24,7 @@
 
         public void UpdateInstanceMethod()
         {
-
+            Tracker.Call("change");
         }
 
         public void AddedInstanceMethodAndCalledFromSameClass()
