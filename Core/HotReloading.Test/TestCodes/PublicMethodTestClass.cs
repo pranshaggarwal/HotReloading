@@ -29,7 +29,12 @@
 
         public void AddedInstanceMethodAndCalledFromSameClass()
         {
+            AddedInstanceMethodAndCalledFromSameClass1();
+        }
 
+        public void AddedInstanceMethodAndCalledFromSameClass1()
+        {
+            Tracker.Call("change");
         }
 
         public void AddedInstanceMethodAndCalledFromAnotherClass()

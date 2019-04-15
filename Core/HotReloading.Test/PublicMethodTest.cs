@@ -96,9 +96,25 @@ namespace HotReloading.Test
             Tracker.LastValue.Should().Be("change");
         }
 
+        [Test]
         public void AddedInstanceMethodAndCalledFromSameClass()
         {
+            var existingMethod = Helper.GetMethod("PublicMethodTestClass", "AddedInstanceMethodAndCalledFromSameClass");
+            var newMethod = Helper.GetMethod("PublicMethodTestClass", "AddedInstanceMethodAndCalledFromSameClass1");
 
+            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            {
+                Methods = new System.Collections.Generic.List<Core.Method>
+                {
+                    existingMethod, newMethod
+                }
+            });
+
+            var instance = new PublicMethodTestClass();
+
+            instance.AddedInstanceMethodAndCalledFromSameClass();
+
+            Tracker.LastValue.Should().Be("change");
         }
 
         public void AddedInstanceMethodAndCalledFromAnotherClass()

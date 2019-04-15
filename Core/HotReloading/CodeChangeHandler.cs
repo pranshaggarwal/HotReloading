@@ -41,9 +41,6 @@ namespace HotReloading
 
         private static void HandleMethodChange(Method method)
         {
-            if (!method.IsStatic)
-                InstanceMethodRequest(method);
-
             if(!Methods.ContainsKey(method.ParentType))
             {
                 Methods.Add(method.ParentType, new List<MethodContainer>());
@@ -58,7 +55,21 @@ namespace HotReloading
                 methods.Remove(existingMethod);
             }
 
-            methods.Add(new MethodContainer(method));
+            MethodContainer container = new MethodContainer(method);
+            methods.Add(container);
+
+            if (!method.IsStatic)
+            {
+                foreach (var list in instanceClasses.Where(x => x.GetType() == method.ParentType))
+                {
+                    if (list.InstanceMethods.ContainsKey(method.Name))
+                    {
+                        list.InstanceMethods[method.Name] = container.GetDelegate();
+                    }
+                    else
+                        list.InstanceMethods.Add(method.Name, container.GetDelegate());
+                }
+            }
         }
 
         public static Delegate GetMethodDelegate(Type parentType, string methodName)
@@ -151,9 +162,9 @@ namespace HotReloading
             var type = instanceClass.GetType();
             var instanceMethods = new Dictionary<string, Delegate>();
 
-            if (PublicInstanceMethods.ContainsKey(type))
-                foreach (var instanceMethod in PublicInstanceMethods[type])
-                    instanceMethods.Add(instanceMethod.Key, instanceMethod.Value.Compile());
+            if (Methods.ContainsKey(type))
+                foreach (var instanceMethod in Methods[type])
+                    instanceMethods.Add(instanceMethod.Method.Name, instanceMethod.GetDelegate());
 
             return instanceMethods;
         }

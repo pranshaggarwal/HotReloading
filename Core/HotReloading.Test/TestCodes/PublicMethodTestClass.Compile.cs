@@ -55,6 +55,16 @@ namespace HotReloading.Test.TestCodes
             Tracker.Call("default");
         }
 
+        public void AddedInstanceMethodAndCalledFromSameClass()
+        {
+            Delegate instanceMethod = GetInstanceMethod(nameof(AddedInstanceMethodAndCalledFromSameClass));
+            if ((object)instanceMethod != null)
+            {
+                instanceMethod.DynamicInvoke(this);
+                return;
+            }
+        }
+
         protected Delegate GetInstanceMethod(string methodName)
         {
             if (InstanceMethods.ContainsKey(methodName))

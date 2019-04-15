@@ -30,7 +30,12 @@ namespace StatementConverter.ExpressionInterpreter
 
             if(lamdaExpression != null)
             {
-                return Expression.Invoke(lamdaExpression.GetExpression(), arguments);
+                var expression = lamdaExpression.GetExpression();
+                var arguments1 = new List<Expression>();
+                if (invocationStatement.Method is InstanceMethodMemberStatement instanceStatement1)
+                    arguments1.Add(expressionInterpreterHandler.GetExpression(instanceStatement1.Parent));
+                arguments1.AddRange(arguments);
+                return Expression.Invoke(expression, arguments1);
             }
 
             var methodInfo =
