@@ -126,9 +126,9 @@ namespace HotReloading.Test
             CodeChangeHandler.HandleCodeChange(new Core.CodeChange
             {
                 Methods = new System.Collections.Generic.List<Core.Method>
-            {
-                instanceMethod, newMethod
-            }
+                {
+                    instanceMethod, newMethod
+                }
             });
 
             var instance = new PublicMethodTestClass();
@@ -138,9 +138,24 @@ namespace HotReloading.Test
             Tracker.LastValue.Should().Be("change");
         }
 
+        [Test]
         public void AddedInstanceMethodAndCalledFromAnotherClass()
         {
+            var method = Helper.GetMethod("PublicMethodTestClass1", "AddedInstanceMethodAndCalledFromAnotherClass");
 
+            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            {
+                Methods = new System.Collections.Generic.List<Core.Method>
+                {
+                    method
+                }
+            });
+
+            var instance = new PublicMethodTestClass1();
+
+            instance.AddedInstanceMethodAndCalledFromAnotherClass();
+
+            Tracker.LastValue.Should().Be("default");
         }
 
         public void MethodOverload()
