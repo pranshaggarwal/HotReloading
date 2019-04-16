@@ -74,6 +74,7 @@
     <Compile Include="TestLogger.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="WrapStaticMethodTest.cs" />
+    <Compile Include="WrapInstanceMethodTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -110,6 +111,14 @@
     <ProjectReference Include="..\BuildSamples\WrapStaticMethodWithParameter\WrapStaticMethodWithParameter.csproj">
       <Project>{C11A5C19-818D-4BF2-BC10-4424916040A1}</Project>
       <Name>WrapStaticMethodWithParameter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\WrapInstanceMethodWithParameter\WrapInstanceMethodWithParameter.csproj">
+      <Project>{0DDAE43F-7359-405E-A53A-535A2E8B64AF}</Project>
+      <Name>WrapInstanceMethodWithParameter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\WrapInstanceMethodWithoutParameter\WrapInstanceMethodWithoutParameter.csproj">
+      <Project>{66FD8981-D685-4C03-B7CE-1959B3A6D637}</Project>
+      <Name>WrapInstanceMethodWithoutParameter</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -222,7 +222,7 @@ namespace HotReloading.BuildTask
             if(method.IsStatic)
                 ComposeStaticMethodInstructions(type, method, delegateVariable, boolVariable, methodKeyVariable, firstInstruction, parameters, composer);
             else
-                ComposeInstanceMethodInstructions(type, method, delegateVariable, boolVariable, firstInstruction, parameters, composer, getInstanceMethod);
+                ComposeInstanceMethodInstructions(type, method, delegateVariable, boolVariable, methodKeyVariable, firstInstruction, parameters, composer, getInstanceMethod);
 
             if (method.ReturnType.FullName == "System.Void") composer.Pop();
             else if (method.ReturnType.IsValueType)
@@ -245,10 +245,20 @@ namespace HotReloading.BuildTask
             foreach (var instruction in composer.Instructions) ilprocessor.InsertBefore(firstInstruction, instruction);
         }
 
-        private static void ComposeInstanceMethodInstructions(TypeDefinition type, MethodDefinition method, VariableDefinition delegateVariable, VariableDefinition boolVariable, Instruction firstInstruction, ParameterDefinition[] parameters, InstructionComposer composer, MethodDefinition getInstanceMethod)
+        private static void ComposeInstanceMethodInstructions(TypeDefinition type, MethodDefinition method, VariableDefinition delegateVariable, VariableDefinition boolVariable, VariableDefinition methodKeyVariable, Instruction firstInstruction, ParameterDefinition[] parameters, InstructionComposer composer, MethodDefinition getInstanceMethod)
         {
-            composer.LoadArg_0()
-                .LoadStr(method.Name)
+            composer
+            .Load(method.Name)
+                .LoadArray(parameters.Length, typeof(string), parameters.Select(x => x.ParameterType.FullName).ToArray())
+                .StaticCall(new Method
+                {
+                    ParentType = typeof(CodeChangeHandler),
+                    MethodName = nameof(CodeChangeHandler.GetMethodKey),
+                    ParameterSignature = new[] { typeof(string), typeof(string[]) }
+                }).
+                Store(methodKeyVariable)
+                .LoadArg_0()
+                .Load(methodKeyVariable)
                 .InstanceCall(getInstanceMethod)
                 .Store(delegateVariable)
                 .Load(delegateVariable)
