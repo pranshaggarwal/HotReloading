@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using BaseAssembly;
 
 namespace HotReloading.BuildTask.Test
 {
@@ -27,6 +28,7 @@ namespace HotReloading.BuildTask.Test
         {
             CodeChangeHandler.instanceClasses.Clear();
             CodeChangeHandler.Methods.Clear();
+            Tracker.LastValue = null;
         }
     }
 }

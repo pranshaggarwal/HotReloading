@@ -61,6 +61,7 @@
     <Compile Include="InterfaceImplmentationTest.cs" />
     <Compile Include="TestLogger.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="WrapStaticMethodTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -81,6 +82,14 @@
     <ProjectReference Include="..\BuildSamples\IInstanceClassInterfaceImplementationTest\IInstanceClassInterfaceImplementationTest.csproj">
       <Project>{72AB7D2D-EB1B-4AE3-ABBF-38569C044693}</Project>
       <Name>IInstanceClassInterfaceImplementationTest</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\BaseAssembly\BaseAssembly.csproj">
+      <Project>{20A59D9F-11DF-413D-84B5-9330F3CAC3CA}</Project>
+      <Name>BaseAssembly</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\WrapStaticMethodWithoutParameter\WrapStaticMethodWithoutParameter.csproj">
+      <Project>{C7439F47-CDC0-4B72-8315-114ADB8F4C79}</Project>
+      <Name>WrapStaticMethodWithoutParameter</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
