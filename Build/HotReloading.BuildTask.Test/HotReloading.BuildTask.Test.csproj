@@ -80,13 +80,13 @@
       <Project>{55C5FC73-60CD-47AF-A342-E39EC7AD6B4C}</Project>
       <Name>BuildSample</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BuildSamples\InterfaceImplementationTestAssembly\InterfaceImplementationTestAssembly.csproj">
-      <Project>{7E5B8566-C492-4599-AE8A-C3EFEA0D64F5}</Project>
-      <Name>InterfaceImplementationTestAssembly</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Core\HotReloading\HotReloading.csproj">
       <Project>{F22483C4-C6C7-4D46-A64A-C7D3E1003333}</Project>
       <Name>HotReloading</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\BuildTestAssembly\BuildTestAssembly.csproj">
+      <Project>{567ED37E-91C5-4FCE-9847-D1245A2941FE}</Project>
+      <Name>BuildTestAssembly</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -16,13 +16,15 @@ namespace HotReloading.BuildTask.Test
         {
             var methodInjectorTask = new MethodInjector(new TestLogger());
 
-            var assemblyPath = Path.Combine(assemblyLocation, "InterfaceImplementationTestAssembly.dll");
+            var assemblyPath = Path.Combine(assemblyLocation, "BuildTestAssembly.dll");
 
-            var newAssemblyPath = methodInjectorTask.InjectCode(assemblyPath, "InterfaceImplementationTestAssembly.InterfaceImplmentationTestClass");
+            var classToTest = "BuildTestAssembly.IInstanceClassInterfaceImplementationTest";
+
+            var newAssemblyPath = methodInjectorTask.InjectCode(assemblyPath, classToTest);
 
             var assembly = Assembly.LoadFrom(newAssemblyPath);
 
-            var type = assembly.GetType("InterfaceImplementationTestAssembly.InterfaceImplmentationTestClass");
+            var type = assembly.GetType(classToTest);
 
             var interface1 = type.GetInterfaces();
 
