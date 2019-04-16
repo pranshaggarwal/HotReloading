@@ -52,6 +52,50 @@ namespace HotReloading.BuildTask.Test
             File.Delete(newAssemblyPath);
         }
 
+        [Test]
+        public void Test_WrapStaticMethod_WithParameter()
+        {
+            var assemblyToTest = "WrapStaticMethodWithParameter";
+            string newAssemblyPath = Helper.GetInjectedAssembly(assemblyToTest);
+
+            var assembly = Assembly.LoadFrom(newAssemblyPath);
+
+            var type = assembly.GetType(Helper.GetFullClassname(assemblyToTest));
+
+            string methodName = "TestMethod";
+
+            var testMethod = type.GetMethod(methodName);
+
+            var result = testMethod.Invoke(null, new object[] { "default" });
+
+            result.Should().Be("default");
+
+            Func<string, string> @delegate = (str) =>
+            {
+                return str + 1;
+            };
+
+            var parameters = new List<Core.Parameter>()
+            {
+                new Core.Parameter
+                {
+                    Type = new Core.ClassType
+                    {
+                        Name = typeof(string).FullName,
+                        AssemblyName = typeof(string).Assembly.GetName().Name
+                    }
+                }
+            };
+
+            SetupCodeChangeDelegate(type, @delegate, methodName, parameters);
+
+            result = testMethod.Invoke(null, new object[] { "default" });
+
+            result.Should().Be("default1");
+
+            File.Delete(newAssemblyPath);
+        }
+
 
         private static void SetupCodeChangeDelegate(Type type, Delegate @delegate, string methodName, List<Core.Parameter> parameters)
         {

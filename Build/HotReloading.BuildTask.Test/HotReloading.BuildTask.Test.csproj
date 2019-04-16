@@ -107,6 +107,10 @@
       <Project>{E283AEFD-4581-4EEE-9F6D-B7545D9536FE}</Project>
       <Name>HotReloading.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\WrapStaticMethodWithParameter\WrapStaticMethodWithParameter.csproj">
+      <Project>{C11A5C19-818D-4BF2-BC10-4424916040A1}</Project>
+      <Name>WrapStaticMethodWithParameter</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
