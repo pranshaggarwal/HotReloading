@@ -31,11 +31,5 @@ namespace HotReloading.BuildTask.Test
 
             instanceClass.InstanceMethods.Count();
         }
-
-        //[Fact]
-        //public void Execute_Test()
-        //{
-        //    methodInjectorTask.Execute();
-        //}
     }
 }

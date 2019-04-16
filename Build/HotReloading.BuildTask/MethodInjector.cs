@@ -83,7 +83,7 @@ namespace HotReloading.BuildTask
                             .Any(x => x.AttributeType.Name == "GeneratedCodeAttribute"))
                         continue;
 
-                    if (method == instanceMethodGetters)
+                    if (method == instanceMethodGetters || method.IsConstructor)
                         continue;
 
                     Logger.LogMessage("Weaving Method " + method.Name);

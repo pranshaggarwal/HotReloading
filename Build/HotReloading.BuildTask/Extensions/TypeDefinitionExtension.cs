@@ -87,7 +87,7 @@ namespace HotReloading.BuildTask.Extensions
             TypeReference retTypeReference, List<Instruction> instructions, MethodAttributes attributes = MethodAttributes.Public, bool vir = false)
         {
             if (vir)
-                attributes |= MethodAttributes.NewSlot | MethodAttributes.Virtual;
+                attributes |= MethodAttributes.NewSlot | MethodAttributes.Virtual | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.Final | MethodAttributes.FamANDAssem | MethodAttributes.Family;
 
             var getter = new MethodDefinition($"get_{propertyName}", attributes, retTypeReference);
 
