@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 
 namespace HotReloading.BuildTask.Test
 {
@@ -7,19 +8,19 @@ namespace HotReloading.BuildTask.Test
     {
         private static readonly string assemblyLocation = System.IO.Directory.GetCurrentDirectory();
 
-        public static string GetInjectedAssembly(string classToTest)
+        public static string GetInjectedAssembly(string assemblyToTest)
         {
             var methodInjectorTask = new MethodInjector(new TestLogger());
 
-            var assemblyPath = Path.Combine(assemblyLocation, "BuildTestAssembly.dll");
+            var assemblyPath = Path.Combine(assemblyLocation, $"{assemblyToTest}.dll");
 
-            var newAssemblyPath = methodInjectorTask.InjectCode(assemblyPath, GetFullClassname(classToTest));
+            var newAssemblyPath = methodInjectorTask.InjectCode(assemblyPath, GetFullClassname(assemblyToTest));
             return newAssemblyPath;
         }
 
-        public static string GetFullClassname(string className)
+        public static string GetFullClassname(string assemblyName)
         {
-            return $"BuildTestAssembly.{className}";
+            return $"{assemblyName}.TestClass";
         }
 
         public static void Reset()

@@ -7,4 +7,17 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core\HotReloading\HotReloading.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="IInstanceClassInterfaceImplementationTest\obj\Debug\netstandard2.0\IInstanceClassInterfaceImplementationTest.assets.cache" />
+    <None Remove="IInstanceClassInterfaceImplementationTest\obj\IInstanceClassInterfaceImplementationTest.csproj.nuget.g.props" />
+    <None Remove="IInstanceClassInterfaceImplementationTest\obj\IInstanceClassInterfaceImplementationTest.csproj.nuget.g.targets" />
+    <None Remove="IInstanceClassInterfaceImplementationTest\obj\project.assets.json" />
+    <None Remove="IInstanceClassInterfaceImplementationTest\obj\IInstanceClassInterfaceImplementationTest.csproj.nuget.cache" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="IInstanceClassInterfaceImplementationTest\Class1.cs" />
+  </ItemGroup>
 </Project>

@@ -82,6 +82,14 @@
       <Project>{567ED37E-91C5-4FCE-9847-D1245A2941FE}</Project>
       <Name>BuildTestAssembly</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\IInstanceClassAleadyImplmentedTest\IInstanceClassAleadyImplmentedTest.csproj">
+      <Project>{0C95FEC7-EA92-439F-978D-D6403BCBDCEF}</Project>
+      <Name>IInstanceClassAleadyImplmentedTest</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\IInstanceClassInterfaceImplementationTest\IInstanceClassInterfaceImplementationTest.csproj">
+      <Project>{72AB7D2D-EB1B-4AE3-ABBF-38569C044693}</Project>
+      <Name>IInstanceClassInterfaceImplementationTest</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

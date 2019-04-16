@@ -19,19 +19,43 @@ namespace HotReloading.BuildTask.Test
         [Test]
         public void Test_IInstanceClass_Implementation()
         {
-            var classToTest = "IInstanceClassInterfaceImplementationTest";
-            string newAssemblyPath = Helper.GetInjectedAssembly(classToTest);
+            var assemblyToTest = "IInstanceClassInterfaceImplementationTest";
+            string newAssemblyPath = Helper.GetInjectedAssembly(assemblyToTest);
 
             var assembly = Assembly.LoadFrom(newAssemblyPath);
 
-            var type = assembly.GetType($"BuildTestAssembly.{classToTest}");
+            var type = assembly.GetType(Helper.GetFullClassname(assemblyToTest));
 
-            var interface1 = type.GetInterfaces();
+            var interfaces = type.GetInterfaces();
 
             var obj = Activator.CreateInstance(type);
             var instanceClass = obj.Should().BeAssignableTo<IInstanceClass>().Subject;
 
-            instanceClass.InstanceMethods.Count();
+            instanceClass.InstanceMethods.Count().Should().Be(0);
+
+            File.Delete(newAssemblyPath);
+        } 
+
+        [Test]
+        public void Test_IInstanceClass_AlreadyImplemented()
+        {
+            var assemblyToTest = "IInstanceClassAleadyImplmentedTest";
+            string newAssemblyPath = Helper.GetInjectedAssembly(assemblyToTest);
+
+            var assembly = Assembly.LoadFrom(newAssemblyPath);
+
+            var type = assembly.GetType(Helper.GetFullClassname(assemblyToTest));
+
+            var iInstanceInterfaces = type.GetInterfaces().Where(x => x == typeof(IInstanceClass));
+
+            iInstanceInterfaces.Count().Should().Be(1);
+
+            var obj = Activator.CreateInstance(type);
+            var instanceClass = obj.Should().BeAssignableTo<IInstanceClass>().Subject;
+
+            instanceClass.InstanceMethods.Count().Should().Be(0);
+
+            File.Delete(newAssemblyPath);
         }
     }
 }
