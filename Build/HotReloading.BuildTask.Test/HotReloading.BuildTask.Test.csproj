@@ -56,6 +56,18 @@
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\packages\Castle.Core.4.3.1\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions">
+      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.5.1\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\..\packages\Moq.4.10.1\lib\net45\Moq.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="InterfaceImplmentationTest.cs" />
@@ -90,6 +102,10 @@
     <ProjectReference Include="..\BuildSamples\WrapStaticMethodWithoutParameter\WrapStaticMethodWithoutParameter.csproj">
       <Project>{C7439F47-CDC0-4B72-8315-114ADB8F4C79}</Project>
       <Name>WrapStaticMethodWithoutParameter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\HotReloading.Core\HotReloading.Core.csproj">
+      <Project>{E283AEFD-4581-4EEE-9F6D-B7545D9536FE}</Project>
+      <Name>HotReloading.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

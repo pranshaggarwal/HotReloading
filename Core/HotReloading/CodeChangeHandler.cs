@@ -22,13 +22,13 @@ namespace HotReloading
             }
         }
 
-        public static Dictionary<Type, List<MethodContainer>> Methods { get; private set; } = new Dictionary<Type, List<MethodContainer>>();
+        public static Dictionary<Type, List<IMethodContainer>> Methods { get; private set; } = new Dictionary<Type, List<IMethodContainer>>();
 
         private static void HandleMethodChange(Method method)
         {
             if(!Methods.ContainsKey(method.ParentType))
             {
-                Methods.Add(method.ParentType, new List<MethodContainer>());
+                Methods.Add(method.ParentType, new List<IMethodContainer>());
             }
 
             var methods = Methods[method.ParentType];
