@@ -34,15 +34,13 @@ namespace HotReloading.BuildTask
         public override bool Execute()
         {
             var assemblyPath = Path.Combine(ProjectDirectory, AssemblyFile);
-            InjectCode(assemblyPath);
-
-            //File.Replace(tempAssemblyPath, assemblyPath, tempAssemblyPath + "1");
+            InjectCode(assemblyPath, assemblyPath);
 
             Logger.LogMessage("Injection done");
             return true;
         }
 
-        public void InjectCode(string assemblyPath, string classToInjectCode = null)
+        public void InjectCode(string assemblyPath, string outputAssemblyPath, string classToInjectCode = null)
         {
             var debug = DebugSymbols || !string.IsNullOrEmpty(DebugType) && DebugType.ToLowerInvariant() != "none";
 
@@ -95,12 +93,20 @@ namespace HotReloading.BuildTask
                     methods.Add(getInstanceMethod);
             }
 
-            var tempAssemblyPath = Path.Combine(Path.GetDirectoryName(assemblyPath), $"{Path.GetFileNameWithoutExtension(assemblyPath)}.temp.{Path.GetExtension(assemblyPath)}");
-
-            ad.Write(new WriterParameters
+            if (assemblyPath == outputAssemblyPath)
             {
-                WriteSymbols = debug
-            });
+                ad.Write(new WriterParameters
+                {
+                    WriteSymbols = debug
+                });
+            }
+            else
+            {
+                ad.Write(outputAssemblyPath, new WriterParameters
+                {
+                    WriteSymbols = debug
+                });
+            }
 
             ad.Dispose();
         }
