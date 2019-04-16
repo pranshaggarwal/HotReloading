@@ -48,8 +48,6 @@ namespace HotReloading.BuildTask.Test
             testMethod.Invoke(null, new object[] { });
 
             Tracker.LastValue.Should().Be("new");
-
-            File.Delete(newAssemblyPath);
         }
 
         [Test]
@@ -92,8 +90,6 @@ namespace HotReloading.BuildTask.Test
             result = testMethod.Invoke(null, new object[] { "default" });
 
             result.Should().Be("default1");
-
-            File.Delete(newAssemblyPath);
         }
 
 

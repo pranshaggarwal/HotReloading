@@ -34,15 +34,15 @@ namespace HotReloading.BuildTask
         public override bool Execute()
         {
             var assemblyPath = Path.Combine(ProjectDirectory, AssemblyFile);
-            var tempAssemblyPath = InjectCode(assemblyPath);
+            InjectCode(assemblyPath);
 
-            File.Replace(tempAssemblyPath, assemblyPath, tempAssemblyPath + "1");
+            //File.Replace(tempAssemblyPath, assemblyPath, tempAssemblyPath + "1");
 
             Logger.LogMessage("Injection done");
             return true;
         }
 
-        public string InjectCode(string assemblyPath, string classToInjectCode = null)
+        public void InjectCode(string assemblyPath, string classToInjectCode = null)
         {
             var debug = DebugSymbols || !string.IsNullOrEmpty(DebugType) && DebugType.ToLowerInvariant() != "none";
 
@@ -97,14 +97,12 @@ namespace HotReloading.BuildTask
 
             var tempAssemblyPath = Path.Combine(Path.GetDirectoryName(assemblyPath), $"{Path.GetFileNameWithoutExtension(assemblyPath)}.temp.{Path.GetExtension(assemblyPath)}");
 
-            ad.Write(tempAssemblyPath, new WriterParameters
+            ad.Write(new WriterParameters
             {
                 WriteSymbols = debug
             });
 
             ad.Dispose();
-
-            return tempAssemblyPath;
         }
 
         private static void ImplementIInstanceClass(ModuleDefinition md, TypeDefinition type, ref PropertyDefinition instanceMethods, ref MethodDefinition getInstanceMethod, ref MethodDefinition instanceMethodGetters, bool hasImplementedIInstanceClass)

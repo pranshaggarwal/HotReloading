@@ -15,8 +15,8 @@ namespace HotReloading.BuildTask.Test
 
             var assemblyPath = Path.Combine(assemblyLocation, $"{assemblyToTest}.dll");
 
-            var newAssemblyPath = methodInjectorTask.InjectCode(assemblyPath, GetFullClassname(assemblyToTest));
-            return newAssemblyPath;
+            methodInjectorTask.InjectCode(assemblyPath, GetFullClassname(assemblyToTest));
+            return assemblyPath;
         }
 
         public static string GetFullClassname(string assemblyName)

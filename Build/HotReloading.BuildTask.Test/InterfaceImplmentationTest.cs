@@ -32,8 +32,6 @@ namespace HotReloading.BuildTask.Test
             var instanceClass = obj.Should().BeAssignableTo<IInstanceClass>().Subject;
 
             instanceClass.InstanceMethods.Count().Should().Be(0);
-
-            File.Delete(newAssemblyPath);
         } 
 
         [Test]
@@ -54,8 +52,6 @@ namespace HotReloading.BuildTask.Test
             var instanceClass = obj.Should().BeAssignableTo<IInstanceClass>().Subject;
 
             instanceClass.InstanceMethods.Count().Should().Be(0);
-
-            File.Delete(newAssemblyPath);
         }
     }
 }
