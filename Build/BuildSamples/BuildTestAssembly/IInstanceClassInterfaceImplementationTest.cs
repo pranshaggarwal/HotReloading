@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using HotReloading;
-
-namespace BuildTestAssembly
+﻿namespace BuildTestAssembly
 {
     public class IInstanceClassInterfaceImplementationTest
     {
