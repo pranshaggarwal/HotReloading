@@ -168,6 +168,9 @@ namespace HotReloading.BuildTask
 
         private static void WrapMethod(ModuleDefinition md, TypeDefinition type, MethodDefinition method, MethodDefinition getInstanceMethod)
         {
+            var methodKeyVariable = new VariableDefinition(md.ImportReference(typeof(string)));
+            method.Body.Variables.Add(methodKeyVariable);
+
             var delegateVariable = new VariableDefinition(md.ImportReference(typeof(Delegate)));
             method.Body.Variables.Add(delegateVariable);
 
@@ -211,7 +214,7 @@ namespace HotReloading.BuildTask
             var composer = new InstructionComposer(md);
 
             if(method.IsStatic)
-                ComposeStaticMethodInstructions(type, method, delegateVariable, boolVariable, firstInstruction, parameters, composer);
+                ComposeStaticMethodInstructions(type, method, delegateVariable, boolVariable, methodKeyVariable, firstInstruction, parameters, composer);
             else
                 ComposeInstanceMethodInstructions(type, method, delegateVariable, boolVariable, firstInstruction, parameters, composer, getInstanceMethod);
 
@@ -258,16 +261,26 @@ namespace HotReloading.BuildTask
                 });
         }
 
-        private static void ComposeStaticMethodInstructions(TypeDefinition type, MethodDefinition method, VariableDefinition delegateVariable, VariableDefinition boolVariable, Instruction firstInstruction, ParameterDefinition[] parameters, InstructionComposer composer)
+        private static void ComposeStaticMethodInstructions(TypeDefinition type, MethodDefinition method, VariableDefinition delegateVariable, VariableDefinition boolVariable, VariableDefinition methodKeyVariable, Instruction firstInstruction, ParameterDefinition[] parameters, InstructionComposer composer)
         {
-            composer.Load(type)
+            composer
+            .Load(method.Name)
+                .LoadArray(parameters.Length, typeof(string), parameters.Select(x => x.ParameterType.FullName).ToArray())
+                .StaticCall(new Method
+                {
+                    ParentType = typeof(CodeChangeHandler),
+                    MethodName = nameof(CodeChangeHandler.GetMethodKey),
+                    ParameterSignature = new[] { typeof(string), typeof(string[])}
+                }).
+                Store(methodKeyVariable)
+                .Load(type)
                             .StaticCall(new Method
                             {
                                 ParentType = typeof(Type),
                                 MethodName = nameof(Type.GetTypeFromHandle),
                                 ParameterSignature = new[] { typeof(RuntimeTypeHandle) }
                             })
-                            .Load(method.Name)
+                            .Load(methodKeyVariable)
                             .StaticCall(new Method
                             {
                                 ParentType = typeof(CodeChangeHandler),

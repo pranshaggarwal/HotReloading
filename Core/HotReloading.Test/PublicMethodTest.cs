@@ -162,7 +162,7 @@ namespace HotReloading.Test
         public void MethodOverload1()
         {
             var method1 = Helper.GetMethod("PublicMethodTestClass", HotReloading.CodeChangeHandler.GetMethodKey("MethodOverload"));
-            var method2 = Helper.GetMethod("PublicMethodTestClass",  HotReloading.CodeChangeHandler.GetMethodKey("MethodOverload", typeof(string)));
+            var method2 = Helper.GetMethod("PublicMethodTestClass",  HotReloading.CodeChangeHandler.GetMethodKey("MethodOverload", typeof(string).FullName));
 
             CodeChangeHandler.HandleCodeChange(new Core.CodeChange
             {
@@ -181,7 +181,7 @@ namespace HotReloading.Test
         public void MethodOverload2()
         {
             var method1 = Helper.GetMethod("PublicMethodTestClass", HotReloading.CodeChangeHandler.GetMethodKey("MethodOverload"));
-            var method2 = Helper.GetMethod("PublicMethodTestClass", HotReloading.CodeChangeHandler.GetMethodKey("MethodOverload", typeof(string)));
+            var method2 = Helper.GetMethod("PublicMethodTestClass", HotReloading.CodeChangeHandler.GetMethodKey("MethodOverload", typeof(string).FullName));
 
             CodeChangeHandler.HandleCodeChange(new Core.CodeChange
             {

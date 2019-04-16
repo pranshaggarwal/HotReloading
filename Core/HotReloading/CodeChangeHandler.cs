@@ -59,13 +59,13 @@ namespace HotReloading
             }
         }
 
-        public static string GetMethodKey(string methodName, params Type[] parameterTypes)
+        public static string GetMethodKey(string methodName, params string[] parameterTypes)
         {
             string key = methodName;
 
             foreach (var parameter in parameterTypes)
             {
-                key += $"`{(parameter).FullName}";
+                key += $"`{(parameter)}";
             }
 
             return key;
@@ -73,7 +73,7 @@ namespace HotReloading
 
         private static string GetMethodKey(Method method)
         {
-            return GetMethodKey(method.Name, method.Parameters.Select(x => (Type)x.Type).ToArray());
+            return GetMethodKey(method.Name, method.Parameters.Select(x => ((Type)x.Type).FullName).ToArray());
         }
 
         public static Delegate GetMethodDelegate(Type parentType, string key)

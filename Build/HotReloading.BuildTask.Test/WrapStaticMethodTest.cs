@@ -87,7 +87,7 @@ namespace HotReloading.BuildTask.Test
 
             SetupCodeChangeDelegate(type, @delegate, methodName, parameters);
 
-            result = testMethod.Invoke(null, new object[] { "default" });
+            result = testMethod.Invoke(null, new string[] { "default" });
 
             result.Should().Be("default1");
         }

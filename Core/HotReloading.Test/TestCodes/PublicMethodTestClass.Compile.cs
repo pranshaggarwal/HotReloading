@@ -91,7 +91,7 @@ namespace HotReloading.Test.TestCodes
 
         public static void MethodOverload(string str)
         {
-            var methodKey = CodeChangeHandler.GetMethodKey(nameof(MethodOverload), typeof(string));
+            var methodKey = CodeChangeHandler.GetMethodKey(nameof(MethodOverload), typeof(string).FullName);
             var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass), methodKey);
 
             if (@delegate != null)

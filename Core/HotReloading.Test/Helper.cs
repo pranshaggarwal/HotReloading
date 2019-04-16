@@ -50,7 +50,7 @@ namespace HotReloading.Test
         {
             return compilationUnit.Members.OfType<NamespaceDeclarationSyntax>().First().Members.OfType<ClassDeclarationSyntax>().First()
                 .Members.OfType<MethodDeclarationSyntax>().Cast<MethodDeclarationSyntax>().FirstOrDefault(x => HotReloading.CodeChangeHandler.GetMethodKey(x.Identifier.Text,
-                                    x.ParameterList.Parameters.Select(p => (Type)p.Type.GetClassType(semanticModel)).ToArray()) == methodKey);
+                                    x.ParameterList.Parameters.Select(p => ((Type)p.Type.GetClassType(semanticModel)).FullName).ToArray()) == methodKey);
         }
 
 

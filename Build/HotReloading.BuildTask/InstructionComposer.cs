@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -77,6 +78,33 @@ namespace HotReloading.BuildTask
             return this;
         }
 
+        public InstructionComposer LoadArray(int length, Type type, string[] elements)
+        {
+            SetupArray(length, type);
+
+            for (var i = 0; i < elements.Length; i++)
+            {
+                AddArrayElement(i, elements[i]);
+            }
+
+            return this;
+        }
+
+        private void SetupArray(int length, Type type)
+        {
+            Instructions.Add(Instruction.Create(OpCodes.Ldc_I4, length));
+            var typeReference = moduleDefinition.ImportReference(type);
+            Instructions.Add(Instruction.Create(OpCodes.Newarr, typeReference));
+        }
+
+        private void AddArrayElement(int index, string element)
+        {
+            Instructions.Add(Instruction.Create(OpCodes.Dup));
+            Instructions.Add(Instruction.Create(OpCodes.Ldc_I4, index));
+            Instructions.Add(Instruction.Create(OpCodes.Ldstr, element));
+            Instructions.Add(Instruction.Create(OpCodes.Stelem_Ref));
+        }
+
         public InstructionComposer LoadArray(ParameterDefinition[] array, bool isInstance = false)
         {
             var offset = 0;
@@ -84,10 +112,7 @@ namespace HotReloading.BuildTask
             if (isInstance)
                 offset = 1;
 
-            Instructions.Add(Instruction.Create(OpCodes.Ldc_I4, array.Length + offset));
-            var objectType = typeof(object);
-            var objectReference = moduleDefinition.ImportReference(objectType);
-            Instructions.Add(Instruction.Create(OpCodes.Newarr, objectReference));
+            SetupArray(array.Length + offset, typeof(object));
 
             if (isInstance)
             {
