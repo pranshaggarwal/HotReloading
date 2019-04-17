@@ -18,6 +18,12 @@ namespace HotReloading.BuildTask
 
         public List<Instruction> Instructions { get; }
 
+        public InstructionComposer LoadArg(ParameterDefinition parameterDefinition)
+        {
+            Instructions.Add(Instruction.Create(OpCodes.Ldarg, parameterDefinition));
+            return this;
+        }
+
         public InstructionComposer LoadArg_0()
         {
             Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
@@ -177,6 +183,12 @@ namespace HotReloading.BuildTask
         {
             var methodInfo = method.ParentType.GetMethod(method.MethodName, method.ParameterSignature);
             var methodReference = moduleDefinition.ImportReference(methodInfo);
+            Instructions.Add(Instruction.Create(OpCodes.Call, methodReference));
+            return this;
+        }
+
+        public InstructionComposer BaseCall(MethodReference methodReference)
+        {
             Instructions.Add(Instruction.Create(OpCodes.Call, methodReference));
             return this;
         }

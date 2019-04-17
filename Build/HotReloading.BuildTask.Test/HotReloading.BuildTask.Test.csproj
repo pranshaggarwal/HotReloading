@@ -75,6 +75,7 @@
     <Compile Include="Helper.cs" />
     <Compile Include="WrapStaticMethodTest.cs" />
     <Compile Include="WrapInstanceMethodTest.cs" />
+    <Compile Include="WrapOverrideMethodTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -119,6 +120,10 @@
     <ProjectReference Include="..\BuildSamples\WrapInstanceMethodWithoutParameter\WrapInstanceMethodWithoutParameter.csproj">
       <Project>{66FD8981-D685-4C03-B7CE-1959B3A6D637}</Project>
       <Name>WrapInstanceMethodWithoutParameter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\WrapOverrideMethodTest\WrapOverrideMethodTest.csproj">
+      <Project>{C6B582DE-E9BC-470B-82B7-E7128932E44E}</Project>
+      <Name>WrapOverrideMethodTest</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

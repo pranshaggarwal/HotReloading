@@ -89,6 +89,8 @@ namespace HotReloading.BuildTask
                     WrapMethod(md, type, method, getInstanceMethod);
                 }
 
+                AddOverrideMethod(type, md, getInstanceMethod);
+
                 if (!type.IsAbstract & !hasImplementedIInstanceClass)
                     methods.Add(getInstanceMethod);
             }
@@ -109,6 +111,101 @@ namespace HotReloading.BuildTask
             }
 
             ad.Dispose();
+        }
+
+        private void AddOverrideMethod(TypeDefinition type, ModuleDefinition md, MethodDefinition getInstanceMethod)
+        {
+            if (type.BaseType == null)
+                return;
+
+            var overridableMethods = GetOverridableMethods(type);
+
+            foreach(var overridableMethod in overridableMethods)
+            {
+                var overridableReference = md.ImportReference(overridableMethod);
+                if(!type.Methods.Any(x => AreEquals(x, overridableMethod)))
+                {
+                    var attributes = overridableMethod.Attributes & ~MethodAttributes.NewSlot | MethodAttributes.ReuseSlot;
+                    var method = new MethodDefinition(overridableMethod.Name, attributes, md.ImportReference(overridableMethod.ReturnType));
+                    method.ImplAttributes = overridableMethod.ImplAttributes;
+                    method.SemanticsAttributes = overridableMethod.SemanticsAttributes;
+
+
+                    foreach(var parameter in overridableMethod.Parameters)
+                    {
+                        method.Parameters.Add(parameter);
+                    }
+
+                    var composer = new InstructionComposer(md);
+
+                    composer.LoadArg_0();
+
+                    foreach(var parameter in method.Parameters)
+                    {
+                        composer.LoadArg(parameter);
+                    }
+
+                    composer.BaseCall(overridableReference);
+
+                    if (overridableMethod.ReturnType.FullName != "System.Void")
+                    {
+                        var returnVariable = new VariableDefinition(md.ImportReference(overridableMethod.ReturnType));
+
+                        method.Body.Variables.Add(returnVariable);
+
+                        composer.Store(returnVariable);
+                        composer.Load(returnVariable);
+                    }
+
+                    composer.Return();
+
+                    foreach(var instruction in composer.Instructions)
+                    {
+                        method.Body.GetILProcessor().Append(instruction);
+                    }
+
+                    WrapMethod(md, type, method, getInstanceMethod);
+
+                    type.Methods.Add(method);
+                }
+            }
+        }
+
+        private IEnumerable<MethodDefinition> GetOverridableMethods(TypeDefinition type)
+        {
+            if (type.BaseType == null)
+                return null;
+
+            var overriadableMethods = new List<MethodDefinition>();
+
+            var baseTypeDefinition = type.BaseType.Resolve();
+
+            overriadableMethods.AddRange(baseTypeDefinition.Methods.Where(x => x.IsVirtual && !x.IsFinal && x.Name != "Finalize"));
+
+            var baseOverriableMethods = GetOverridableMethods(baseTypeDefinition);
+            if (baseOverriableMethods == null)
+                return overriadableMethods;
+
+            overriadableMethods.AddRange(baseOverriableMethods.Where(x => !overriadableMethods.Any(y => AreEquals(x, y))));
+
+            return overriadableMethods;
+        }
+
+        private static bool AreEquals(MethodDefinition method1, MethodDefinition method2)
+        {
+            if (method1.Name != method2.Name)
+                return false;
+
+            if (method1.Parameters.Count != method2.Parameters.Count)
+                return false;
+
+            for (var i = 0; i < method1.Parameters.Count; i++)
+            {
+                if (method1.Parameters[i].ParameterType.FullName != method2.Parameters[i].ParameterType.FullName)
+                    return false;
+            }
+
+            return true;
         }
 
         private static void ImplementIInstanceClass(ModuleDefinition md, TypeDefinition type, ref PropertyDefinition instanceMethods, ref MethodDefinition getInstanceMethod, ref MethodDefinition instanceMethodGetters, bool hasImplementedIInstanceClass)
