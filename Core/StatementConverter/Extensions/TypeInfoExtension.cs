@@ -18,6 +18,8 @@ namespace StatementConverter.Extensions
                 return namedTypeSymbol.GetClassType();
             else if (type is IArrayTypeSymbol arrayTypeSymbol)
                 return arrayTypeSymbol.GetClassType();
+            else if (type is ITypeParameterSymbol typeParameterSymbol)
+                return new ClassType { IsGeneric = true };
             var typeString = type.Name;
             var containingNamespace = type.ContainingNamespace;
             while (!containingNamespace.IsGlobalNamespace)

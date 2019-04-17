@@ -32,6 +32,7 @@
     <EmbeddedResource Include="TestCodes\ArrayTestClass.cs" />
     <EmbeddedResource Include="TestCodes\ListDictionaryTestClass.cs" />
     <EmbeddedResource Include="TestCodes\OverrideMethodTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\GenericMethodTestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="IntegrationTests\" />
@@ -68,6 +69,7 @@
     <Compile Remove="TestCodes\ArrayTestClass.cs" />
     <Compile Remove="TestCodes\ListDictionaryTestClass.cs" />
     <Compile Remove="TestCodes\OverrideMethodTestClass.cs" />
+    <Compile Remove="TestCodes\GenericMethodTestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StatementConverter\StatementConverter.csproj" />
