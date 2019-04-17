@@ -125,6 +125,22 @@
       <Project>{C6B582DE-E9BC-470B-82B7-E7128932E44E}</Project>
       <Name>WrapOverrideMethodTest</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\WrapOverrideGenericMethod\WrapOverrideGenericMethod.csproj">
+      <Project>{41BBF6A7-899C-49B4-B19C-E1C313A560CC}</Project>
+      <Name>WrapOverrideGenericMethod</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\WrapOverrideMethodGenericClass\WrapOverrideMethodGenericClass.csproj">
+      <Project>{610C04AF-4BF7-48EB-839D-357FB3B805A7}</Project>
+      <Name>WrapOverrideMethodGenericClass</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\WrapOverrideMethodGenericClassDefinedType\WrapOverrideMethodGenericClassDefinedType.csproj">
+      <Project>{DCA0524A-A8BD-4408-9ECD-4206BC7C51C2}</Project>
+      <Name>WrapOverrideMethodGenericClassDefinedType</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\WrapOverrideMethodWithGenericNested\WrapOverrideMethodWithGenericNested.csproj">
+      <Project>{23987F7B-1D25-4A22-ACE3-FF37785DA4E7}</Project>
+      <Name>WrapOverrideMethodWithGenericNested</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -142,14 +142,62 @@ namespace HotReloading.BuildTask
                 if(!type.Methods.Any(x => AreEquals(x, overridableMethod)))
                 {
                     var attributes = overridableMethod.Attributes & ~MethodAttributes.NewSlot | MethodAttributes.ReuseSlot;
-                    var method = new MethodDefinition(overridableMethod.Name, attributes, md.ImportReference(overridableMethod.ReturnType));
+                    var method = new MethodDefinition(overridableMethod.Name, attributes, md.ImportReference(typeof(void)));
                     method.ImplAttributes = overridableMethod.ImplAttributes;
                     method.SemanticsAttributes = overridableMethod.SemanticsAttributes;
 
-                    foreach(var parameter in overridableMethod.Parameters)
+                    foreach(var genericParameter in overridableMethod.GenericParameters)
                     {
-                        Logger.LogMessage("ParameterType: " + parameter.ParameterType);
-                        method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, md.ImportReference(parameter.ParameterType)));
+                        if (genericParameter.Type == GenericParameterType.Method)
+                        {
+                            method.GenericParameters.Add(new GenericParameter(genericParameter.Name, method));
+                        }
+                        else
+                        {
+                            method.GenericParameters.Add(new GenericParameter(genericParameter.Name, type));
+                        }
+                    }
+
+                    TypeReference returnType;
+
+                    if(overridableMethod.ReturnType is GenericParameter genericReturn)
+                    {
+                        if(genericReturn.Type == GenericParameterType.Method)
+                        {
+                            returnType = method.GenericParameters.First(x => x.Name == genericReturn.Name);
+                        }
+                        else
+                        {
+                            returnType = type.GenericParameters.First(x => x.Name == genericReturn.Name);
+                        }
+                    }
+                    else
+                    {
+                        returnType = md.ImportReference(overridableMethod.ReturnType);
+                    }
+
+                    method.ReturnType = returnType;
+
+                    foreach (var parameter in overridableMethod.Parameters)
+                    {
+                        TypeReference parameterType;
+                        if(parameter.ParameterType is GenericParameter genericParameter)
+                        {
+                            if (genericParameter.Type == GenericParameterType.Method)
+                            {
+                                parameterType = method.GenericParameters.First(x => x.Name == genericParameter.Name);
+                            }
+                            else
+                            {
+                                parameterType = type.GenericParameters.First(x => x.Name == genericParameter.Name);
+                            }
+                        }
+                        else
+                        {
+                            parameterType = md.ImportReference(parameter.ParameterType);
+                        }
+
+                        method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType));
                     }
 
                     var composer = new InstructionComposer(md);
@@ -165,7 +213,7 @@ namespace HotReloading.BuildTask
 
                     if (overridableMethod.ReturnType.FullName != "System.Void")
                     {
-                        var returnVariable = new VariableDefinition(md.ImportReference(overridableMethod.ReturnType));
+                        var returnVariable = new VariableDefinition(returnType);
 
                         method.Body.Variables.Add(returnVariable);
 
@@ -197,7 +245,7 @@ namespace HotReloading.BuildTask
             var baseTypeDefinition = type.BaseType.Resolve();
 
             //Ignore non virtual, sealed, finalized and generic methods
-            overriadableMethods.AddRange(baseTypeDefinition.Methods.Where(x => x.IsVirtual && !x.IsFinal && x.Name != "Finalize" && !x.ContainsGenericParameter));
+            overriadableMethods.AddRange(baseTypeDefinition.Methods.Where(x => x.IsVirtual && !x.IsFinal && x.Name != "Finalize"));
 
             var baseOverriableMethods = GetOverridableMethods(baseTypeDefinition);
             if (baseOverriableMethods == null)

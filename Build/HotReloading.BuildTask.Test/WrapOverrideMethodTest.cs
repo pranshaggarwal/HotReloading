@@ -87,6 +87,61 @@ namespace HotReloading.BuildTask.Test
             result.Should().Be("default1");
         }
 
+        [Test]
+        public void Test_WrapOverrideGenericMethod()
+        {
+            var assemblyToTest = "WrapOverrideGenericMethod";
+            string newAssemblyPath = Helper.GetInjectedAssembly(assemblyToTest);
+
+            var assembly = Assembly.LoadFrom(newAssemblyPath);
+
+            var type = assembly.GetType(Helper.GetFullClassname(assemblyToTest));
+
+            var methodName = "BaseMethod";
+
+            var baseMethod = type.GetMethod(methodName);
+
+            baseMethod = baseMethod.MakeGenericMethod(typeof(string));
+
+            var instance = Activator.CreateInstance(type);
+
+            var result = baseMethod.Invoke(instance, new string[] { "default" });
+
+            result.Should().Be("default");
+
+            Func<object, string, string> @delegate = (object obj, string str) =>
+            {
+                return str + 1;
+            };
+
+            var parameters = new List<Core.Parameter>();
+            SetupCodeChangeDelegate(type, @delegate, methodName, parameters);
+
+            var instance2 = Activator.CreateInstance(type);
+
+            result = baseMethod.Invoke(instance2, new string[] { "default" });
+
+            result.Should().Be("default1");
+        }
+
+        [Test]
+        public void Test_WrapOverrideMethodGenericClass()
+        {
+
+        }
+
+        [Test]
+        public void Test_WrapOverrideMethodGenericClassDefinedType()
+        {
+
+        }
+
+        [Test]
+        public void Test_WrapOverrideMethodWithGenericNested()
+        {
+
+        }
+
         private static void SetupCodeChangeDelegate(Type type, Delegate @delegate, string methodName, List<Core.Parameter> parameters)
         {
             var methodContainer = new Mock<IMethodContainer>();
