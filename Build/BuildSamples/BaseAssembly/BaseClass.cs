@@ -1,5 +1,4 @@
-﻿using System;
-namespace BaseAssembly
+﻿namespace BaseAssembly
 {
     public class BaseClass
     {
