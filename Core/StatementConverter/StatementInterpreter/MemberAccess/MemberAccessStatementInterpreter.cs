@@ -17,10 +17,9 @@ namespace StatementConverter.StatementInterpreter
 
         public Statement GetStatement()
         {
-            var parent = statementInterpreterHandler.GetStatement(memberAccessExpressionSyntax.Expression)
-                ;
-            return statementInterpreterHandler.GetStatementInterpreter(memberAccessExpressionSyntax.Name, parent)
-                ;
+            var parent = statementInterpreterHandler.GetStatement(memberAccessExpressionSyntax.Expression);
+
+            return statementInterpreterHandler.GetStatementInterpreter(memberAccessExpressionSyntax.Name, parent);
         }
     }
 }

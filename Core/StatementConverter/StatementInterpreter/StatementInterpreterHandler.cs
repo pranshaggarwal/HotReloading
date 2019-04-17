@@ -147,6 +147,9 @@ namespace StatementConverter.StatementInterpreter
                 case UsingStatementSyntax usingStatementSyntax:
                     statement = new UsingStatementInterpreter(this, usingStatementSyntax).GetStatement();
                     return statement;
+                case BaseExpressionSyntax baseExpressionSyntax:
+                    statement = new BaseStatementInterpreter(baseExpressionSyntax).GetStatement();
+                    return statement;
                 default:
                     throw new NotImplementedException(syntax.GetType() + " is not supported yet");
             }
