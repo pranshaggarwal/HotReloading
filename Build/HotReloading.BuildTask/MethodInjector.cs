@@ -27,6 +27,8 @@ namespace HotReloading.BuildTask
         [Required] public string AssemblyFile { get; set; }
 
         [Required] public string ProjectDirectory { get; set; }
+        [Required]
+        public string References { get; set; }
 
         public bool DebugSymbols { get; set; }
         public string DebugType { get; set; }
@@ -40,17 +42,33 @@ namespace HotReloading.BuildTask
             return true;
         }
 
-        public void InjectCode(string assemblyPath, string outputAssemblyPath, string classToInjectCode = null)
+        public void InjectCode(string assemblyPath, string outputAssemblyPath)
         {
             var debug = DebugSymbols || !string.IsNullOrEmpty(DebugType) && DebugType.ToLowerInvariant() != "none";
+
+            var assemblyReferenceResolver = new AssemblyReferenceResolver();
+
+            if (!string.IsNullOrEmpty(References))
+            {
+                var paths = References.Replace("//", "/").Split(';').Distinct();
+                foreach (var p in paths)
+                {
+                    var searchpath = Path.GetDirectoryName(p);
+                    Logger.LogMessage($"Adding searchpath {searchpath}");
+                    assemblyReferenceResolver.AddSearchDirectory(searchpath);
+                }
+            }
 
             var ad = AssemblyDefinition.ReadAssembly(assemblyPath, new ReaderParameters
             {
                 ReadWrite = true,
-                ReadSymbols = true
+                ReadSymbols = true,
+                AssemblyResolver = assemblyReferenceResolver
             });
 
             var md = ad.MainModule;
+
+            var test1 = md.AssemblyReferences;
 
             var types = md.Types.Where(x => x.BaseType != null).ToList();
 
@@ -58,8 +76,6 @@ namespace HotReloading.BuildTask
 
             foreach (var type in types)
             {
-                if (classToInjectCode != null && type.FullName != classToInjectCode)
-                    continue;
                 var methods = type.Methods;
 
                 PropertyDefinition instanceMethods = null;
@@ -130,10 +146,10 @@ namespace HotReloading.BuildTask
                     method.ImplAttributes = overridableMethod.ImplAttributes;
                     method.SemanticsAttributes = overridableMethod.SemanticsAttributes;
 
-
                     foreach(var parameter in overridableMethod.Parameters)
                     {
-                        method.Parameters.Add(parameter);
+                        Logger.LogMessage("ParameterType: " + parameter.ParameterType);
+                        method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, md.ImportReference(parameter.ParameterType)));
                     }
 
                     var composer = new InstructionComposer(md);
@@ -180,7 +196,8 @@ namespace HotReloading.BuildTask
 
             var baseTypeDefinition = type.BaseType.Resolve();
 
-            overriadableMethods.AddRange(baseTypeDefinition.Methods.Where(x => x.IsVirtual && !x.IsFinal && x.Name != "Finalize"));
+            //Ignore non virtual, sealed, finalized and generic methods
+            overriadableMethods.AddRange(baseTypeDefinition.Methods.Where(x => x.IsVirtual && !x.IsFinal && x.Name != "Finalize" && !x.ContainsGenericParameter));
 
             var baseOverriableMethods = GetOverridableMethods(baseTypeDefinition);
             if (baseOverriableMethods == null)

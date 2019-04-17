@@ -11,14 +11,13 @@ namespace HotReloading.BuildTask.Test
 
         public static string GetInjectedAssembly(string assemblyToTest)
         {
-
             var methodInjectorTask = new MethodInjector(new TestLogger());
 
             var assemblyPath = Path.Combine(assemblyLocation, $"{assemblyToTest}.dll");
 
             var tempAssemblyPath = Path.Combine(Path.GetDirectoryName(assemblyPath), $"{Path.GetFileNameWithoutExtension(assemblyPath)}.temp.{Path.GetExtension(assemblyPath)}");
 
-            methodInjectorTask.InjectCode(assemblyPath, tempAssemblyPath, GetFullClassname(assemblyToTest));
+            methodInjectorTask.InjectCode(assemblyPath, tempAssemblyPath);
             return tempAssemblyPath;
         }
 

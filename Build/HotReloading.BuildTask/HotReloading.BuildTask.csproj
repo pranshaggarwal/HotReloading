@@ -68,6 +68,7 @@
     <Compile Include="Method.cs" />
     <Compile Include="Extensions\TypeDefinitionExtension.cs" />
     <Compile Include="Extensions\InstructionComposerExtension.cs" />
+    <Compile Include="AssemblyReferenceResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
