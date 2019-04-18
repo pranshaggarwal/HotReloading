@@ -66,7 +66,7 @@ namespace HotReloading.BuildTask
             return this;
         }
 
-        public InstructionComposer Load(FieldDefinition field)
+        public InstructionComposer Load(FieldReference field)
         {
             Instructions.Add(Instruction.Create(OpCodes.Ldfld, field));
             return this;
@@ -201,9 +201,9 @@ namespace HotReloading.BuildTask
             return this;
         }
 
-        public InstructionComposer InstanceCall(MethodDefinition setMethod)
+        public InstructionComposer InstanceCall(MethodReference setMethod)
         {
-            Instructions.Add(Instruction.Create(OpCodes.Call, setMethod));
+            Instructions.Add(Instruction.Create(OpCodes.Callvirt, setMethod));
             return this;
         }
 
@@ -213,7 +213,7 @@ namespace HotReloading.BuildTask
             return this;
         }
 
-        public InstructionComposer Store(FieldDefinition field)
+        public InstructionComposer Store(FieldReference field)
         {
             Instructions.Add(Instruction.Create(OpCodes.Stfld, field));
             return this;

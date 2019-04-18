@@ -78,7 +78,6 @@ namespace HotReloading.BuildTask
             {
                 var methods = type.Methods;
 
-                PropertyDefinition instanceMethods = null;
                 MethodDefinition getInstanceMethod = null;
                 MethodDefinition instanceMethodGetters = null;
 
@@ -87,7 +86,7 @@ namespace HotReloading.BuildTask
 
                 var hasImplementedIInstanceClass = type.HasImplementedIInstanceClass(iInstanceClassType, out getInstanceMethod, out instanceMethodGetters);
 
-                ImplementIInstanceClass(md, type, ref instanceMethods, ref getInstanceMethod, ref instanceMethodGetters, hasImplementedIInstanceClass);
+                ImplementIInstanceClass(md, type, ref getInstanceMethod, ref instanceMethodGetters, hasImplementedIInstanceClass);
 
                 foreach (var method in methods)
                 {
@@ -97,18 +96,15 @@ namespace HotReloading.BuildTask
                             .Any(x => x.AttributeType.Name == "GeneratedCodeAttribute"))
                         continue;
 
-                    if (method == instanceMethodGetters || method.IsConstructor)
+                    if (method == instanceMethodGetters || method.IsConstructor || method == getInstanceMethod)
                         continue;
 
                     Logger.LogMessage("Weaving Method " + method.Name);
 
-                    WrapMethod(md, type, method, getInstanceMethod);
+                    WrapMethod(md, type, method, getInstanceMethod.GetReference());
                 }
 
-                AddOverrideMethod(type, md, getInstanceMethod);
-
-                if (!type.IsAbstract & !hasImplementedIInstanceClass)
-                    methods.Add(getInstanceMethod);
+                AddOverrideMethod(type, md, getInstanceMethod.GetReference());
             }
 
             if (assemblyPath == outputAssemblyPath)
@@ -129,7 +125,7 @@ namespace HotReloading.BuildTask
             ad.Dispose();
         }
 
-        private void AddOverrideMethod(TypeDefinition type, ModuleDefinition md, MethodDefinition getInstanceMethod)
+        private void AddOverrideMethod(TypeDefinition type, ModuleDefinition md, MethodReference getInstanceMethod)
         {
             if (type.BaseType == null)
                 return;
@@ -273,20 +269,21 @@ namespace HotReloading.BuildTask
             return true;
         }
 
-        private static void ImplementIInstanceClass(ModuleDefinition md, TypeDefinition type, ref PropertyDefinition instanceMethods, ref MethodDefinition getInstanceMethod, ref MethodDefinition instanceMethodGetters, bool hasImplementedIInstanceClass)
+        private static void ImplementIInstanceClass(ModuleDefinition md, TypeDefinition type, ref MethodDefinition getInstanceMethod, ref MethodDefinition instanceMethodGetters, bool hasImplementedIInstanceClass)
         {
             if (!type.IsAbstract && !hasImplementedIInstanceClass)
             {
                 type.Interfaces.Add(new InterfaceImplementation(md.ImportReference(typeof(IInstanceClass))));
-                CreateInstanceMethodsProperty(md, type, out instanceMethods, out instanceMethodGetters);
-                getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods);
+                PropertyDefinition instanceMethods = CreateInstanceMethodsProperty(md, type, out instanceMethodGetters);
+                getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods.GetMethod.GetReference(), type, hasImplementedIInstanceClass);
             }
         }
 
-        private static void CreateInstanceMethodsProperty(ModuleDefinition md, TypeDefinition type, out PropertyDefinition instanceMethods, out MethodDefinition instanceMethodGetters)
+        private static PropertyDefinition CreateInstanceMethodsProperty(ModuleDefinition md, TypeDefinition type, out MethodDefinition instanceMethodGetters)
         {
             var instaceMethodType = md.ImportReference(typeof(Dictionary<string, Delegate>));
             var field = type.CreateField(md, "instanceMethods", instaceMethodType);
+            var fieldReference = field.GetReference();
 
             var returnComposer = new InstructionComposer(md)
                 .Load_1()
@@ -294,7 +291,7 @@ namespace HotReloading.BuildTask
 
             var getFieldComposer = new InstructionComposer(md)
                 .LoadArg_0()
-                .Load(field)
+                .Load(fieldReference)
                 .Store_1()
                 .MoveTo(returnComposer.Instructions.First());
 
@@ -308,12 +305,12 @@ namespace HotReloading.BuildTask
                     MethodName = nameof(CodeChangeHandler.GetInitialInstanceMethods),
                     ParameterSignature = new[] { typeof(IInstanceClass) }
                 })
-                .Store(field)
+                .Store(fieldReference)
                 .NoOperation();
 
             var getterComposer = new InstructionComposer(md);
             getterComposer.LoadArg_0()
-                .Load(field)
+                .Load(fieldReference)
                 .LoadNull()
                 .CompareEqual()
                 .Store_0()
@@ -331,10 +328,10 @@ namespace HotReloading.BuildTask
             var delegateVariable = new VariableDefinition(md.ImportReference(typeof(Delegate)));
             instanceMethodGetters.Body.Variables.Add(delegateVariable);
 
-            instanceMethods = type.CreateProperty("InstanceMethods", instaceMethodType, instanceMethodGetters, null);
+            return type.CreateProperty("InstanceMethods", instaceMethodType, instanceMethodGetters, null);
         }
 
-        private static void WrapMethod(ModuleDefinition md, TypeDefinition type, MethodDefinition method, MethodDefinition getInstanceMethod)
+        private static void WrapMethod(ModuleDefinition md, TypeDefinition type, MethodDefinition method, MethodReference getInstanceMethod)
         {
             var methodKeyVariable = new VariableDefinition(md.ImportReference(typeof(string)));
             method.Body.Variables.Add(methodKeyVariable);
@@ -407,7 +404,7 @@ namespace HotReloading.BuildTask
             foreach (var instruction in composer.Instructions) ilprocessor.InsertBefore(firstInstruction, instruction);
         }
 
-        private static void ComposeInstanceMethodInstructions(TypeDefinition type, MethodDefinition method, VariableDefinition delegateVariable, VariableDefinition boolVariable, VariableDefinition methodKeyVariable, Instruction firstInstruction, ParameterDefinition[] parameters, InstructionComposer composer, MethodDefinition getInstanceMethod)
+        private static void ComposeInstanceMethodInstructions(TypeDefinition type, MethodDefinition method, VariableDefinition delegateVariable, VariableDefinition boolVariable, VariableDefinition methodKeyVariable, Instruction firstInstruction, ParameterDefinition[] parameters, InstructionComposer composer, MethodReference getInstanceMethod)
         {
             composer
             .Load(method.Name)
@@ -482,7 +479,7 @@ namespace HotReloading.BuildTask
                             });
         }
 
-        private static MethodDefinition CreateGetInstanceMethod(ModuleDefinition md, PropertyDefinition instanceMethods)
+        private static MethodDefinition CreateGetInstanceMethod(ModuleDefinition md, MethodReference instanceMethodGetter, TypeDefinition type, bool hasImplementedIInstanceClass)
         {
             var getInstanceMethod = new MethodDefinition("GetInstanceMethod", MethodAttributes.Family,
                 md.ImportReference(typeof(Delegate)));
@@ -507,7 +504,7 @@ namespace HotReloading.BuildTask
 
             var composer = new InstructionComposer(md)
                 .LoadArg_0()
-                .InstanceCall(instanceMethods.GetMethod)
+                .InstanceCall(instanceMethodGetter)
                 .Load(methodName)
                 .InstanceCall(new Method
                 {
@@ -519,7 +516,7 @@ namespace HotReloading.BuildTask
                 .Load(boolVariable)
                 .MoveToWhenFalse(composer2.Instructions.First())
                 .LoadArg_0()
-                .InstanceCall(instanceMethods.GetMethod)
+                .InstanceCall(instanceMethodGetter)
                 .Load(methodName)
                 .InstanceCall(new Method
                 {
@@ -535,6 +532,9 @@ namespace HotReloading.BuildTask
             var ilProcessor = getInstanceMethod.Body.GetILProcessor();
 
             foreach (var instruction in composer.Instructions) ilProcessor.Append(instruction);
+
+            if (!type.IsAbstract & !hasImplementedIInstanceClass)
+                type.Methods.Add(getInstanceMethod);
 
             return getInstanceMethod;
         }

@@ -6,6 +6,15 @@ namespace HotReloading.Core
     {
         public string Name { get; set; }
         public string AssemblyName { get; set; }
+        public string Key
+        {
+            get
+            {
+                if (IsGeneric)
+                    return Name;
+                return ((Type)this).FullName;
+            }
+        }
 
         public string TypeString => $"{Name}, {AssemblyName}";
         public bool IsGeneric { get; set; }

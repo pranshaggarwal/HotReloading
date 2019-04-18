@@ -160,5 +160,43 @@ namespace HotReloading.BuildTask.Extensions
 
             return setter;
         }
+
+        public static FieldReference GetReference(this FieldDefinition fieldDefinition)
+        {
+            if(fieldDefinition.DeclaringType.HasGenericParameters)
+            {
+                var genericInstance = new GenericInstanceType(fieldDefinition.DeclaringType);
+                foreach(var parameter in fieldDefinition.DeclaringType.GenericParameters)
+                {
+                    genericInstance.GenericArguments.Add(parameter);
+                }
+
+                return new FieldReference(fieldDefinition.Name, fieldDefinition.FieldType, genericInstance);
+            }
+
+            return fieldDefinition;
+        }
+
+        public static MethodReference GetReference(this MethodDefinition methodDefinition)
+        {
+            if (methodDefinition.DeclaringType.HasGenericParameters)
+            {
+                var genericInstance = new GenericInstanceType(methodDefinition.DeclaringType);
+                foreach (var parameter in methodDefinition.DeclaringType.GenericParameters)
+                {
+                    genericInstance.GenericArguments.Add(parameter);
+                }
+
+                var methodReference = new MethodReference(methodDefinition.Name, methodDefinition.ReturnType, genericInstance);
+                foreach(var parameter in methodDefinition.Parameters)
+                {
+                    methodReference.Parameters.Add(parameter);
+                }
+                methodReference.HasThis = methodDefinition.HasThis;
+                return methodReference;
+            }
+
+            return methodDefinition;
+        }
     }
 }

@@ -73,7 +73,7 @@ namespace HotReloading
 
         private static string GetMethodKey(Method method)
         {
-            return GetMethodKey(method.Name, method.Parameters.Select(x => ((Type)x.Type).FullName).ToArray());
+            return GetMethodKey(method.Name, method.Parameters.Select(x => x.Type.Key).ToArray());
         }
 
         public static Delegate GetMethodDelegate(Type parentType, string key)

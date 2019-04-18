@@ -6,5 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BaseAssembly\BaseAssembly.csproj" />
+    <ProjectReference Include="..\..\..\Core\HotReloading\HotReloading.csproj" />
   </ItemGroup>
 </Project>
