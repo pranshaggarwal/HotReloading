@@ -138,7 +138,7 @@ namespace HotReloading.BuildTask
                 try
                 {
                     var baseMethod = GetBaseMethod(overridableMethod);
-                    overridableReference = md.ImportReference(baseMethod);
+                    overridableReference = baseMethod;
                 }
                 catch(Exception ex)
                 {
@@ -219,16 +219,6 @@ namespace HotReloading.BuildTask
                         //overridableReference.Parameters[i].ParameterType = method.Parameters[i].ParameterType;
                     }
 
-                    if (type.BaseType.IsGenericInstance)
-                    {
-                        var baseTypeInstance = (GenericInstanceType)type.BaseType;
-                        overridableReference = overridableReference.MakeGeneric(baseTypeInstance.GenericArguments.ToArray());
-                    }
-                    else
-                    {
-
-                    }
-
                     composer.BaseCall(overridableReference);
 
                     if (overridableMethod.Method.ReturnType.FullName != "System.Void")
@@ -259,6 +249,7 @@ namespace HotReloading.BuildTask
         {
             public MethodDefinition Method;
             public OverridableMethod BaseMethod;
+            public MethodReference MethodReference;
 
         }
         private IEnumerable<OverridableMethod> GetOverridableMethods(TypeDefinition type, ModuleDefinition md)
@@ -276,7 +267,13 @@ namespace HotReloading.BuildTask
 
             foreach(var method in test)
             {
-                retVal.Add(CopyMethod(type, new OverridableMethod{ Method = method}, md));
+                MethodReference baseMethodReference = md.ImportReference(method);
+                if (type.BaseType.IsGenericInstance)
+                {
+                    var baseTypeInstance = (GenericInstanceType)type.BaseType;
+                    baseMethodReference = baseMethodReference.MakeGeneric(baseTypeInstance.GenericArguments.ToArray());
+                }
+                retVal.Add(CopyMethod(type, new OverridableMethod{ Method = method, MethodReference = baseMethodReference }, md));
             }
 
             //Ignore non virtual, sealed, finalized and generic methods
@@ -390,12 +387,12 @@ namespace HotReloading.BuildTask
             };
         }
 
-        private MethodDefinition GetBaseMethod(OverridableMethod overridableMethod)
+        private MethodReference GetBaseMethod(OverridableMethod overridableMethod)
         {
             if (overridableMethod.BaseMethod != null)
                 return GetBaseMethod(overridableMethod.BaseMethod);
 
-            return overridableMethod.Method;
+            return overridableMethod.MethodReference;
         }
 
         private static bool AreEquals(MethodDefinition method1, MethodDefinition method2)
