@@ -230,71 +230,13 @@ namespace HotReloading.BuildTask
                 }
             }
 
-            TypeReference returnType;
-
-            if (overridableMethod.Method.ReturnType is GenericParameter genericReturn)
-            {
-                if (genericReturn.Type == GenericParameterType.Method)
-                {
-                    returnType = method.GenericParameters.First(x => x.Name == genericReturn.Name);
-                }
-                else
-                {
-                    if (type.BaseType is GenericInstanceType genericInstanceType)
-                    {
-                        var genericArgument = genericInstanceType.GenericArguments[genericReturn.Position];
-                        if(genericArgument.IsGenericParameter)
-                        {
-                            returnType = genericArgument;
-                        }
-                        else
-                        {
-                            returnType = md.ImportReference(genericArgument);
-                        }
-                    }
-                    else
-                        returnType = type.GenericParameters.FirstOrDefault(x => x.Name == genericReturn.Name);
-                }
-            }
-            else
-            {
-                returnType = md.ImportReference(overridableMethod.Method.ReturnType);
-            }
+            TypeReference returnType = overridableMethod.Method.ReturnType.CopyType(type, md, method);
 
             method.ReturnType = returnType;
 
             foreach (var parameter in overridableMethod.Method.Parameters)
             {
-                TypeReference parameterType;
-                if (parameter.ParameterType is GenericParameter genericParameter)
-                {
-                    if (genericParameter.Type == GenericParameterType.Method)
-                    {
-                        parameterType = method.GenericParameters.First(x => x.Name == genericParameter.Name);
-                    }
-                    else
-                    {
-                        if (type.BaseType is GenericInstanceType genericInstanceType)
-                        {
-                            var genericArgument = genericInstanceType.GenericArguments[genericParameter.Position];
-                            if (genericArgument.IsGenericParameter)
-                            {
-                                parameterType = genericArgument;
-                            }
-                            else
-                            {
-                                parameterType = md.ImportReference(genericArgument);
-                            }
-                        }
-                        else
-                            parameterType = type.GenericParameters.FirstOrDefault(x => x.Name == genericParameter.Name);
-                    }
-                }
-                else
-                {
-                    parameterType = md.ImportReference(parameter.ParameterType);
-                }
-
+                TypeReference parameterType = parameter.ParameterType.CopyType(type, md, method);
                 method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType));
             }
 
@@ -313,6 +255,7 @@ namespace HotReloading.BuildTask
                 MethodReference = baseMethodReference
             };
         }
+
 
         private MethodReference GetBaseMethod(OverridableMethod overridableMethod)
         {

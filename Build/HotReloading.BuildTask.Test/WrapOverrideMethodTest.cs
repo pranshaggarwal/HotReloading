@@ -229,7 +229,50 @@ namespace HotReloading.BuildTask.Test
         [Test]
         public void Test_WrapOverrideMethodWithGenericNested()
         {
+            var assemblyToTest = "WrapOverrideMethodWithGenericNested";
+            string newAssemblyPath = Helper.GetInjectedAssembly(assemblyToTest);
 
+            var assembly = Assembly.LoadFrom(newAssemblyPath);
+
+            var type = assembly.GetType(Helper.GetFullClassname(assemblyToTest));
+
+            var methodName = "BaseMethod";
+
+            var baseMethod = type.GetMethod(methodName);
+
+            baseMethod = baseMethod.MakeGenericMethod(typeof(string));
+
+            var instance = Activator.CreateInstance(type);
+
+            Func<string> inputDelegate = () => "default";
+
+            var result = baseMethod.Invoke(instance, new Func<string>[] { inputDelegate });
+
+            result.Should().Be("default");
+
+            Func<object, Func<string>, string> @delegate = (object obj, Func<string> str) =>
+            {
+                return str() + 1;
+            };
+
+            var parameters = new List<Core.Parameter>()
+            {
+                new Core.Parameter
+                {
+                    Type = new Core.ClassType
+                    {
+                        IsGeneric = true,
+                        Name = "System.Func`1<T>"
+                    }
+                }
+            };
+            SetupCodeChangeDelegate(type, @delegate, methodName, parameters);
+
+            var instance2 = Activator.CreateInstance(type);
+
+            result = baseMethod.Invoke(instance2, new Func<string>[] { inputDelegate });
+
+            result.Should().Be("default1");
         }
 
         private static void SetupCodeChangeDelegate(Type type, Delegate @delegate, string methodName, List<Core.Parameter> parameters)

@@ -229,5 +229,42 @@ namespace HotReloading.BuildTask.Extensions
 
             return reference;
         }
+
+        public static TypeReference CopyType(this TypeReference sourceType, TypeDefinition targetType, ModuleDefinition md, MethodDefinition declaredMethod)
+        {
+            if (sourceType is GenericParameter genericParameter)
+            {
+                if (genericParameter.Type == GenericParameterType.Method)
+                {
+                    return declaredMethod.GenericParameters.First(x => x.Name == genericParameter.Name);
+                }
+                else
+                {
+                    if (targetType.BaseType is GenericInstanceType genericInstanceType)
+                    {
+                        var genericArgument = genericInstanceType.GenericArguments[genericParameter.Position];
+                        if (genericArgument.IsGenericParameter)
+                        {
+                            return genericArgument;
+                        }
+                        else
+                        {
+                            return md.ImportReference(genericArgument);
+                        }
+                    }
+                    else
+                        return targetType.GenericParameters.FirstOrDefault(x => x.Name == genericParameter.Name);
+                }
+            }
+            else
+            {
+                if(sourceType is GenericInstanceType genericInstanceType)
+                {
+                    var elementType = md.ImportReference(genericInstanceType.ElementType);
+                    return elementType.MakeGenericType(genericInstanceType.GenericArguments.ToArray());
+                }
+                return md.ImportReference(sourceType);
+            }
+        }
     }
 }
