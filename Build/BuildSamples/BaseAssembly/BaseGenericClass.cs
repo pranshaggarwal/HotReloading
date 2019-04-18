@@ -7,4 +7,9 @@
             return t;
         }
     }
+
+    public class TEs1<T> : BaseGenericClass<T>
+    {
+
+    }
 }

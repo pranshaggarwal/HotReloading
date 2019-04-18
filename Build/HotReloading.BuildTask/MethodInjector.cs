@@ -101,10 +101,10 @@ namespace HotReloading.BuildTask
 
                     Logger.LogMessage("Weaving Method " + method.Name);
 
-                    WrapMethod(md, type, method, getInstanceMethod.GetReference());
+                    WrapMethod(md, type, method, getInstanceMethod.GetReference(md));
                 }
 
-                AddOverrideMethod(type, md, getInstanceMethod.GetReference());
+                AddOverrideMethod(type, md, getInstanceMethod.GetReference(md));
             }
 
             if (assemblyPath == outputAssemblyPath)
@@ -130,84 +130,108 @@ namespace HotReloading.BuildTask
             if (type.BaseType == null)
                 return;
 
-            var overridableMethods = GetOverridableMethods(type);
+            var overridableMethods = GetOverridableMethods(type, md);
 
             foreach(var overridableMethod in overridableMethods)
             {
-                var overridableReference = md.ImportReference(overridableMethod);
-                if(!type.Methods.Any(x => AreEquals(x, overridableMethod)))
+                MethodReference overridableReference = null;
+                try
                 {
-                    var attributes = overridableMethod.Attributes & ~MethodAttributes.NewSlot | MethodAttributes.ReuseSlot;
-                    var method = new MethodDefinition(overridableMethod.Name, attributes, md.ImportReference(typeof(void)));
-                    method.ImplAttributes = overridableMethod.ImplAttributes;
-                    method.SemanticsAttributes = overridableMethod.SemanticsAttributes;
+                    var baseMethod = GetBaseMethod(overridableMethod);
+                    overridableReference = md.ImportReference(baseMethod);
+                }
+                catch(Exception ex)
+                {
 
-                    foreach(var genericParameter in overridableMethod.GenericParameters)
-                    {
-                        if (genericParameter.Type == GenericParameterType.Method)
-                        {
-                            method.GenericParameters.Add(new GenericParameter(genericParameter.Name, method));
-                        }
-                        else
-                        {
-                            method.GenericParameters.Add(new GenericParameter(genericParameter.Name, type));
-                        }
-                    }
+                }
+                if (!type.Methods.Any(x => AreEquals(x, overridableMethod.Method)))
+                {
+                    //var attributes = overridableMethod.Attributes & ~MethodAttributes.NewSlot | MethodAttributes.ReuseSlot;
+                    //var method = new MethodDefinition(overridableMethod.Name, attributes, md.ImportReference(typeof(void)));
+                    //method.ImplAttributes = overridableMethod.ImplAttributes;
+                    //method.SemanticsAttributes = overridableMethod.SemanticsAttributes;
 
-                    TypeReference returnType;
+                    //foreach(var genericParameter in overridableMethod.GenericParameters)
+                    //{
+                    //    if (genericParameter.Type == GenericParameterType.Method)
+                    //    {
+                    //        method.GenericParameters.Add(new GenericParameter(genericParameter.Name, method));
+                    //    }
+                    //}
 
-                    if(overridableMethod.ReturnType is GenericParameter genericReturn)
-                    {
-                        if(genericReturn.Type == GenericParameterType.Method)
-                        {
-                            returnType = method.GenericParameters.First(x => x.Name == genericReturn.Name);
-                        }
-                        else
-                        {
-                            returnType = type.GenericParameters.First(x => x.Name == genericReturn.Name);
-                        }
-                    }
-                    else
-                    {
-                        returnType = md.ImportReference(overridableMethod.ReturnType);
-                    }
+                    //TypeReference returnType;
 
-                    method.ReturnType = returnType;
+                    //if(overridableMethod.ReturnType is GenericParameter genericReturn)
+                    //{
+                    //    if(genericReturn.Type == GenericParameterType.Method)
+                    //    {
+                    //        returnType = method.GenericParameters.First(x => x.Name == genericReturn.Name);
+                    //    }
+                    //    else
+                    //    {
+                    //        returnType = type.GenericParameters.FirstOrDefault(x => x.Name == genericReturn.Name);
 
-                    foreach (var parameter in overridableMethod.Parameters)
-                    {
-                        TypeReference parameterType;
-                        if(parameter.ParameterType is GenericParameter genericParameter)
-                        {
-                            if (genericParameter.Type == GenericParameterType.Method)
-                            {
-                                parameterType = method.GenericParameters.First(x => x.Name == genericParameter.Name);
-                            }
-                            else
-                            {
-                                parameterType = type.GenericParameters.First(x => x.Name == genericParameter.Name);
-                            }
-                        }
-                        else
-                        {
-                            parameterType = md.ImportReference(parameter.ParameterType);
-                        }
+                    //        if (returnType == null && type.BaseType is GenericInstanceType genericInstanceType)
+                    //        {
+                    //        }
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    returnType = md.ImportReference(overridableMethod.ReturnType);
+                    //}
 
-                        method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType));
-                    }
+                    //method.ReturnType = returnType;
+
+                    //foreach (var parameter in overridableMethod.Parameters)
+                    //{
+                    //    TypeReference parameterType;
+                    //    if(parameter.ParameterType is GenericParameter genericParameter)
+                    //    {
+                    //        if (genericParameter.Type == GenericParameterType.Method)
+                    //        {
+                    //            parameterType = method.GenericParameters.First(x => x.Name == genericParameter.Name);
+                    //        }
+                    //        else
+                    //        {
+                    //            parameterType = type.GenericParameters.First(x => x.Name == genericParameter.Name);
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        parameterType = md.ImportReference(parameter.ParameterType);
+                    //    }
+
+                    //    method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType));
+                    //}
+
+                    var method = overridableMethod.Method;
+
+                    var returnType = method.ReturnType;
 
                     var composer = new InstructionComposer(md);
 
                     composer.LoadArg_0();
 
-                    foreach(var parameter in method.Parameters)
+                    for(int i =0;i<method.Parameters.Count;i++)
                     {
-                        composer.LoadArg(parameter);
+                        composer.LoadArg(method.Parameters[i]);
+                        //overridableReference.Parameters[i].ParameterType = method.Parameters[i].ParameterType;
+                    }
+
+                    if (type.BaseType.IsGenericInstance)
+                    {
+                        var baseTypeInstance = (GenericInstanceType)type.BaseType;
+                        overridableReference = overridableReference.MakeGeneric(baseTypeInstance.GenericArguments.ToArray());
+                    }
+                    else
+                    {
+
                     }
 
                     composer.BaseCall(overridableReference);
 
-                    if (overridableMethod.ReturnType.FullName != "System.Void")
+                    if (overridableMethod.Method.ReturnType.FullName != "System.Void")
                     {
                         var returnVariable = new VariableDefinition(returnType);
 
@@ -231,25 +255,147 @@ namespace HotReloading.BuildTask
             }
         }
 
-        private IEnumerable<MethodDefinition> GetOverridableMethods(TypeDefinition type)
+        public class OverridableMethod
+        {
+            public MethodDefinition Method;
+            public OverridableMethod BaseMethod;
+
+        }
+        private IEnumerable<OverridableMethod> GetOverridableMethods(TypeDefinition type, ModuleDefinition md)
         {
             if (type.BaseType == null)
                 return null;
+
+            var retVal = new List<OverridableMethod>();
 
             var overriadableMethods = new List<MethodDefinition>();
 
             var baseTypeDefinition = type.BaseType.Resolve();
 
+            var test = baseTypeDefinition.Methods.Where(x => x.IsVirtual && !x.IsFinal && x.Name != "Finalize");
+
+            foreach(var method in test)
+            {
+                retVal.Add(CopyMethod(type, new OverridableMethod{ Method = method}, md));
+            }
+
             //Ignore non virtual, sealed, finalized and generic methods
-            overriadableMethods.AddRange(baseTypeDefinition.Methods.Where(x => x.IsVirtual && !x.IsFinal && x.Name != "Finalize"));
+            //overriadableMethods.AddRange(test);
 
-            var baseOverriableMethods = GetOverridableMethods(baseTypeDefinition);
+            var baseOverriableMethods = GetOverridableMethods(baseTypeDefinition, md);
             if (baseOverriableMethods == null)
-                return overriadableMethods;
+                return retVal;
 
-            overriadableMethods.AddRange(baseOverriableMethods.Where(x => !overriadableMethods.Any(y => AreEquals(x, y))));
+            //overriadableMethods.AddRange(baseOverriableMethods.Select(x => x.Method).Where(x => !overriadableMethods.Any(y => AreEquals(x, y))));
 
-            return overriadableMethods;
+            foreach(var method in baseOverriableMethods)
+            {
+                retVal.Add(CopyMethod(type, method, md));
+            }
+
+            //retVal.AddRange(overriadableMethods.Select(x => new OverridableMethod { Method = x, Type = baseTypeDefinition });
+
+            return retVal;
+        }
+
+        private OverridableMethod CopyMethod(TypeDefinition type, OverridableMethod overridableMethod, ModuleDefinition md)
+        {
+            var attributes = overridableMethod.Method.Attributes & ~MethodAttributes.NewSlot | MethodAttributes.ReuseSlot;
+            var method = new MethodDefinition(overridableMethod.Method.Name, attributes, md.ImportReference(typeof(void)));
+            method.ImplAttributes = overridableMethod.Method.ImplAttributes;
+            method.SemanticsAttributes = overridableMethod.Method.SemanticsAttributes;
+            method.DeclaringType = type;
+
+            foreach (var genericParameter in overridableMethod.Method.GenericParameters)
+            {
+                if (genericParameter.Type == GenericParameterType.Method)
+                {
+                    method.GenericParameters.Add(new GenericParameter(genericParameter.Name, method));
+                }
+            }
+
+            TypeReference returnType;
+
+            if (overridableMethod.Method.ReturnType is GenericParameter genericReturn)
+            {
+                if (genericReturn.Type == GenericParameterType.Method)
+                {
+                    returnType = method.GenericParameters.First(x => x.Name == genericReturn.Name);
+                }
+                else
+                {
+                    if (type.BaseType is GenericInstanceType genericInstanceType)
+                    {
+                        var genericArgument = genericInstanceType.GenericArguments[genericReturn.Position];
+                        if(genericArgument.IsGenericParameter)
+                        {
+                            returnType = genericArgument;
+                        }
+                        else
+                        {
+                            returnType = md.ImportReference(genericArgument);
+                        }
+                    }
+                    else
+                        returnType = type.GenericParameters.FirstOrDefault(x => x.Name == genericReturn.Name);
+                }
+            }
+            else
+            {
+                returnType = md.ImportReference(overridableMethod.Method.ReturnType);
+            }
+
+            method.ReturnType = returnType;
+
+            foreach (var parameter in overridableMethod.Method.Parameters)
+            {
+                TypeReference parameterType;
+                if (parameter.ParameterType is GenericParameter genericParameter)
+                {
+                    if (genericParameter.Type == GenericParameterType.Method)
+                    {
+                        parameterType = method.GenericParameters.First(x => x.Name == genericParameter.Name);
+                    }
+                    else
+                    {
+                        if (type.BaseType is GenericInstanceType genericInstanceType)
+                        {
+                            var genericArgument = genericInstanceType.GenericArguments[genericParameter.Position];
+                            if (genericArgument.IsGenericParameter)
+                            {
+                                parameterType = genericArgument;
+                            }
+                            else
+                            {
+                                parameterType = md.ImportReference(genericArgument);
+                            }
+                        }
+                        else
+                            parameterType = type.GenericParameters.FirstOrDefault(x => x.Name == genericParameter.Name);
+                    }
+                }
+                else
+                {
+                    parameterType = md.ImportReference(parameter.ParameterType);
+                }
+
+                method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType));
+            }
+
+
+            return new OverridableMethod
+            {
+                Method = method,
+                    BaseMethod = overridableMethod 
+            };
+        }
+
+        private MethodDefinition GetBaseMethod(OverridableMethod overridableMethod)
+        {
+            if (overridableMethod.BaseMethod != null)
+                return GetBaseMethod(overridableMethod.BaseMethod);
+
+            return overridableMethod.Method;
         }
 
         private static bool AreEquals(MethodDefinition method1, MethodDefinition method2)
@@ -275,7 +421,7 @@ namespace HotReloading.BuildTask
             {
                 type.Interfaces.Add(new InterfaceImplementation(md.ImportReference(typeof(IInstanceClass))));
                 PropertyDefinition instanceMethods = CreateInstanceMethodsProperty(md, type, out instanceMethodGetters);
-                getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods.GetMethod.GetReference(), type, hasImplementedIInstanceClass);
+                getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods.GetMethod.GetReference(md), type, hasImplementedIInstanceClass);
             }
         }
 

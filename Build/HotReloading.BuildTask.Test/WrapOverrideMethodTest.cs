@@ -184,7 +184,46 @@ namespace HotReloading.BuildTask.Test
         [Test]
         public void Test_WrapOverrideMethodGenericClassDefinedType()
         {
+            var assemblyToTest = "WrapOverrideMethodGenericClassDefinedType";
+            string newAssemblyPath = Helper.GetInjectedAssembly(assemblyToTest);
 
+            var assembly = Assembly.LoadFrom(newAssemblyPath);
+
+            var type = assembly.GetType(Helper.GetFullClassname(assemblyToTest));
+
+            var methodName = "BaseMethod";
+
+            var baseMethod = type.GetMethod(methodName);
+
+            var instance = Activator.CreateInstance(type);
+
+            var result = baseMethod.Invoke(instance, new string[] { "default" });
+
+            result.Should().Be("default");
+
+            Func<object, string, string> @delegate = (object obj, string str) =>
+            {
+                return str + 1;
+            };
+
+            var parameters = new List<Core.Parameter>()
+            {
+                new Core.Parameter
+                {
+                    Type = new Core.ClassType
+                    {
+                        Name = typeof(string).FullName,
+                        AssemblyName = typeof(string).Assembly.GetName().Name
+                    }
+                }
+            };
+            SetupCodeChangeDelegate(type, @delegate, methodName, parameters);
+
+            var instance2 = Activator.CreateInstance(type);
+
+            result = baseMethod.Invoke(instance2, new string[] { "default" });
+
+            result.Should().Be("default1");
         }
 
         [Test]
