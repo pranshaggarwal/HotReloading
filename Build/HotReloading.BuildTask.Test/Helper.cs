@@ -13,8 +13,6 @@ namespace HotReloading.BuildTask.Test
         {
             var methodInjectorTask = new MethodInjector(new TestLogger());
 
-            methodInjectorTask.References = "/Users/pranshuaggarwal/Xenolt/HotReloading/Build/HotReloading.BuildTask.Test/bin/Debug/BaseAssembly.dll";
-
             var assemblyPath = Path.Combine(assemblyLocation, $"{assemblyToTest}.dll");
 
             var tempAssemblyPath = Path.Combine(Path.GetDirectoryName(assemblyPath), $"{Path.GetFileNameWithoutExtension(assemblyPath)}.temp.{Path.GetExtension(assemblyPath)}");

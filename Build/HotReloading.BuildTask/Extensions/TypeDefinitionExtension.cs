@@ -193,29 +193,39 @@ namespace HotReloading.BuildTask.Extensions
                     methodReference.Parameters.Add(parameter);
                 }
                 methodReference.HasThis = methodDefinition.HasThis;
+                methodReference.DeclaringType = methodDefinition.DeclaringType;
+                methodReference.ExplicitThis = methodDefinition.ExplicitThis;
+                methodReference.CallingConvention = methodDefinition.CallingConvention;
                 return methodReference;
             }
 
             return methodDefinition;
         }
 
-        public static TypeReference MakeGenericType(this TypeReference self, params TypeReference[] arguments)
+        public static TypeReference MakeGenericType(this TypeReference self, ModuleDefinition md, params TypeReference[] arguments)
         {
             if (self.GenericParameters.Count != arguments.Length)
                 throw new ArgumentException();
 
             var instance = new GenericInstanceType(self);
             foreach (var argument in arguments)
-                instance.GenericArguments.Add(argument);
+            {
+                if(!argument.IsGenericParameter)
+                {
+                    instance.GenericArguments.Add(md.ImportReference(argument));
+                }
+                else
+                    instance.GenericArguments.Add(argument);
+            }
 
             return instance;
         }
 
-        public static MethodReference MakeGeneric(this MethodReference self, params TypeReference[] arguments)
+        public static MethodReference MakeGeneric(this MethodReference self, ModuleDefinition md, params TypeReference[] arguments)
         {
             var reference = new MethodReference(self.Name, self.ReturnType)
             {
-                DeclaringType = self.DeclaringType.MakeGenericType(arguments),
+                DeclaringType = self.DeclaringType.MakeGenericType(md, arguments),
                 HasThis = self.HasThis,
                 ExplicitThis = self.ExplicitThis,
                 CallingConvention = self.CallingConvention,
@@ -261,7 +271,7 @@ namespace HotReloading.BuildTask.Extensions
                 if(sourceType is GenericInstanceType genericInstanceType)
                 {
                     var elementType = md.ImportReference(genericInstanceType.ElementType);
-                    return elementType.MakeGenericType(genericInstanceType.GenericArguments.ToArray());
+                    return elementType.MakeGenericType(md, genericInstanceType.GenericArguments.ToArray());
                 }
                 return md.ImportReference(sourceType);
             }

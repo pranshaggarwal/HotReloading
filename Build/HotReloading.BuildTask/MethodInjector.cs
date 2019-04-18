@@ -245,7 +245,7 @@ namespace HotReloading.BuildTask
             if (type.BaseType.IsGenericInstance)
             {
                 var baseTypeInstance = (GenericInstanceType)type.BaseType;
-                baseMethodReference = baseMethodReference.MakeGeneric(baseTypeInstance.GenericArguments.ToArray());
+                baseMethodReference = baseMethodReference.MakeGeneric(md, baseTypeInstance.GenericArguments.ToArray());
             }
 
             return new OverridableMethod
