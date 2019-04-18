@@ -230,13 +230,13 @@ namespace HotReloading.BuildTask
                 }
             }
 
-            TypeReference returnType = overridableMethod.Method.ReturnType.CopyType(type, md, method);
+            TypeReference returnType = overridableMethod.Method.ReturnType.CopyType(md, type, method);
 
             method.ReturnType = returnType;
 
             foreach (var parameter in overridableMethod.Method.Parameters)
             {
-                TypeReference parameterType = parameter.ParameterType.CopyType(type, md, method);
+                TypeReference parameterType = parameter.ParameterType.CopyType(md, type, method);
                 method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType));
             }
 

@@ -210,12 +210,7 @@ namespace HotReloading.BuildTask.Extensions
             var instance = new GenericInstanceType(self);
             foreach (var argument in arguments)
             {
-                if(!argument.IsGenericParameter)
-                {
-                    instance.GenericArguments.Add(md.ImportReference(argument));
-                }
-                else
-                    instance.GenericArguments.Add(argument);
+                instance.GenericArguments.Add(argument.CopyType(md, null, null));
             }
 
             return instance;
@@ -240,15 +235,15 @@ namespace HotReloading.BuildTask.Extensions
             return reference;
         }
 
-        public static TypeReference CopyType(this TypeReference sourceType, TypeDefinition targetType, ModuleDefinition md, MethodDefinition targetMethod)
+        public static TypeReference CopyType(this TypeReference sourceType, ModuleDefinition md, TypeDefinition targetType = null, MethodDefinition targetMethod = null)
         {
             if (sourceType is GenericParameter genericParameter)
             {
-                if (genericParameter.Type == GenericParameterType.Method)
+                if (targetMethod != null && genericParameter.Type == GenericParameterType.Method)
                 {
                     return targetMethod.GenericParameters.First(x => x.Name == genericParameter.Name);
                 }
-                else
+                else if(targetType != null)
                 {
                     if (targetType.BaseType is GenericInstanceType genericInstanceType)
                     {
@@ -259,11 +254,15 @@ namespace HotReloading.BuildTask.Extensions
                         }
                         else
                         {
-                            return md.ImportReference(genericArgument);
+                            return genericArgument.CopyType(md, targetType, targetMethod);
                         }
                     }
                     else
                         return targetType.GenericParameters.FirstOrDefault(x => x.Name == genericParameter.Name);
+                }
+                else
+                {
+                    return sourceType;
                 }
             }
             else
@@ -273,9 +272,9 @@ namespace HotReloading.BuildTask.Extensions
                     var elementType = md.ImportReference(genericInstanceType.ElementType);
                     return elementType.MakeGenericType(md, genericInstanceType.GenericArguments.ToArray());
                 }
-                else if(sourceType is ByReferenceType byReferenceType)
+                else if(sourceType is ByReferenceType byReferenceType && targetType != null)
                 {
-                    var elementType = byReferenceType.ElementType.CopyType(targetType, md, targetMethod);
+                    var elementType = byReferenceType.ElementType.CopyType(md, targetType, targetMethod);
                     return new ByReferenceType(elementType);
                 }
 
