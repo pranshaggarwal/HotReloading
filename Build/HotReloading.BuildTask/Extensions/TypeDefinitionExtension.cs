@@ -240,13 +240,13 @@ namespace HotReloading.BuildTask.Extensions
             return reference;
         }
 
-        public static TypeReference CopyType(this TypeReference sourceType, TypeDefinition targetType, ModuleDefinition md, MethodDefinition declaredMethod)
+        public static TypeReference CopyType(this TypeReference sourceType, TypeDefinition targetType, ModuleDefinition md, MethodDefinition targetMethod)
         {
             if (sourceType is GenericParameter genericParameter)
             {
                 if (genericParameter.Type == GenericParameterType.Method)
                 {
-                    return declaredMethod.GenericParameters.First(x => x.Name == genericParameter.Name);
+                    return targetMethod.GenericParameters.First(x => x.Name == genericParameter.Name);
                 }
                 else
                 {
@@ -273,6 +273,12 @@ namespace HotReloading.BuildTask.Extensions
                     var elementType = md.ImportReference(genericInstanceType.ElementType);
                     return elementType.MakeGenericType(md, genericInstanceType.GenericArguments.ToArray());
                 }
+                else if(sourceType is ByReferenceType byReferenceType)
+                {
+                    var elementType = byReferenceType.ElementType.CopyType(targetType, md, targetMethod);
+                    return new ByReferenceType(elementType);
+                }
+
                 return md.ImportReference(sourceType);
             }
         }

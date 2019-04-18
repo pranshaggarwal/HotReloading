@@ -240,7 +240,6 @@ namespace HotReloading.BuildTask
                 method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType));
             }
 
-
             MethodReference baseMethodReference = md.ImportReference(overridableMethod.Method);
             if (type.BaseType.IsGenericInstance)
             {
