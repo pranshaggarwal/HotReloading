@@ -243,10 +243,14 @@ namespace HotReloading.BuildTask
             var baseTypeDefinition = type.BaseType.Resolve();
 
             //Ignore non virtual, sealed, finalized and generic methods
-            var methods = baseTypeDefinition.Methods.Where(x => x.IsVirtual && !x.IsFinal && x.Name != "Finalize");
+            var methods = baseTypeDefinition.Methods.Where(x => x.IsVirtual && x.Name != "Finalize");
+
+            var sealedMethods = methods.Where(x => x.IsFinal);
 
             foreach(var method in methods)
             {
+                if (method.IsFinal)
+                    continue;
                 retVal.Add(CopyMethod(type, new OverridableMethod{ Method = method }, md));
             }
 
@@ -257,6 +261,8 @@ namespace HotReloading.BuildTask
             foreach(var method in baseOverriableMethods)
             {
                 if (retVal.Any(x => AreEquals(x.Method, method.Method)))
+                    continue;
+                if (sealedMethods.Any(x => AreEquals(x, method.Method)))
                     continue;
                 retVal.Add(CopyMethod(type, method, md));
             }
@@ -291,15 +297,7 @@ namespace HotReloading.BuildTask
                 method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType));
             }
 
-            MethodReference baseMethodReference = null;
-            try
-            {
-                baseMethodReference = md.ImportReference(overridableMethod.Method);
-            }
-            catch(Exception ex)
-            {
-
-            }
+            var baseMethodReference = md.ImportReference(overridableMethod.Method);
             if (type.BaseType.IsGenericInstance)
             {
                 var baseTypeInstance = (GenericInstanceType)type.BaseType;
