@@ -242,8 +242,8 @@ namespace HotReloading.BuildTask
 
             var baseTypeDefinition = type.BaseType.Resolve();
 
-            //Ignore non virtual, sealed, finalized and generic methods
-            var methods = baseTypeDefinition.Methods.Where(x => x.IsVirtual && x.Name != "Finalize");
+            //Ignore non virtual, finalized and special name
+            var methods = baseTypeDefinition.Methods.Where(x => x.IsVirtual && !x.IsSpecialName && x.Name != "Finalize");
 
             var sealedMethods = methods.Where(x => x.IsFinal);
 
