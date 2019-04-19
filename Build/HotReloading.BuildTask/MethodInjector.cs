@@ -72,10 +72,37 @@ namespace HotReloading.BuildTask
 
             var types = md.Types.Where(x => x.BaseType != null).ToList();
 
+            var typesWithCorrectOrder = new List<TypeDefinition>();
+
+            foreach(var type in types)
+            {
+                if(type.BaseType is TypeDefinition baseTypeDeginition)
+                {
+                    var baseTypes = GetBaseTypesWithCorrectOrder(baseTypeDeginition);
+
+                    foreach(var baseType in baseTypes)
+                    {
+                        if (!typesWithCorrectOrder.Contains(baseType))
+                        {
+                            typesWithCorrectOrder.Add(baseType);
+                        }
+                    }
+                    typesWithCorrectOrder.Add(type);
+                }
+                else
+                {
+                    if(!typesWithCorrectOrder.Contains(type))
+                    {
+                        typesWithCorrectOrder.Add(type);
+                    }
+                }
+            }
+
             var iInstanceClassType = md.ImportReference(typeof(IInstanceClass));
 
-            foreach (var type in types)
+            foreach (var type in typesWithCorrectOrder)
             {
+                Logger.LogMessage("Weaving Type: " + type.Name);
                 var methods = type.Methods;
 
                 MethodDefinition getInstanceMethod = null;
@@ -99,7 +126,6 @@ namespace HotReloading.BuildTask
                     if (method == instanceMethodGetters || method.IsConstructor || method == getInstanceMethod)
                         continue;
 
-                    Logger.LogMessage("Weaving Method " + method.Name);
 
                     WrapMethod(md, type, method, getInstanceMethod.GetReference(md));
                 }
@@ -123,6 +149,28 @@ namespace HotReloading.BuildTask
             }
 
             ad.Dispose();
+        }
+
+        private List<TypeDefinition> GetBaseTypesWithCorrectOrder(TypeDefinition type)
+        {
+            var retVal = new List<TypeDefinition>();
+
+            if(type.BaseType is TypeDefinition baseTypeDefinition)
+            {
+                var baseTypes = GetBaseTypesWithCorrectOrder(baseTypeDefinition);
+
+                foreach(var baseType in baseTypes)
+                {
+                    if (!retVal.Contains(baseType))
+                    {
+                        retVal.Add(baseType);
+                    }
+                }
+            }
+
+            retVal.Add(type);
+
+            return retVal;
         }
 
         private void AddOverrideMethod(TypeDefinition type, ModuleDefinition md, MethodReference getInstanceMethod)
@@ -343,8 +391,10 @@ namespace HotReloading.BuildTask
             return type.CreateProperty("InstanceMethods", instaceMethodType, instanceMethodGetters, null);
         }
 
-        private static void WrapMethod(ModuleDefinition md, TypeDefinition type, MethodDefinition method, MethodReference getInstanceMethod)
+        private void WrapMethod(ModuleDefinition md, TypeDefinition type, MethodDefinition method, MethodReference getInstanceMethod)
         {
+            Logger.LogMessage("\tWeaving Method " + method.Name);
+
             var methodKeyVariable = new VariableDefinition(md.ImportReference(typeof(string)));
             method.Body.Variables.Add(methodKeyVariable);
 
