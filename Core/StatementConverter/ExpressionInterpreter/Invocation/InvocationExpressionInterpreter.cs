@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using HotReloading.Core.Statements;
 
 namespace StatementConverter.ExpressionInterpreter
@@ -30,20 +31,26 @@ namespace StatementConverter.ExpressionInterpreter
 
             var lamdaExpression = CodeChangeHandler.GetMethod(invocationStatement.Method.ParentType, methodKey);
 
-            if(lamdaExpression != null)
+            var instanceMember = invocationStatement.Method as InstanceMethodMemberStatement;
+
+            if (lamdaExpression != null)
             {
                 var expression = lamdaExpression.GetExpression();
                 var arguments1 = new List<Expression>();
-                if (invocationStatement.Method is InstanceMethodMemberStatement instanceStatement1)
-                    arguments1.Add(expressionInterpreterHandler.GetExpression(instanceStatement1.Parent));
+                if (instanceMember != null)
+                    arguments1.Add(expressionInterpreterHandler.GetExpression(instanceMember.Parent));
                 arguments1.AddRange(arguments);
                 return Expression.Invoke(expression, arguments1);
             }
 
+            BindingFlags bindingFlags = instanceMember == null ? BindingFlags.Static : BindingFlags.Instance;
+
+            bindingFlags |= invocationStatement.Method.AccessModifier == HotReloading.Core.AccessModifier.Public ?
+                BindingFlags.Public : BindingFlags.NonPublic;
+
             var methodInfo =
                 ((Type) invocationStatement.Method.ParentType).GetMethod(invocationStatement.Method.Name,
-                    parameterTypes);
-
+                    bindingFlags, Type.DefaultBinder, parameterTypes, null);
             Expression[] convertedArguments = new Expression[arguments.Length];
 
             for(int i=0; i < convertedArguments.Length; i++)
@@ -62,9 +69,9 @@ namespace StatementConverter.ExpressionInterpreter
                 }
             }
 
-            if (invocationStatement.Method is InstanceMethodMemberStatement instanceStatement)
+            if (instanceMember != null)
                 return Expression.Call(
-                    expressionInterpreterHandler.GetExpression(instanceStatement.Parent),
+                    expressionInterpreterHandler.GetExpression(instanceMember.Parent),
                     methodInfo, convertedArguments);
 
             return Expression.Call(methodInfo, convertedArguments);

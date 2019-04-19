@@ -105,14 +105,35 @@ namespace StatementConverter.StatementInterpreter
                 return new StaticMethodMemberStatement
                 {
                     Name = ms.Name,
-                    ParentType = ms.ContainingType.GetClassType()
+                    ParentType = ms.ContainingType.GetClassType(),
+                    AccessModifier = GetAccessModifier(ms)
                 };
             return new InstanceMethodMemberStatement
             {
                 Name = ms.Name,
                 ParentType = ms.ContainingType.GetClassType(),
-                Parent = parent ?? new ThisStatement()
+                Parent = parent ?? new ThisStatement(),
+                AccessModifier = GetAccessModifier(ms)
             };
+        }
+
+        private AccessModifier GetAccessModifier(IMethodSymbol ms)
+        {
+            switch(ms.DeclaredAccessibility)
+            {
+                case Accessibility.Public:
+                    return AccessModifier.Public;
+                case Accessibility.Private:
+                    return AccessModifier.Private;
+                case Accessibility.Protected:
+                    return AccessModifier.Protected;
+                case Accessibility.Internal:
+                    return AccessModifier.Internal;
+                case Accessibility.ProtectedOrInternal:
+                    return AccessModifier.ProtectedInternal;
+                default:
+                    throw new Exception("Accessibility is unknown");
+            }
         }
 
         private static Statement GetStatement(ILocalSymbol ls, string varName)

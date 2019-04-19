@@ -1,4 +1,5 @@
 using System;
+using Newtonsoft.Json;
 
 namespace HotReloading.Core
 {
@@ -6,13 +7,28 @@ namespace HotReloading.Core
     {
         public string Name { get; set; }
         public string AssemblyName { get; set; }
+        [JsonIgnore]
         public string Key
         {
             get
             {
                 if (IsGeneric)
                     return Name;
-                return ((Type)this).FullName;
+
+                var type = ((Type)this);
+
+                var key = type.Namespace + "." + type.Name;
+                if(type.IsGenericType)
+                {
+                    key += "<";
+                    foreach(var genericArgument in type.GenericTypeArguments)
+                    {
+                        key += genericArgument.Namespace + "." + genericArgument.Name + ",";
+                    }
+                    key = key.Remove(key.Length - 1);
+                    key += ">";
+                }
+                return key;
             }
         }
 
