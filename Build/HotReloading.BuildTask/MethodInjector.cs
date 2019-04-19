@@ -256,6 +256,8 @@ namespace HotReloading.BuildTask
 
             foreach(var method in baseOverriableMethods)
             {
+                if (retVal.Any(x => AreEquals(x.Method, method.Method)))
+                    continue;
                 retVal.Add(CopyMethod(type, method, md));
             }
 
@@ -264,6 +266,7 @@ namespace HotReloading.BuildTask
 
         private OverridableMethod CopyMethod(TypeDefinition type, OverridableMethod overridableMethod, ModuleDefinition md)
         {
+            Logger.LogMessage("\tOverriding: " + overridableMethod.Method.FullName);
             var attributes = overridableMethod.Method.Attributes & ~MethodAttributes.NewSlot | MethodAttributes.ReuseSlot;
             var method = new MethodDefinition(overridableMethod.Method.Name, attributes, md.ImportReference(typeof(void)));
             method.ImplAttributes = overridableMethod.Method.ImplAttributes;
@@ -288,7 +291,15 @@ namespace HotReloading.BuildTask
                 method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType));
             }
 
-            MethodReference baseMethodReference = md.ImportReference(overridableMethod.Method);
+            MethodReference baseMethodReference = null;
+            try
+            {
+                baseMethodReference = md.ImportReference(overridableMethod.Method);
+            }
+            catch(Exception ex)
+            {
+
+            }
             if (type.BaseType.IsGenericInstance)
             {
                 var baseTypeInstance = (GenericInstanceType)type.BaseType;
@@ -322,7 +333,19 @@ namespace HotReloading.BuildTask
 
             for (var i = 0; i < method1.Parameters.Count; i++)
             {
-                if (method1.Parameters[i].ParameterType.FullName != method2.Parameters[i].ParameterType.FullName)
+                if (method1.Parameters[i].ParameterType.Name != method2.Parameters[i].ParameterType.Name)
+                    return false;
+
+                var genericInstanceType1 = method1.Parameters[i].ParameterType as GenericInstanceType;
+                var genericInstanceType2 = method2.Parameters[i].ParameterType as GenericInstanceType;
+
+                if (genericInstanceType1 == null && genericInstanceType2 == null)
+                    continue;
+
+                if (genericInstanceType1 == null || genericInstanceType2 == null)
+                    return false;
+
+                if (genericInstanceType1.GenericArguments.Count != genericInstanceType2.GenericArguments.Count)
                     return false;
             }
 
