@@ -96,6 +96,13 @@ namespace HotReloading.BuildTask
             return this;
         }
 
+        public InstructionComposer ArrayElementAccess(int index)
+        {
+            Instructions.Add(Instruction.Create(OpCodes.Ldc_I4, index));
+            Instructions.Add(Instruction.Create(OpCodes.Ldelem_Ref));
+            return this;
+        }
+
         private void SetupArray(int length, Type type)
         {
             Instructions.Add(Instruction.Create(OpCodes.Ldc_I4, length));
@@ -319,6 +326,12 @@ namespace HotReloading.BuildTask
         public InstructionComposer Append(InstructionComposer composer2)
         {
             Instructions.AddRange(composer2.Instructions);
+            return this;
+        }
+
+        public InstructionComposer CastClass(TypeReference targetType)
+        {
+            Instructions.Add(Instruction.Create(OpCodes.Castclass, targetType));
             return this;
         }
     }

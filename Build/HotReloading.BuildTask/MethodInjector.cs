@@ -108,7 +108,7 @@ namespace HotReloading.BuildTask
                 MethodDefinition getInstanceMethod = null;
                 MethodDefinition instanceMethodGetters = null;
 
-                if (type.IsDelegate(md))
+                if (type.IsDelegate(md) || type.IsEnum)
                     continue;
 
                 var hasImplementedIInstanceClass = type.HasImplementedIInstanceClass(iInstanceClassType, out getInstanceMethod, out instanceMethodGetters);
@@ -127,10 +127,10 @@ namespace HotReloading.BuildTask
                         continue;
 
 
-                    WrapMethod(md, type, method, getInstanceMethod.GetReference(md));
+                    WrapMethod(md, type, method, getInstanceMethod.GetReference(type, type, md));
                 }
 
-                AddOverrideMethod(type, md, getInstanceMethod.GetReference(md));
+                AddOverrideMethod(type, md, getInstanceMethod.GetReference(type, type, md));
             }
 
             if (assemblyPath == outputAssemblyPath)
@@ -180,11 +180,11 @@ namespace HotReloading.BuildTask
 
             var overridableMethods = GetOverridableMethods(type, md);
 
+            var baseMethodCalls = new List<MethodReference>();
+
             foreach(var overridableMethod in overridableMethods)
             {
-                MethodReference overridableReference = null;
-                var baseMethod = GetBaseMethod(overridableMethod);
-                overridableReference = baseMethod;
+                MethodReference baseMethod = GetBaseMethod(overridableMethod);
                 if (!type.Methods.Any(x => AreEquals(x, overridableMethod.Method)))
                 {
                     var method = overridableMethod.Method;
@@ -200,7 +200,8 @@ namespace HotReloading.BuildTask
                         composer.LoadArg(parameter);
                     }
 
-                    composer.BaseCall(overridableReference);
+                    baseMethodCalls.Add(baseMethod);
+                    composer.BaseCall(baseMethod);
 
                     if (overridableMethod.Method.ReturnType.FullName != "System.Void")
                     {
@@ -224,6 +225,82 @@ namespace HotReloading.BuildTask
                     type.Methods.Add(method);
                 }
             }
+
+            //if (baseMethodCalls.Count > 0)
+            //{
+
+            //    var hotreloadingBaseMethodCallMethod = new MethodDefinition("HotReloading_BaseMethodCall", MethodAttributes.Private | MethodAttributes.HideBySig, md.ImportReference(typeof(object)));
+            //    hotreloadingBaseMethodCallMethod.Parameters.Add(new ParameterDefinition(md.ImportReference(typeof(string))));
+            //    hotreloadingBaseMethodCallMethod.Parameters.Add(new ParameterDefinition(md.ImportReference(typeof(object[]))));
+
+            //    hotreloadingBaseMethodCallMethod.ReturnType = md.ImportReference(typeof(object));
+            //    var retVar = new VariableDefinition(md.ImportReference(typeof(object)));
+            //    hotreloadingBaseMethodCallMethod.Body.Variables.Add(retVar);
+            //    var methodKeyVar = new VariableDefinition(md.ImportReference(typeof(string)));
+            //    hotreloadingBaseMethodCallMethod.Body.Variables.Add(methodKeyVar);
+
+            //    var returnInstructions = new InstructionComposer(md)
+            //        .Load(retVar)
+            //        .Return().Instructions;
+
+            //    var baseMethodCallComposer = new InstructionComposer(md);
+            //    baseMethodCallComposer.LoadNull()
+            //        .Store(retVar)
+            //        .LoadArg_1();
+
+            //    foreach(var baseMethod in baseMethodCalls)
+            //    {
+            //        foreach(var genericParameter in baseMethod.GenericParameters)
+            //        {
+            //            hotreloadingBaseMethodCallMethod.GenericParameters.Add(new GenericParameter(hotreloadingBaseMethodCallMethod));
+            //        }
+
+            //        baseMethodCallComposer.Load(baseMethod.Name)
+            //            .LoadArray(baseMethod.Parameters.Count, typeof(string), baseMethod.Parameters.Select(x => x.ParameterType.FullName).ToArray())
+            //            .StaticCall(new Method
+            //            {
+            //                ParentType = typeof(CodeChangeHandler),
+            //                MethodName = nameof(CodeChangeHandler.GetMethodKey),
+            //                ParameterSignature = new[] { typeof(string), typeof(string[]) }
+            //            }).
+            //            Store(methodKeyVar)
+            //            .Load(methodKeyVar)
+            //            .StaticCall(new Method
+            //            {
+            //                ParentType = typeof(string),
+            //                MethodName = "op_Equality",
+            //                ParameterSignature = new Type[] { typeof(string), typeof(string) }
+            //            }).MoveToWhenFalse(returnInstructions.First())
+            //            .LoadArg_0();
+
+            //        for(int i=0; i < baseMethod.Parameters.Count; i++)
+            //        {
+            //            baseMethodCallComposer.LoadArg_2();
+            //            baseMethodCallComposer.ArrayElementAccess(i);
+            //            var targetType = baseMethod.Parameters[i].ParameterType.CopyType(md, type, null);
+            //            baseMethodCallComposer.CastClass(targetType)
+            //            .BaseCall(baseMethod);
+            //            if (baseMethod.ReturnType.FullName != "System.Void")
+            //            {
+            //                baseMethodCallComposer.Store(retVar);
+            //            }
+
+            //            baseMethodCallComposer.MoveTo(returnInstructions.First());
+            //        }
+            //    }
+
+            //    foreach(var instruction in returnInstructions)
+            //    {
+            //        baseMethodCallComposer.Append(instruction);
+            //    }
+
+            //    foreach (var instruction in baseMethodCallComposer.Instructions)
+            //    {
+            //        hotreloadingBaseMethodCallMethod.Body.GetILProcessor().Append(instruction);
+            //    }
+
+            //    type.Methods.Add(hotreloadingBaseMethodCallMethod);
+            //}
         }
 
         public class OverridableMethod
@@ -246,9 +323,9 @@ namespace HotReloading.BuildTask
             var methods = baseTypeDefinition.Methods.Where(x => x.IsVirtual && 
                                                                 !x.IsSpecialName && 
                                                                 x.Name != "Finalize" &&
-                                                                x.IsPublic &&
-                                                                x.IsFamily &&
-                                                                x.IsFamilyOrAssembly);
+                                                                (x.IsPublic ||
+                                                                x.IsFamily ||
+                                                                x.IsFamilyOrAssembly));
 
             var sealedMethods = methods.Where(x => x.IsFinal);
 
@@ -302,12 +379,7 @@ namespace HotReloading.BuildTask
                 method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType));
             }
 
-            var baseMethodReference = md.ImportReference(overridableMethod.Method);
-            if (type.BaseType.IsGenericInstance)
-            {
-                var baseTypeInstance = (GenericInstanceType)type.BaseType;
-                baseMethodReference = baseMethodReference.MakeGeneric(md, baseTypeInstance.GenericArguments.ToArray());
-            }
+            var baseMethodReference = md.ImportReference(overridableMethod.Method).GetReference(type, type.BaseType, md);
 
             return new OverridableMethod
             {
@@ -361,7 +433,7 @@ namespace HotReloading.BuildTask
             {
                 type.Interfaces.Add(new InterfaceImplementation(md.ImportReference(typeof(IInstanceClass))));
                 PropertyDefinition instanceMethods = CreateInstanceMethodsProperty(md, type, out instanceMethodGetters);
-                getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods.GetMethod.GetReference(md), type, hasImplementedIInstanceClass);
+                getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods.GetMethod.GetReference(type, type, md), type, hasImplementedIInstanceClass);
             }
         }
 
