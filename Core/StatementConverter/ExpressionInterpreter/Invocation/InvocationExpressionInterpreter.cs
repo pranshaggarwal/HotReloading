@@ -48,8 +48,9 @@ namespace StatementConverter.ExpressionInterpreter
             bindingFlags |= invocationStatement.Method.AccessModifier == HotReloading.Core.AccessModifier.Public ?
                 BindingFlags.Public : BindingFlags.NonPublic;
 
+            Type declareType = (Type)invocationStatement.Method.ParentType;
             var methodInfo =
-                ((Type) invocationStatement.Method.ParentType).GetMethod(invocationStatement.Method.Name,
+                declareType.GetMethod(invocationStatement.Method.Name,
                     bindingFlags, Type.DefaultBinder, parameterTypes, null);
             Expression[] convertedArguments = new Expression[arguments.Length];
 
@@ -70,11 +71,22 @@ namespace StatementConverter.ExpressionInterpreter
             }
 
             if (instanceMember != null)
+            {
+                var caller = expressionInterpreterHandler.GetExpression(instanceMember.Parent);
                 return Expression.Call(
-                    expressionInterpreterHandler.GetExpression(instanceMember.Parent),
-                    methodInfo, convertedArguments);
+                            caller,
+                            methodInfo, convertedArguments);
+
+            }
 
             return Expression.Call(methodInfo, convertedArguments);
+        }
+
+        private Type GetDelegateType(MethodInfo methodInfo)
+        {
+            var parameterTypes = methodInfo.GetParameters().Select(x => x.ParameterType).ToList();
+            parameterTypes.Add(methodInfo.ReturnType);
+            return Expression.GetDelegateType(parameterTypes.ToArray());
         }
 
         private string GetMethodKey()

@@ -185,6 +185,7 @@ namespace HotReloading.BuildTask
             foreach(var overridableMethod in overridableMethods)
             {
                 MethodReference baseMethod = GetBaseMethod(overridableMethod);
+                baseMethodCalls.Add(baseMethod);
                 if (!type.Methods.Any(x => AreEquals(x, overridableMethod.Method)))
                 {
                     var method = overridableMethod.Method;
@@ -200,7 +201,6 @@ namespace HotReloading.BuildTask
                         composer.LoadArg(parameter);
                     }
 
-                    baseMethodCalls.Add(baseMethod);
                     composer.BaseCall(baseMethod);
 
                     if (overridableMethod.Method.ReturnType.FullName != "System.Void")
@@ -226,81 +226,54 @@ namespace HotReloading.BuildTask
                 }
             }
 
-            //if (baseMethodCalls.Count > 0)
-            //{
+            foreach (var baseMethod in baseMethodCalls)
+            {
+                var methodKey = CodeChangeHandler.GetMethodKey(baseMethod.Name, baseMethod.Parameters.Select(x => x.ParameterType.FullName).ToArray());
+                var methodName = "HotReloadingBase_" + baseMethod.Name;
+                var hotReloadingBaseMethod = new MethodDefinition(methodName, MethodAttributes.Private | MethodAttributes.HideBySig, md.ImportReference(typeof(void)));
 
-            //    var hotreloadingBaseMethodCallMethod = new MethodDefinition("HotReloading_BaseMethodCall", MethodAttributes.Private | MethodAttributes.HideBySig, md.ImportReference(typeof(object)));
-            //    hotreloadingBaseMethodCallMethod.Parameters.Add(new ParameterDefinition(md.ImportReference(typeof(string))));
-            //    hotreloadingBaseMethodCallMethod.Parameters.Add(new ParameterDefinition(md.ImportReference(typeof(object[]))));
+                foreach (var parameter in baseMethod.GenericParameters)
+                {
+                    hotReloadingBaseMethod.GenericParameters.Add(parameter);
+                }
 
-            //    hotreloadingBaseMethodCallMethod.ReturnType = md.ImportReference(typeof(object));
-            //    var retVar = new VariableDefinition(md.ImportReference(typeof(object)));
-            //    hotreloadingBaseMethodCallMethod.Body.Variables.Add(retVar);
-            //    var methodKeyVar = new VariableDefinition(md.ImportReference(typeof(string)));
-            //    hotreloadingBaseMethodCallMethod.Body.Variables.Add(methodKeyVar);
+                hotReloadingBaseMethod.ReturnType = baseMethod.ReturnType.CopyType(md, type, hotReloadingBaseMethod);
+                foreach (var parameter in baseMethod.Parameters)
+                {
+                    TypeReference parameterType = parameter.ParameterType.CopyType(md, type, hotReloadingBaseMethod);
+                    hotReloadingBaseMethod.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType));
+                }
 
-            //    var returnInstructions = new InstructionComposer(md)
-            //        .Load(retVar)
-            //        .Return().Instructions;
+                var retVar = new VariableDefinition(md.ImportReference(typeof(object)));
+                var baseCallComposer = new InstructionComposer(md)
+                    .LoadArg_0();
 
-            //    var baseMethodCallComposer = new InstructionComposer(md);
-            //    baseMethodCallComposer.LoadNull()
-            //        .Store(retVar)
-            //        .LoadArg_1();
+                foreach (var parameter in hotReloadingBaseMethod.Parameters)
+                {
+                    baseCallComposer.LoadArg(parameter);
+                }
 
-            //    foreach(var baseMethod in baseMethodCalls)
-            //    {
-            //        foreach(var genericParameter in baseMethod.GenericParameters)
-            //        {
-            //            hotreloadingBaseMethodCallMethod.GenericParameters.Add(new GenericParameter(hotreloadingBaseMethodCallMethod));
-            //        }
+                baseCallComposer.BaseCall(baseMethod);
 
-            //        baseMethodCallComposer.Load(baseMethod.Name)
-            //            .LoadArray(baseMethod.Parameters.Count, typeof(string), baseMethod.Parameters.Select(x => x.ParameterType.FullName).ToArray())
-            //            .StaticCall(new Method
-            //            {
-            //                ParentType = typeof(CodeChangeHandler),
-            //                MethodName = nameof(CodeChangeHandler.GetMethodKey),
-            //                ParameterSignature = new[] { typeof(string), typeof(string[]) }
-            //            }).
-            //            Store(methodKeyVar)
-            //            .Load(methodKeyVar)
-            //            .StaticCall(new Method
-            //            {
-            //                ParentType = typeof(string),
-            //                MethodName = "op_Equality",
-            //                ParameterSignature = new Type[] { typeof(string), typeof(string) }
-            //            }).MoveToWhenFalse(returnInstructions.First())
-            //            .LoadArg_0();
+                if (hotReloadingBaseMethod.ReturnType.FullName != "System.Void")
+                {
+                    var returnVariable = new VariableDefinition(hotReloadingBaseMethod.ReturnType);
 
-            //        for(int i=0; i < baseMethod.Parameters.Count; i++)
-            //        {
-            //            baseMethodCallComposer.LoadArg_2();
-            //            baseMethodCallComposer.ArrayElementAccess(i);
-            //            var targetType = baseMethod.Parameters[i].ParameterType.CopyType(md, type, null);
-            //            baseMethodCallComposer.CastClass(targetType)
-            //            .BaseCall(baseMethod);
-            //            if (baseMethod.ReturnType.FullName != "System.Void")
-            //            {
-            //                baseMethodCallComposer.Store(retVar);
-            //            }
+                    hotReloadingBaseMethod.Body.Variables.Add(returnVariable);
 
-            //            baseMethodCallComposer.MoveTo(returnInstructions.First());
-            //        }
-            //    }
+                    baseCallComposer.Store(returnVariable);
+                    baseCallComposer.Load(returnVariable);
+                }
 
-            //    foreach(var instruction in returnInstructions)
-            //    {
-            //        baseMethodCallComposer.Append(instruction);
-            //    }
+                baseCallComposer.Return();
 
-            //    foreach (var instruction in baseMethodCallComposer.Instructions)
-            //    {
-            //        hotreloadingBaseMethodCallMethod.Body.GetILProcessor().Append(instruction);
-            //    }
+                foreach (var instruction in baseCallComposer.Instructions)
+                {
+                    hotReloadingBaseMethod.Body.GetILProcessor().Append(instruction);
+                }
 
-            //    type.Methods.Add(hotreloadingBaseMethodCallMethod);
-            //}
+                type.Methods.Add(hotReloadingBaseMethod);
+            }
         }
 
         public class OverridableMethod
@@ -363,10 +336,7 @@ namespace HotReloading.BuildTask
 
             foreach (var genericParameter in overridableMethod.Method.GenericParameters)
             {
-                if (genericParameter.Type == GenericParameterType.Method)
-                {
-                    method.GenericParameters.Add(new GenericParameter(genericParameter.Name, method));
-                }
+                method.GenericParameters.Add(new GenericParameter(genericParameter.Name, method));
             }
 
             TypeReference returnType = overridableMethod.Method.ReturnType.CopyType(md, type, method);

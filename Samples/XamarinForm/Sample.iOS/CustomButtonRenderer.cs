@@ -8,5 +8,10 @@ namespace Sample.iOS
 {
     public class CustomButtonRenderer : ButtonRenderer
     {
+        protected override void OnElementChanged(ElementChangedEventArgs<Button> e)
+        {
+            System.Diagnostics.Debug.WriteLine("OnElementChangedCalled");
+            base.OnElementChanged(e);
+        }
     }
 }

@@ -32,8 +32,34 @@ namespace StatementConverter.StatementInterpreter
             if (varName == "nameof")
                 return new NameOfStatement();
 
+            if(parent is BaseStatement)
+            {
+                //Find HotReloadingBaseCall method
+                var callerMethod = GetCallingMethod(identifierNameSyntax);
+                var callerSymbol = semanticModel.GetDeclaredSymbol(callerMethod);
+                var methodSymbol = semanticModel.GetSymbolInfo(identifierNameSyntax).Symbol as IMethodSymbol;
+                return new InstanceMethodMemberStatement
+                {
+                    Name = methodSymbol.Name,
+                    ParentType = callerSymbol.ContainingType.GetClassType(),
+                    Parent = parent ?? new ThisStatement(),
+                    AccessModifier = GetAccessModifier(methodSymbol)
+                };
+            }
+
             var symbolInfo = semanticModel.GetSymbolInfo(identifierNameSyntax);
             return GetStatement(symbolInfo, varName);
+        }
+
+        private MethodDeclarationSyntax GetCallingMethod(SyntaxNode syntaxNode)
+        {
+            if (syntaxNode is MethodDeclarationSyntax)
+                return syntaxNode as MethodDeclarationSyntax;
+
+            if (syntaxNode.Parent == null)
+                return null;
+
+            return GetCallingMethod(syntaxNode.Parent);
         }
 
         private Statement GetStatement(SymbolInfo symbolInfo, string varName)
