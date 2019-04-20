@@ -346,10 +346,15 @@ namespace HotReloading.BuildTask
             foreach (var parameter in overridableMethod.Method.Parameters)
             {
                 TypeReference parameterType = parameter.ParameterType.CopyType(md, type, method);
-                method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType));
+                method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType)
+                { 
+                    IsOptional = parameter.IsOptional,
+                    IsIn = parameter.IsIn,
+                    IsOut = parameter.IsOut
+                });
             }
 
-            var baseMethodReference = md.ImportReference(overridableMethod.Method).GetReference(type, type.BaseType, md);
+            var baseMethodReference = overridableMethod.Method.GetReference(type, type.BaseType, md);
 
             return new OverridableMethod
             {
