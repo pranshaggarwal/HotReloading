@@ -126,6 +126,9 @@ namespace HotReloading.BuildTask
                     if (method == instanceMethodGetters || method.IsConstructor || method == getInstanceMethod)
                         continue;
 
+                    //Ignore method with ref parameter
+                    if (method.Parameters.Any(x => x.ParameterType is ByReferenceType))
+                        continue;
 
                     WrapMethod(md, type, method, getInstanceMethod.GetReference(type, type, md));
                 }
@@ -185,7 +188,11 @@ namespace HotReloading.BuildTask
             foreach(var overridableMethod in overridableMethods)
             {
                 MethodReference baseMethod = GetBaseMethod(overridableMethod);
+                //Ignore method with ref parameter
+                if (baseMethod.Parameters.Any(x => x.ParameterType is ByReferenceType))
+                    continue;
                 baseMethodCalls.Add(baseMethod);
+
                 if (!type.Methods.Any(x => AreEquals(x, overridableMethod.Method)))
                 {
                     var method = overridableMethod.Method;
