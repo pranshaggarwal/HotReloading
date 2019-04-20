@@ -235,6 +235,11 @@ namespace HotReloading.BuildTask
 
             foreach (var baseMethod in baseMethodCalls)
             {
+                //Ignore optional
+                if(baseMethod.Parameters.Any(x => x.IsOptional))
+                {
+                    continue;
+                }
                 var methodKey = CodeChangeHandler.GetMethodKey(baseMethod.Name, baseMethod.Parameters.Select(x => x.ParameterType.FullName).ToArray());
                 var methodName = "HotReloadingBase_" + baseMethod.Name;
                 var hotReloadingBaseMethod = new MethodDefinition(methodName, MethodAttributes.Private | MethodAttributes.HideBySig, md.ImportReference(typeof(void)));
@@ -248,7 +253,12 @@ namespace HotReloading.BuildTask
                 foreach (var parameter in baseMethod.Parameters)
                 {
                     TypeReference parameterType = parameter.ParameterType.CopyType(md, type, hotReloadingBaseMethod);
-                    hotReloadingBaseMethod.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType));
+                    hotReloadingBaseMethod.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType)
+                    {
+                        IsIn = parameter.IsIn,
+                        IsOut = parameter.IsOut,
+                        IsOptional = parameter.IsOptional
+                    });
                 }
 
                 var retVar = new VariableDefinition(md.ImportReference(typeof(object)));
@@ -361,7 +371,7 @@ namespace HotReloading.BuildTask
                 });
             }
 
-            var baseMethodReference = overridableMethod.Method.GetReference(type, type.BaseType, md);
+            var baseMethodReference = overridableMethod.Method.GetReference(type, type.BaseType, md, false);
 
             return new OverridableMethod
             {

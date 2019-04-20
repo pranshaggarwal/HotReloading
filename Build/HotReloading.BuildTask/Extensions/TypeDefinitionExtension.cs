@@ -177,9 +177,9 @@ namespace HotReloading.BuildTask.Extensions
             return fieldDefinition;
         }
 
-        public static MethodReference GetReference(this MethodReference self, TypeDefinition currentType, TypeReference targetType, ModuleDefinition md)
+        public static MethodReference GetReference(this MethodReference source, TypeDefinition currentType, TypeReference targetType, ModuleDefinition md, bool shouldResolveGenericParameter = true)
         {
-            self = md.ImportReference(self);
+            var self = md.ImportReference(source);
             TypeReference[] arguments = null;
 
             if(currentType == targetType)
@@ -197,29 +197,37 @@ namespace HotReloading.BuildTask.Extensions
                 }
             }
 
-            if(arguments != null)
+            TypeReference declaringType;
+            if (arguments != null)
+                declaringType = self.DeclaringType.MakeGenericType(md, currentType, shouldResolveGenericParameter, arguments);
+            else
+                declaringType = md.ImportReference(self.DeclaringType);
+            var reference = new MethodReference(self.Name, self.ReturnType)
             {
-                var reference = new MethodReference(self.Name, self.ReturnType)
+                DeclaringType = declaringType,
+                HasThis = self.HasThis,
+                ExplicitThis = self.ExplicitThis,
+                CallingConvention = self.CallingConvention,
+            };
+
+            foreach (var parameter in source.Parameters)
+            {
+                var parameterType = parameter.ParameterType.CopyType(md, currentType, null, shouldResolveGenericParameter);
+                reference.Parameters.Add(new ParameterDefinition(parameterType)
                 {
-                    DeclaringType = self.DeclaringType.MakeGenericType(md, currentType, arguments),
-                    HasThis = self.HasThis,
-                    ExplicitThis = self.ExplicitThis,
-                    CallingConvention = self.CallingConvention,
-                };
-
-                foreach (var parameter in self.Parameters)
-                    reference.Parameters.Add(new ParameterDefinition(parameter.ParameterType));
-
-                foreach (var generic_parameter in self.GenericParameters)
-                    reference.GenericParameters.Add(new GenericParameter(generic_parameter.Name, reference));
-
-                return reference;
+                    IsIn = parameter.IsIn,
+                    IsOut = parameter.IsOut,
+                    IsOptional = parameter.IsOptional
+                });
             }
 
-            return self;
+            foreach (var generic_parameter in source.GenericParameters)
+                reference.GenericParameters.Add(new GenericParameter(generic_parameter.Name, reference));
+
+            return reference;
         }
 
-        public static TypeReference MakeGenericType(this TypeReference self, ModuleDefinition md, TypeDefinition targetType, params TypeReference[] arguments)
+        public static TypeReference MakeGenericType(this TypeReference self, ModuleDefinition md, TypeDefinition targetType, bool shouldResolveGenericParameter, params TypeReference[] arguments)
         {
             if (self.GenericParameters.Count != arguments.Length)
                 throw new ArgumentException();
@@ -233,10 +241,12 @@ namespace HotReloading.BuildTask.Extensions
             return instance;
         }
 
-        public static TypeReference CopyType(this TypeReference self, ModuleDefinition md, TypeDefinition targetType = null, MethodDefinition targetMethod = null)
+        public static TypeReference CopyType(this TypeReference self, ModuleDefinition md, TypeDefinition targetType = null, MethodDefinition targetMethod = null, bool shouldResolveGenericParaemeter = true)
         {
             if (self is GenericParameter genericParameter)
             {
+                if (!shouldResolveGenericParaemeter)
+                    return self;
                 if (targetMethod != null && genericParameter.Type == GenericParameterType.Method)
                 {
                     return targetMethod.GenericParameters.First(x => x.Name == genericParameter.Name);
@@ -268,11 +278,11 @@ namespace HotReloading.BuildTask.Extensions
                 if(self is GenericInstanceType genericInstanceType)
                 {
                     var elementType = md.ImportReference(genericInstanceType.ElementType);
-                    return elementType.MakeGenericType(md, targetType,genericInstanceType.GenericArguments.ToArray());
+                    return elementType.MakeGenericType(md, targetType, shouldResolveGenericParaemeter, genericInstanceType.GenericArguments.ToArray());
                 }
                 else if(self is ByReferenceType byReferenceType && targetType != null)
                 {
-                    var elementType = byReferenceType.ElementType.CopyType(md, targetType, targetMethod);
+                    var elementType = byReferenceType.ElementType.CopyType(md, targetType, targetMethod, shouldResolveGenericParaemeter);
                     return new ByReferenceType(elementType);
                 }
 
