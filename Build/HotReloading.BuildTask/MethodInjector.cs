@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using HotReloading.BuildTask.Extensions;
@@ -76,7 +77,7 @@ namespace HotReloading.BuildTask
 
             foreach(var type in types)
             {
-                if(type.BaseType is TypeDefinition baseTypeDeginition)
+                if (type.BaseType is TypeDefinition baseTypeDeginition)
                 {
                     var baseTypes = GetBaseTypesWithCorrectOrder(baseTypeDeginition);
 
@@ -102,6 +103,8 @@ namespace HotReloading.BuildTask
 
             foreach (var type in typesWithCorrectOrder)
             {
+                if (type.Name.EndsWith("Delegate", StringComparison.InvariantCulture))
+                    continue;
                 Logger.LogMessage("Weaving Type: " + type.Name);
                 var methods = type.Methods;
 
@@ -308,22 +311,36 @@ namespace HotReloading.BuildTask
             var retVal = new List<OverridableMethod>();
 
             var baseTypeDefinition = type.BaseType.Resolve();
-
-            //Ignore non virtual, finalized, special name, private and internal
-            var methods = baseTypeDefinition.Methods.Where(x => x.IsVirtual && 
-                                                                !x.IsSpecialName && 
-                                                                x.Name != "Finalize" &&
-                                                                (x.IsPublic ||
-                                                                x.IsFamily ||
-                                                                x.IsFamilyOrAssembly));
-
-            var sealedMethods = methods.Where(x => x.IsFinal);
-
-            foreach(var method in methods)
+            IEnumerable<MethodDefinition> sealedMethods = new List<MethodDefinition>();
+            if (!baseTypeDefinition.Name.EndsWith("Delegate", StringComparison.InvariantCulture))
             {
-                if (method.IsFinal)
-                    continue;
-                retVal.Add(CopyMethod(type, new OverridableMethod{ Method = method }, md));
+                //Ignore non virtual, finalized, special name, private and internal
+                var methods = baseTypeDefinition.Methods.Where(x => x.IsVirtual &&
+                                                                    !x.IsSpecialName &&
+                                                                    x.Name != "Finalize" &&
+                                                                    (x.IsPublic ||
+                                                                    x.IsFamily ||
+                                                                    x.IsFamilyOrAssembly));
+
+
+                sealedMethods = methods.Where(x => x.IsFinal);
+                foreach (var method in methods)
+                {
+                    if (method.IsFinal)
+                        continue;
+
+                    //Ignore method with export method
+                    if (method.CustomAttributes.Any(x => x.AttributeType.Name == "ExportAttribute"))
+                        continue;
+
+                    //Ignore Xamarin.iOS protocols method
+                    if (baseTypeDefinition.Interfaces.Where(x => x.InterfaceType.Name.EndsWith("Delegate", StringComparison.InvariantCulture))
+                    .Select(x => x.InterfaceType).OfType<TypeDefinition>()
+                    .SelectMany(x => x.Methods).Any(x => AreEquals(x, method)))
+                        continue;
+
+                    retVal.Add(CopyMethod(type, new OverridableMethod { Method = method }, md));
+                }
             }
 
             var baseOverriableMethods = GetOverridableMethods(baseTypeDefinition, md);
