@@ -19,7 +19,7 @@
   </ItemGroup>
   <UsingTask TaskName="MethodInjector" AssemblyFile="..\..\Build\HotReloading.BuildTask\bin\$(Configuration)\HotReloading.BuildTask.dll" />
 
-  <Target Name="MethodInjector" AfterTargets="AfterCompile" Condition="Exists('@(IntermediateAssembly)') And $(DesignTimeBuild) != true" Inputs="@(IntermediateAssembly);$(ProjectWeaverXml)" Outputs="$(TargetPath)">
+  <Target Name="MethodInjector" AfterTargets="AfterCompile" Condition="Exists('@(IntermediateAssembly)') And $(DesignTimeBuild) != true And $(Configuration) == 'Debug'" Inputs="@(IntermediateAssembly);$(ProjectWeaverXml)" Outputs="$(TargetPath)">
     <MethodInjector References="@(ReferencePath)" AssemblyFile="@(IntermediateAssembly)" ProjectDirectory="$(MSBuildProjectDirectory)" DebugSymbols="$(DebugSymbols)" DebugType="$(DebugType)" />
   </Target>
 
