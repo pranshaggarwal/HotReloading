@@ -40,10 +40,10 @@ namespace StatementConverter.StatementInterpreter
                 var methodSymbol = semanticModel.GetSymbolInfo(identifierNameSyntax).Symbol as IMethodSymbol;
                 return new InstanceMethodMemberStatement
                 {
-                    Name = methodSymbol.Name,
+                    Name = "HotReloadingBase_" + methodSymbol.Name,
                     ParentType = callerSymbol.ContainingType.GetClassType(),
                     Parent = parent ?? new ThisStatement(),
-                    AccessModifier = GetAccessModifier(methodSymbol)
+                    AccessModifier = AccessModifier.Private
                 };
             }
 
