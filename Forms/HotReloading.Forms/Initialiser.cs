@@ -35,7 +35,7 @@ namespace HotReloading.Forms
             await ClosePopup();
             Debug.WriteLine("New Code change");
 
-            Device.BeginInvokeOnMainThread(() => 
+            Device.BeginInvokeOnMainThread(async () => 
             {
                 try
                 {
@@ -44,6 +44,7 @@ namespace HotReloading.Forms
                     var setupView = mainPage.GetType().GetMethod("SetupView");
                     if(setupView != null)
                         setupView.Invoke(mainPage, new object[] { });
+                    await Task.Delay(1000);
                     Application.Current.MainPage = mainPage;
                 }
                 catch(Exception ex)
