@@ -81,7 +81,7 @@ namespace HotReloading
             Debug.WriteLine("GetMethodDelegate called");
 
             if(Methods.ContainsKey(parentType))
-                return Methods[parentType].SingleOrDefault(x => GetMethodKey(x.Method) == key).GetDelegate();
+                return Methods[parentType].SingleOrDefault(x => GetMethodKey(x.Method) == key)?.GetDelegate();
             return null;
         }
 
