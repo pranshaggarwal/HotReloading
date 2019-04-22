@@ -136,7 +136,10 @@ namespace HotReloading.BuildTask
                     WrapMethod(md, type, method, getInstanceMethod.GetReference(type, type, md));
                 }
 
-                AddOverrideMethod(type, md, getInstanceMethod.GetReference(type, type, md));
+                if (!type.IsAbstract && !type.IsSealed)
+                {
+                    AddOverrideMethod(type, md, getInstanceMethod.GetReference(type, type, md));
+                }
             }
 
             if (assemblyPath == outputAssemblyPath)
@@ -540,6 +543,7 @@ namespace HotReloading.BuildTask
             method.Body.Instructions.Add(retInstruction);
 
             foreach (var instruction in oldInstruction) ilprocessor.InsertBefore(lastInstruction, instruction);
+
             method.Body.InitLocals = true;
             var firstInstruction = method.Body.Instructions.First();
 

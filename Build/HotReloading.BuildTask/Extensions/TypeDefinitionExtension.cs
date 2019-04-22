@@ -179,6 +179,8 @@ namespace HotReloading.BuildTask.Extensions
 
         public static MethodReference GetReference(this MethodReference source, TypeDefinition currentType, TypeReference targetType, ModuleDefinition md, bool shouldResolveGenericParameter = true)
         {
+            if (source == null)
+                return null;
             var self = md.ImportReference(source);
             TypeReference[] arguments = null;
 
