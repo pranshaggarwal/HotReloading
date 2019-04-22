@@ -39,11 +39,23 @@ namespace HotReloading.Forms
             {
                 try
                 {
+                    var currentPage = GetCurrentPage();
                     var mainPage = Application.Current.MainPage;
                     Application.Current.MainPage = new ContentPage();
-                    var setupView = mainPage.GetType().GetMethod("SetupView");
-                    if(setupView != null)
-                        setupView.Invoke(mainPage, new object[] { });
+                    var initMethod = mainPage.GetType().GetMethod("HotReloading_Init");
+                    if(initMethod != null)
+                        initMethod.Invoke(mainPage, new object[] { });
+                    else
+                    {
+                        if(currentPage != null && currentPage.InstanceMethods.ContainsKey("HotReloading_Init"))
+                        {
+                            var initDelegate = currentPage.InstanceMethods["HotReloading_Init"];
+                            if(initDelegate != null)
+                            {
+                                initDelegate.DynamicInvoke(mainPage);
+                            }
+                        }
+                    }
                     await Task.Delay(1000);
                     Application.Current.MainPage = mainPage;
                 }
@@ -52,6 +64,16 @@ namespace HotReloading.Forms
                     System.Diagnostics.Debug.WriteLine(ex);
                 }
             });
+        }
+
+        private static IInstanceClass GetCurrentPage()
+        {
+            if(Application.Current.MainPage is NavigationPage navigationPage)
+            {
+                return navigationPage.CurrentPage as IInstanceClass;
+            }
+
+            return Application.Current.MainPage as IInstanceClass;
         }
 
         private static async Task OpenPopup(PopupPage popupPage)
