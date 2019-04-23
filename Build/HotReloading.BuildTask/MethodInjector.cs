@@ -364,6 +364,20 @@ namespace HotReloading.BuildTask
             return retVal;
         }
 
+        private string GetUniqueGenericParameterName(TypeReference typeReference)
+        {
+            string name = "T";
+            int count = 0;
+
+            while(typeReference.GenericParameters.Any(x => x.Name == name))
+            {
+                count++;
+                name = "T" + count;
+            }
+
+            return name;
+        }
+
         private OverridableMethod CopyMethod1(OverridableMethod overridableMethod, TypeReference targetType, TypeReference sourceType, ModuleDefinition md)
         {
             Logger.LogMessage("\tOverriding: " + overridableMethod.Method.FullName);
@@ -375,7 +389,7 @@ namespace HotReloading.BuildTask
 
             foreach (var genericParameter in overridableMethod.Method.GenericParameters)
             {
-                method.GenericParameters.Add(new GenericParameter(genericParameter.Name, method));
+                method.GenericParameters.Add(new GenericParameter(GetUniqueGenericParameterName(targetType), method));
             }
 
             TypeReference returnType = overridableMethod.Method.ReturnType.CopyType1(targetType, sourceType, md, method);
