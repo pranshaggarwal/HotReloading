@@ -12,7 +12,6 @@ namespace HotReloading
 {
     public static class Runtime
     {
-
         public static void HandleCodeChange(CodeChange codeChange)
         {
             foreach (var method in codeChange.Methods)
@@ -30,9 +29,9 @@ namespace HotReloading
 
             var methods = RuntimeMemory.Methods[method.ParentType];
 
-            var methodKey = GetMethodKey(method);
+            var methodKey = Helper.GetMethodKey(method);
 
-            var existingMethod = methods.SingleOrDefault(x => GetMethodKey(x.Method) == methodKey);
+            var existingMethod = methods.SingleOrDefault(x => Helper.GetMethodKey(x.Method) == methodKey);
 
             if(existingMethod != null)
             {
@@ -56,41 +55,12 @@ namespace HotReloading
             }
         }
 
-        public static string GetMethodKey(string methodName, params string[] parameterTypes)
-        {
-            string key = methodName;
-
-            foreach (var parameter in parameterTypes)
-            {
-                key += $"`{(parameter)}";
-            }
-
-            return key;
-        }
-
-        private static string GetMethodKey(Method method)
-        {
-            return GetMethodKey(method.Name, method.Parameters.Select(x => x.Type.Key).ToArray());
-        }
-
         public static Delegate GetMethodDelegate(Type parentType, string key)
         {
             Debug.WriteLine("GetMethodDelegate called");
 
             if(RuntimeMemory.Methods.ContainsKey(parentType))
-                return RuntimeMemory.Methods[parentType].SingleOrDefault(x => GetMethodKey(x.Method) == key)?.GetDelegate();
-            return null;
-        }
-
-        public static CSharpLamdaExpression GetMethod(Type @class, string key)
-        {
-            if(RuntimeMemory.Methods.ContainsKey(@class))
-            {
-                var method = RuntimeMemory.Methods[@class].SingleOrDefault(x => GetMethodKey(x.Method) == key);
-                if (method != null)
-                    return method.GetExpression();
-            }
-
+                return RuntimeMemory.Methods[parentType].SingleOrDefault(x => Helper.GetMethodKey(x.Method) == key)?.GetDelegate();
             return null;
         }
 
@@ -103,7 +73,7 @@ namespace HotReloading
 
             if (RuntimeMemory.Methods.ContainsKey(type))
                 foreach (var instanceMethod in RuntimeMemory.Methods[type])
-                    instanceMethods.Add(GetMethodKey(instanceMethod.Method), instanceMethod.GetDelegate());
+                    instanceMethods.Add(Helper.GetMethodKey(instanceMethod.Method), instanceMethod.GetDelegate());
 
             return instanceMethods;
         }

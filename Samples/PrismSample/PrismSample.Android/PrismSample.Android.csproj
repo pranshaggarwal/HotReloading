@@ -100,6 +100,10 @@
       <Project>{8ABB0DE7-84F9-4EB4-ABBD-99BCD595986D}</Project>
       <Name>PrismSample</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Core\HotReloading.Core\HotReloading.Core.csproj">
+      <Project>{E283AEFD-4581-4EEE-9F6D-B7545D9536FE}</Project>
+      <Name>HotReloading.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

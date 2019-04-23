@@ -84,7 +84,6 @@ namespace StatementConverter.Test
         {
             Tracker.Reset();
             RuntimeMemory.Reset();
-            CodeChangeHandler.GetMethod = HotReloading.Runtime.GetMethod;
         }
     }
 }

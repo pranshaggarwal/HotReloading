@@ -22,7 +22,7 @@ namespace HotReloading.Test.TestCodes
 
         public static void AddedStaticMethodAndCalledFromAnotherClass()
         {
-            var methodKey = Runtime.GetMethodKey(nameof(AddedStaticMethodAndCalledFromAnotherClass));
+            var methodKey = Core.Helper.GetMethodKey(nameof(AddedStaticMethodAndCalledFromAnotherClass));
             var @delegate = Runtime.GetMethodDelegate(typeof(PublicMethodTestClass1), methodKey);
 
             if (@delegate != null)

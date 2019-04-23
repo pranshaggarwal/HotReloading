@@ -248,7 +248,7 @@ namespace HotReloading.BuildTask
                 {
                     continue;
                 }
-                var methodKey = Runtime.GetMethodKey(baseMethod.Name, baseMethod.Parameters.Select(x => x.ParameterType.FullName).ToArray());
+                var methodKey = Core.Helper.GetMethodKey(baseMethod.Name, baseMethod.Parameters.Select(x => x.ParameterType.FullName).ToArray());
                 var methodName = "HotReloadingBase_" + baseMethod.Name;
                 var hotReloadingBaseMethod = new MethodDefinition(methodName, MethodAttributes.Private | MethodAttributes.HideBySig, md.ImportReference(typeof(void)));
 
@@ -556,8 +556,8 @@ namespace HotReloading.BuildTask
                 .LoadArray(parameters.Length, typeof(string), parameters.Select(x => x.ParameterType.FullName).ToArray())
                 .StaticCall(new Method
                 {
-                    ParentType = typeof(Runtime),
-                    MethodName = nameof(Runtime.GetMethodKey),
+                    ParentType = typeof(Core.Helper),
+                    MethodName = nameof(Core.Helper.GetMethodKey),
                     ParameterSignature = new[] { typeof(string), typeof(string[]) }
                 }).
                 Store(methodKeyVariable)
@@ -588,8 +588,8 @@ namespace HotReloading.BuildTask
                 .LoadArray(parameters.Length, typeof(string), parameters.Select(x => x.ParameterType.FullName).ToArray())
                 .StaticCall(new Method
                 {
-                    ParentType = typeof(Runtime),
-                    MethodName = nameof(Runtime.GetMethodKey),
+                    ParentType = typeof(Core.Helper),
+                    MethodName = nameof(Core.Helper.GetMethodKey),
                     ParameterSignature = new[] { typeof(string), typeof(string[])}
                 }).
                 Store(methodKeyVariable)

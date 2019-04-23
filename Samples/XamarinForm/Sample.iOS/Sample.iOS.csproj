@@ -171,6 +171,10 @@
       <Project>{F22483C4-C6C7-4D46-A64A-C7D3E1003333}</Project>
       <Name>HotReloading</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Core\HotReloading.Core\HotReloading.Core.csproj">
+      <Project>{E283AEFD-4581-4EEE-9F6D-B7545D9536FE}</Project>
+      <Name>HotReloading.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 

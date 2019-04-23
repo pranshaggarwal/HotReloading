@@ -53,7 +53,6 @@ namespace HotReloading
 
         public static async Task<bool> Run(string ideIP = "127.0.0.1", int idePort = Constants.DEFAULT_PORT)
         {
-            StatementConverter.CodeChangeHandler.GetMethod = Runtime.GetMethod;
             Instance = new HotReloadingClient();
             return await Instance.RunInternal(ideIP, idePort);
         }

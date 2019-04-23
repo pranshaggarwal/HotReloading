@@ -22,7 +22,7 @@ namespace HotReloading.Test.TestCodes
 
         public static void UpdateStaticMethod()
         {
-            var methodKey = Runtime.GetMethodKey(nameof(UpdateStaticMethod));
+            var methodKey = Core.Helper.GetMethodKey(nameof(UpdateStaticMethod));
             var @delegate = Runtime.GetMethodDelegate(typeof(PublicMethodTestClass), methodKey);
 
             if (@delegate != null)
@@ -36,7 +36,7 @@ namespace HotReloading.Test.TestCodes
 
         public static void AddedStaticMethodAndCalledFromSameClass1()
         {
-            var methodKey = Runtime.GetMethodKey(nameof(AddedStaticMethodAndCalledFromSameClass1));
+            var methodKey = Core.Helper.GetMethodKey(nameof(AddedStaticMethodAndCalledFromSameClass1));
             var @delegate = Runtime.GetMethodDelegate(typeof(PublicMethodTestClass), methodKey);
 
             if (@delegate != null)
@@ -80,7 +80,7 @@ namespace HotReloading.Test.TestCodes
 
         public static void MethodOverload()
         {
-            var methodKey = Runtime.GetMethodKey(nameof(MethodOverload));
+            var methodKey = Core.Helper.GetMethodKey(nameof(MethodOverload));
             var @delegate = Runtime.GetMethodDelegate(typeof(PublicMethodTestClass), nameof(MethodOverload));
 
             if (@delegate != null)
@@ -92,7 +92,7 @@ namespace HotReloading.Test.TestCodes
 
         public static void MethodOverload(string str)
         {
-            var methodKey = Runtime.GetMethodKey(nameof(MethodOverload), typeof(string).FullName);
+            var methodKey = Core.Helper.GetMethodKey(nameof(MethodOverload), typeof(string).FullName);
             var @delegate = Runtime.GetMethodDelegate(typeof(PublicMethodTestClass), methodKey);
 
             if (@delegate != null)

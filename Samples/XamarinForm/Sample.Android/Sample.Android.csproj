@@ -103,6 +103,10 @@
       <Project>{5FA5850C-BF4F-4057-8111-826CD4A122C2}</Project>
       <Name>HotReloading.Android</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Core\HotReloading.Core\HotReloading.Core.csproj">
+      <Project>{E283AEFD-4581-4EEE-9F6D-B7545D9536FE}</Project>
+      <Name>HotReloading.Core</Name>
+    </ProjectReference>
   </ItemGroup>
  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 

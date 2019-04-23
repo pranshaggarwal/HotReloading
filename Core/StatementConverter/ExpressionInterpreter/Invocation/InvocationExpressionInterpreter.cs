@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using HotReloading.Core;
 using HotReloading.Core.Statements;
 
 namespace StatementConverter.ExpressionInterpreter
@@ -29,7 +30,7 @@ namespace StatementConverter.ExpressionInterpreter
 
             var methodKey = GetMethodKey();
 
-            var lamdaExpression = CodeChangeHandler.GetMethod(invocationStatement.Method.ParentType, methodKey);
+            var lamdaExpression = RuntimeMemory.GetMethod(invocationStatement.Method.ParentType, methodKey);
 
             var instanceMember = invocationStatement.Method as InstanceMethodMemberStatement;
 
