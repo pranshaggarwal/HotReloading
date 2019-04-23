@@ -626,7 +626,7 @@ namespace HotReloading.BuildTask
 
         private static MethodDefinition CreateGetInstanceMethod(ModuleDefinition md, MethodReference instanceMethodGetter, TypeDefinition type, bool hasImplementedIInstanceClass)
         {
-            var getInstanceMethod = new MethodDefinition("GetInstanceMethod", MethodAttributes.Family,
+            var getInstanceMethod = new MethodDefinition("HotReloading_GetInstanceMethod", MethodAttributes.Family,
                 md.ImportReference(typeof(Delegate)));
 
             var methodName = new ParameterDefinition("methodName", ParameterAttributes.None,

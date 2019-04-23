@@ -36,6 +36,7 @@
     <file src="../Build/HotReloading.targets" target="build/HotReloading.targets" />
     <file src="../packages/Mono.Cecil.0.10.3/lib/net40/Mono.Cecil.dll" target="build\Mono.Cecil.dll" />
     <file src="../Core/HotReloading/bin/Debug/netstandard2.0/HotReloading.dll" target="build/HotReloading.dll" />
+    <file src="../Core/HotReloading/bin/Debug/netstandard2.0/HotReloading.Core.dll" target="build/HotReloading.Core.dll" />
     <file src="../Build/HotReloading.BuildTask/bin/Debug/HotReloading.BuildTask.dll" target="build/HotReloading.BuildTask.dll" />
     <file src="../Core/HotReloading/bin/Debug/netstandard2.0/CSharpExpressions.dll" target="build/CSharpExpressions.dll" />
   </files>
