@@ -159,5 +159,19 @@ namespace HotReloading.BuildTask.Extensions
 
             return setter;
         }
+
+        public static string GetUniqueGenericParameterName(this TypeReference typeReference)
+        {
+            string name = "T";
+            int count = 0;
+
+            while (typeReference.GenericParameters.Any(x => x.Name == name))
+            {
+                count++;
+                name = "T" + count;
+            }
+
+            return name;
+        }
     }
 }

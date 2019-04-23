@@ -344,7 +344,7 @@ namespace HotReloading.BuildTask
                     .SelectMany(x => x.Methods).Any(x => AreEquals(x, method)))
                         continue;
 
-                    retVal.Add(CopyMethod1(new OverridableMethod { Method = method, DeclaringType = type.BaseType }, type, type.BaseType, md));
+                    retVal.Add(CopyMethod(new OverridableMethod { Method = method, DeclaringType = type.BaseType }, type, type.BaseType, md));
                 }
             }
 
@@ -358,27 +358,13 @@ namespace HotReloading.BuildTask
                     continue;
                 if (sealedMethods.Any(x => AreEquals(x, method.Method)))
                     continue;
-                retVal.Add(CopyMethod1(method, type, type.BaseType, md));
+                retVal.Add(CopyMethod(method, type, type.BaseType, md));
             }
 
             return retVal;
         }
 
-        private string GetUniqueGenericParameterName(TypeReference typeReference)
-        {
-            string name = "T";
-            int count = 0;
-
-            while(typeReference.GenericParameters.Any(x => x.Name == name))
-            {
-                count++;
-                name = "T" + count;
-            }
-
-            return name;
-        }
-
-        private OverridableMethod CopyMethod1(OverridableMethod overridableMethod, TypeReference targetType, TypeReference sourceType, ModuleDefinition md)
+        private OverridableMethod CopyMethod(OverridableMethod overridableMethod, TypeReference targetType, TypeReference sourceType, ModuleDefinition md)
         {
             Logger.LogMessage("\tOverriding: " + overridableMethod.Method.FullName);
             var attributes = overridableMethod.Method.Attributes & ~MethodAttributes.NewSlot | MethodAttributes.ReuseSlot;
@@ -389,7 +375,7 @@ namespace HotReloading.BuildTask
 
             foreach (var genericParameter in overridableMethod.Method.GenericParameters)
             {
-                method.GenericParameters.Add(new GenericParameter(GetUniqueGenericParameterName(targetType), method));
+                method.GenericParameters.Add(new GenericParameter(targetType.GetUniqueGenericParameterName(), method));
             }
 
             TypeReference returnType = overridableMethod.Method.ReturnType.CopyType(targetType, sourceType, md, method);
@@ -535,7 +521,7 @@ namespace HotReloading.BuildTask
             {
                 var secondLastInstruction =  instructions.ElementAt(instructions.Count - 2);
 
-                if (IsLoadInstruction(secondLastInstruction))
+                if (secondLastInstruction.IsLoadInstruction())
                     loadInstructionForReturn = secondLastInstruction;
             }
 
@@ -582,7 +568,7 @@ namespace HotReloading.BuildTask
 
             if (loadInstructionForReturn != null)
             {
-                Instruction storeInstructionForReturn = GetStoreInstruction(loadInstructionForReturn);
+                Instruction storeInstructionForReturn = loadInstructionForReturn.GetStoreInstruction();
                 composer.Append(storeInstructionForReturn);
             }
 
@@ -724,40 +710,6 @@ namespace HotReloading.BuildTask
                 type.Methods.Add(getInstanceMethod);
 
             return getInstanceMethod;
-        }
-
-        private static bool IsLoadInstruction(Instruction loadInstructionForReturn)
-        {
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_0)
-                return true;
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_1)
-                return true;
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_2)
-                return true;
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_3)
-                return true;
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_S)
-                return true;
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc)
-                return true;
-            return false;
-        }
-
-        private static Instruction GetStoreInstruction(Instruction loadInstructionForReturn)
-        {
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_0)
-                return Instruction.Create(OpCodes.Stloc_0);
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_1)
-                return Instruction.Create(OpCodes.Stloc_1);
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_2)
-                return Instruction.Create(OpCodes.Stloc_2);
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_3)
-                return Instruction.Create(OpCodes.Stloc_3);
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_S)
-                return Instruction.Create(OpCodes.Stloc_S, (VariableDefinition)loadInstructionForReturn.Operand);
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc)
-                return Instruction.Create(OpCodes.Stloc, (VariableDefinition)loadInstructionForReturn.Operand);
-            throw new Exception("Unable to get store locationn for opcode: " + loadInstructionForReturn.OpCode);
         }
     }
 }
