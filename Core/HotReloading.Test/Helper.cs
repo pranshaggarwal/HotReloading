@@ -49,7 +49,7 @@ namespace HotReloading.Test
         public static MethodDeclarationSyntax GetMethodDeclarationSyntax(CompilationUnitSyntax compilationUnit, string methodKey, SemanticModel semanticModel)
         {
             return compilationUnit.Members.OfType<NamespaceDeclarationSyntax>().First().Members.OfType<ClassDeclarationSyntax>().First()
-                .Members.OfType<MethodDeclarationSyntax>().Cast<MethodDeclarationSyntax>().FirstOrDefault(x => HotReloading.CodeChangeHandler.GetMethodKey(x.Identifier.Text,
+                .Members.OfType<MethodDeclarationSyntax>().Cast<MethodDeclarationSyntax>().FirstOrDefault(x => HotReloading.Runtime.GetMethodKey(x.Identifier.Text,
                                     x.ParameterList.Parameters.Select(p => ((Type)p.Type.GetClassType(semanticModel)).FullName).ToArray()) == methodKey);
         }
 
@@ -70,9 +70,8 @@ namespace HotReloading.Test
         public static void Setup()
         {
             Tracker.Reset();
-            RuntimeMemory.Methods.Clear();
-            CodeChangeHandler.instanceClasses.Clear();
-            StatementConverter.CodeChangeHandler.GetMethod = CodeChangeHandler.GetMethod;
+            RuntimeMemory.Reset();
+            StatementConverter.CodeChangeHandler.GetMethod = Runtime.GetMethod;
         }
     }
 }

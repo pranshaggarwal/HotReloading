@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotReloading.Core;
 
 namespace HotReloading.Test.TestCodes
 {
@@ -13,7 +14,7 @@ namespace HotReloading.Test.TestCodes
             {
                 if (instanceMethods == null)
                 {
-                    instanceMethods = CodeChangeHandler.GetInitialInstanceMethods(this);
+                    instanceMethods = Runtime.GetInitialInstanceMethods(this);
                 }
                 return instanceMethods;
             }
@@ -21,8 +22,8 @@ namespace HotReloading.Test.TestCodes
 
         public static void UpdateStaticMethod()
         {
-            var methodKey = CodeChangeHandler.GetMethodKey(nameof(UpdateStaticMethod));
-            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass), methodKey);
+            var methodKey = Runtime.GetMethodKey(nameof(UpdateStaticMethod));
+            var @delegate = Runtime.GetMethodDelegate(typeof(PublicMethodTestClass), methodKey);
 
             if (@delegate != null)
             {
@@ -35,8 +36,8 @@ namespace HotReloading.Test.TestCodes
 
         public static void AddedStaticMethodAndCalledFromSameClass1()
         {
-            var methodKey = CodeChangeHandler.GetMethodKey(nameof(AddedStaticMethodAndCalledFromSameClass1));
-            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass), methodKey);
+            var methodKey = Runtime.GetMethodKey(nameof(AddedStaticMethodAndCalledFromSameClass1));
+            var @delegate = Runtime.GetMethodDelegate(typeof(PublicMethodTestClass), methodKey);
 
             if (@delegate != null)
             {
@@ -79,8 +80,8 @@ namespace HotReloading.Test.TestCodes
 
         public static void MethodOverload()
         {
-            var methodKey = CodeChangeHandler.GetMethodKey(nameof(MethodOverload));
-            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass), nameof(MethodOverload));
+            var methodKey = Runtime.GetMethodKey(nameof(MethodOverload));
+            var @delegate = Runtime.GetMethodDelegate(typeof(PublicMethodTestClass), nameof(MethodOverload));
 
             if (@delegate != null)
             {
@@ -91,8 +92,8 @@ namespace HotReloading.Test.TestCodes
 
         public static void MethodOverload(string str)
         {
-            var methodKey = CodeChangeHandler.GetMethodKey(nameof(MethodOverload), typeof(string).FullName);
-            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass), methodKey);
+            var methodKey = Runtime.GetMethodKey(nameof(MethodOverload), typeof(string).FullName);
+            var @delegate = Runtime.GetMethodDelegate(typeof(PublicMethodTestClass), methodKey);
 
             if (@delegate != null)
             {

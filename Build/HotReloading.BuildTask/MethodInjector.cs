@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using HotReloading.BuildTask.Extensions;
+using HotReloading.Core;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Mono.Cecil;
@@ -247,7 +248,7 @@ namespace HotReloading.BuildTask
                 {
                     continue;
                 }
-                var methodKey = CodeChangeHandler.GetMethodKey(baseMethod.Name, baseMethod.Parameters.Select(x => x.ParameterType.FullName).ToArray());
+                var methodKey = Runtime.GetMethodKey(baseMethod.Name, baseMethod.Parameters.Select(x => x.ParameterType.FullName).ToArray());
                 var methodName = "HotReloadingBase_" + baseMethod.Name;
                 var hotReloadingBaseMethod = new MethodDefinition(methodName, MethodAttributes.Private | MethodAttributes.HideBySig, md.ImportReference(typeof(void)));
 
@@ -442,8 +443,8 @@ namespace HotReloading.BuildTask
                 .LoadArg_0()
                 .StaticCall(new Method
                 {
-                    ParentType = typeof(CodeChangeHandler),
-                    MethodName = nameof(CodeChangeHandler.GetInitialInstanceMethods),
+                    ParentType = typeof(Runtime),
+                    MethodName = nameof(Runtime.GetInitialInstanceMethods),
                     ParameterSignature = new[] { typeof(IInstanceClass) }
                 })
                 .Store(fieldReference)
@@ -555,8 +556,8 @@ namespace HotReloading.BuildTask
                 .LoadArray(parameters.Length, typeof(string), parameters.Select(x => x.ParameterType.FullName).ToArray())
                 .StaticCall(new Method
                 {
-                    ParentType = typeof(CodeChangeHandler),
-                    MethodName = nameof(CodeChangeHandler.GetMethodKey),
+                    ParentType = typeof(Runtime),
+                    MethodName = nameof(Runtime.GetMethodKey),
                     ParameterSignature = new[] { typeof(string), typeof(string[]) }
                 }).
                 Store(methodKeyVariable)
@@ -587,8 +588,8 @@ namespace HotReloading.BuildTask
                 .LoadArray(parameters.Length, typeof(string), parameters.Select(x => x.ParameterType.FullName).ToArray())
                 .StaticCall(new Method
                 {
-                    ParentType = typeof(CodeChangeHandler),
-                    MethodName = nameof(CodeChangeHandler.GetMethodKey),
+                    ParentType = typeof(Runtime),
+                    MethodName = nameof(Runtime.GetMethodKey),
                     ParameterSignature = new[] { typeof(string), typeof(string[])}
                 }).
                 Store(methodKeyVariable)
@@ -602,8 +603,8 @@ namespace HotReloading.BuildTask
                             .Load(methodKeyVariable)
                             .StaticCall(new Method
                             {
-                                ParentType = typeof(CodeChangeHandler),
-                                MethodName = nameof(CodeChangeHandler.GetMethodDelegate),
+                                ParentType = typeof(Runtime),
+                                MethodName = nameof(Runtime.GetMethodDelegate),
                                 ParameterSignature = new[] { typeof(Type), typeof(string) }
                             })
                             .Store(delegateVariable)

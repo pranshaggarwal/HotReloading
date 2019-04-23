@@ -10,9 +10,8 @@ using StatementConverter.ExpressionInterpreter;
 
 namespace HotReloading
 {
-    public static class CodeChangeHandler
+    public static class Runtime
     {
-        public static List<IInstanceClass> instanceClasses = new List<IInstanceClass>();
 
         public static void HandleCodeChange(CodeChange codeChange)
         {
@@ -45,7 +44,7 @@ namespace HotReloading
 
             if (!method.IsStatic)
             {
-                foreach (var list in instanceClasses.Where(x => x.GetType() == method.ParentType))
+                foreach (var list in RuntimeMemory.MemoryInstances.Where(x => x.GetType() == method.ParentType))
                 {
                     if (list.InstanceMethods.ContainsKey(methodKey))
                     {
@@ -97,8 +96,8 @@ namespace HotReloading
 
         public static Dictionary<string, Delegate> GetInitialInstanceMethods(IInstanceClass instanceClass)
         {
-            if(!instanceClasses.Contains(instanceClass))
-                instanceClasses.Add(instanceClass);
+            if(!RuntimeMemory.MemoryInstances.Contains(instanceClass))
+                RuntimeMemory.MemoryInstances.Add(instanceClass);
             var type = instanceClass.GetType();
             var instanceMethods = new Dictionary<string, Delegate>();
 

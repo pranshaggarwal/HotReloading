@@ -31,8 +31,7 @@ namespace HotReloading.BuildTask.Test
 
         public static void Reset()
         {
-            CodeChangeHandler.instanceClasses.Clear();
-            RuntimeMemory.Methods.Clear();
+            RuntimeMemory.Reset();
             Tracker.LastValue = null;
         }
     }

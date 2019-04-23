@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotReloading.Core;
 
 namespace HotReloading.Test.TestCodes
 {
@@ -13,7 +14,7 @@ namespace HotReloading.Test.TestCodes
             {
                 if (instanceMethods == null)
                 {
-                    instanceMethods = CodeChangeHandler.GetInitialInstanceMethods(this);
+                    instanceMethods = Runtime.GetInitialInstanceMethods(this);
                 }
                 return instanceMethods;
             }
@@ -21,8 +22,8 @@ namespace HotReloading.Test.TestCodes
 
         public static void AddedStaticMethodAndCalledFromAnotherClass()
         {
-            var methodKey = CodeChangeHandler.GetMethodKey(nameof(AddedStaticMethodAndCalledFromAnotherClass));
-            var @delegate = CodeChangeHandler.GetMethodDelegate(typeof(PublicMethodTestClass1), methodKey);
+            var methodKey = Runtime.GetMethodKey(nameof(AddedStaticMethodAndCalledFromAnotherClass));
+            var @delegate = Runtime.GetMethodDelegate(typeof(PublicMethodTestClass1), methodKey);
 
             if (@delegate != null)
             {

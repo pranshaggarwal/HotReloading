@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using HotReloading;
+using HotReloading.Core;
 
 namespace IInstanceClassAleadyImplmentedTest
 {
@@ -14,7 +15,7 @@ namespace IInstanceClassAleadyImplmentedTest
             {
                 if (instanceMethods == null)
                 {
-                    instanceMethods = CodeChangeHandler.GetInitialInstanceMethods(this);
+                    instanceMethods = Runtime.GetInitialInstanceMethods(this);
                 }
                 return instanceMethods;
             }

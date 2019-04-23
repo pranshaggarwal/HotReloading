@@ -83,9 +83,8 @@ namespace StatementConverter.Test
         public static void Setup()
         {
             Tracker.Reset();
-            RuntimeMemory.Methods.Clear();
-            HotReloading.CodeChangeHandler.instanceClasses.Clear();
-            CodeChangeHandler.GetMethod = HotReloading.CodeChangeHandler.GetMethod;
+            RuntimeMemory.Reset();
+            CodeChangeHandler.GetMethod = HotReloading.Runtime.GetMethod;
         }
     }
 }

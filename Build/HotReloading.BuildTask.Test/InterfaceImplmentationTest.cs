@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using FluentAssertions;
+using HotReloading.Core;
 using NUnit.Framework;
 
 namespace HotReloading.BuildTask.Test

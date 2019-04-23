@@ -26,7 +26,7 @@ namespace HotReloading.Test
         {
             var method = Helper.GetMethod("PublicMethodTestClass", "UpdateStaticMethod");
 
-            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            Runtime.HandleCodeChange(new Core.CodeChange
             {
                 Methods = new System.Collections.Generic.List<Core.Method>
                 {
@@ -45,7 +45,7 @@ namespace HotReloading.Test
             var existingMethod = Helper.GetMethod("PublicMethodTestClass", "AddedStaticMethodAndCalledFromSameClass1");
             var newMethod = Helper.GetMethod("PublicMethodTestClass", "AddedStaticMethodAndCalledFromSameClass2");
 
-            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            Runtime.HandleCodeChange(new Core.CodeChange
             {
                 Methods = new System.Collections.Generic.List<Core.Method>
                 {
@@ -63,7 +63,7 @@ namespace HotReloading.Test
         {
             var method = Helper.GetMethod("PublicMethodTestClass1", "AddedStaticMethodAndCalledFromAnotherClass");
 
-            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            Runtime.HandleCodeChange(new Core.CodeChange
             {
                 Methods = new System.Collections.Generic.List<Core.Method>
                 {
@@ -81,7 +81,7 @@ namespace HotReloading.Test
         {
             var method = Helper.GetMethod("PublicMethodTestClass", "UpdateInstanceMethod");
 
-            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            Runtime.HandleCodeChange(new Core.CodeChange
             {
                 Methods = new System.Collections.Generic.List<Core.Method>
                 {
@@ -102,7 +102,7 @@ namespace HotReloading.Test
             var existingMethod = Helper.GetMethod("PublicMethodTestClass", "AddedInstanceMethodAndCalledFromSameClass");
             var newMethod = Helper.GetMethod("PublicMethodTestClass", "AddedInstanceMethodAndCalledFromSameClass1");
 
-            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            Runtime.HandleCodeChange(new Core.CodeChange
             {
                 Methods = new System.Collections.Generic.List<Core.Method>
                 {
@@ -123,7 +123,7 @@ namespace HotReloading.Test
             var instanceMethod = Helper.GetMethod("PublicMethodTestClass", "AddedStaticMethodAndCalledFromInstanceMethod");
             var newMethod = Helper.GetMethod("PublicMethodTestClass", "AddedStaticMethodAndCalledFromInstanceMethod1");
 
-            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            Runtime.HandleCodeChange(new Core.CodeChange
             {
                 Methods = new System.Collections.Generic.List<Core.Method>
                 {
@@ -143,7 +143,7 @@ namespace HotReloading.Test
         {
             var method = Helper.GetMethod("PublicMethodTestClass1", "AddedInstanceMethodAndCalledFromAnotherClass");
 
-            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            Runtime.HandleCodeChange(new Core.CodeChange
             {
                 Methods = new System.Collections.Generic.List<Core.Method>
                 {
@@ -161,10 +161,10 @@ namespace HotReloading.Test
         [Test]
         public void MethodOverload1()
         {
-            var method1 = Helper.GetMethod("PublicMethodTestClass", HotReloading.CodeChangeHandler.GetMethodKey("MethodOverload"));
-            var method2 = Helper.GetMethod("PublicMethodTestClass",  HotReloading.CodeChangeHandler.GetMethodKey("MethodOverload", typeof(string).FullName));
+            var method1 = Helper.GetMethod("PublicMethodTestClass", HotReloading.Runtime.GetMethodKey("MethodOverload"));
+            var method2 = Helper.GetMethod("PublicMethodTestClass",  HotReloading.Runtime.GetMethodKey("MethodOverload", typeof(string).FullName));
 
-            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            Runtime.HandleCodeChange(new Core.CodeChange
             {
                 Methods = new System.Collections.Generic.List<Core.Method>
                 {
@@ -180,10 +180,10 @@ namespace HotReloading.Test
         [Test]
         public void MethodOverload2()
         {
-            var method1 = Helper.GetMethod("PublicMethodTestClass", HotReloading.CodeChangeHandler.GetMethodKey("MethodOverload"));
-            var method2 = Helper.GetMethod("PublicMethodTestClass", HotReloading.CodeChangeHandler.GetMethodKey("MethodOverload", typeof(string).FullName));
+            var method1 = Helper.GetMethod("PublicMethodTestClass", HotReloading.Runtime.GetMethodKey("MethodOverload"));
+            var method2 = Helper.GetMethod("PublicMethodTestClass", HotReloading.Runtime.GetMethodKey("MethodOverload", typeof(string).FullName));
 
-            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            Runtime.HandleCodeChange(new Core.CodeChange
             {
                 Methods = new System.Collections.Generic.List<Core.Method>
                 {
