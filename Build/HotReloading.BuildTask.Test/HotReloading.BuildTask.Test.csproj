@@ -76,6 +76,7 @@
     <Compile Include="WrapStaticMethodTest.cs" />
     <Compile Include="WrapInstanceMethodTest.cs" />
     <Compile Include="WrapOverrideMethodTest.cs" />
+    <Compile Include="RandomGenericTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -140,6 +141,10 @@
     <ProjectReference Include="..\BuildSamples\WrapOverrideMethodWithGenericNested\WrapOverrideMethodWithGenericNested.csproj">
       <Project>{23987F7B-1D25-4A22-ACE3-FF37785DA4E7}</Project>
       <Name>WrapOverrideMethodWithGenericNested</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\RandomGenericTest\RandomGenericTest.csproj">
+      <Project>{FD78EA86-74C0-4F1E-9478-A9F44A3468A1}</Project>
+      <Name>RandomGenericTest</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

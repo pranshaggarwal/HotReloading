@@ -133,12 +133,12 @@ namespace HotReloading.BuildTask
                     if (method.Parameters.Any(x => x.ParameterType is ByReferenceType))
                         continue;
 
-                    WrapMethod(md, type, method, getInstanceMethod.GetReference(type, type, md));
+                    WrapMethod(md, type, method, getInstanceMethod.GetReference1(type, md));
                 }
 
                 if (!type.IsAbstract && !type.IsSealed)
                 {
-                    AddOverrideMethod(type, md, getInstanceMethod.GetReference(type, type, md));
+                    AddOverrideMethod(type, md, getInstanceMethod.GetReference1(type, md));
                 }
             }
 
@@ -235,6 +235,7 @@ namespace HotReloading.BuildTask
 
                     WrapMethod(md, type, method, getInstanceMethod);
 
+                    method.DeclaringType = type;
                     type.Methods.Add(method);
                 }
             }
@@ -255,10 +256,10 @@ namespace HotReloading.BuildTask
                     hotReloadingBaseMethod.GenericParameters.Add(parameter);
                 }
 
-                hotReloadingBaseMethod.ReturnType = baseMethod.ReturnType.CopyType(md, type, hotReloadingBaseMethod);
+                hotReloadingBaseMethod.ReturnType = baseMethod.ReturnType;
                 foreach (var parameter in baseMethod.Parameters)
                 {
-                    TypeReference parameterType = parameter.ParameterType.CopyType(md, type, hotReloadingBaseMethod);
+                    TypeReference parameterType = parameter.ParameterType;
                     hotReloadingBaseMethod.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType)
                     {
                         IsIn = parameter.IsIn,
@@ -304,6 +305,7 @@ namespace HotReloading.BuildTask
             public MethodDefinition Method;
             public OverridableMethod BaseMethod;
             public MethodReference MethodReference;
+            public TypeReference DeclaringType;
 
         }
         private IEnumerable<OverridableMethod> GetOverridableMethods(TypeDefinition type, ModuleDefinition md)
@@ -342,7 +344,7 @@ namespace HotReloading.BuildTask
                     .SelectMany(x => x.Methods).Any(x => AreEquals(x, method)))
                         continue;
 
-                    retVal.Add(CopyMethod(type, new OverridableMethod { Method = method }, md));
+                    retVal.Add(CopyMethod1(new OverridableMethod { Method = method, DeclaringType = type.BaseType }, type, type.BaseType, md));
                 }
             }
 
@@ -356,10 +358,48 @@ namespace HotReloading.BuildTask
                     continue;
                 if (sealedMethods.Any(x => AreEquals(x, method.Method)))
                     continue;
-                retVal.Add(CopyMethod(type, method, md));
+                retVal.Add(CopyMethod1(method, type, type.BaseType, md));
             }
 
             return retVal;
+        }
+
+        private OverridableMethod CopyMethod1(OverridableMethod overridableMethod, TypeReference targetType, TypeReference sourceType, ModuleDefinition md)
+        {
+            Logger.LogMessage("\tOverriding: " + overridableMethod.Method.FullName);
+            var attributes = overridableMethod.Method.Attributes & ~MethodAttributes.NewSlot | MethodAttributes.ReuseSlot;
+            var method = new MethodDefinition(overridableMethod.Method.Name, attributes, md.ImportReference(typeof(void)));
+            method.ImplAttributes = overridableMethod.Method.ImplAttributes;
+            method.SemanticsAttributes = overridableMethod.Method.SemanticsAttributes;
+            method.DeclaringType = targetType.Resolve();
+
+            foreach (var genericParameter in overridableMethod.Method.GenericParameters)
+            {
+                method.GenericParameters.Add(new GenericParameter(genericParameter.Name, method));
+            }
+
+            TypeReference returnType = overridableMethod.Method.ReturnType.CopyType1(targetType, sourceType, md, method);
+
+            method.ReturnType = returnType;
+
+            foreach (var parameter in overridableMethod.Method.Parameters)
+            {
+                TypeReference parameterType = parameter.ParameterType.CopyType1(targetType, sourceType, md, method);
+                method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType)
+                {
+                    IsOptional = parameter.IsOptional,
+                    IsIn = parameter.IsIn,
+                    IsOut = parameter.IsOut
+                });
+            }
+             var baseMethodReference = overridableMethod.Method.GetBaseReference(targetType, sourceType, md);  
+             
+             return new OverridableMethod
+            {
+                Method = method,
+                BaseMethod = overridableMethod,
+                MethodReference = baseMethodReference
+            };
         }
 
         private OverridableMethod CopyMethod(TypeDefinition type, OverridableMethod overridableMethod, ModuleDefinition md)
@@ -369,7 +409,12 @@ namespace HotReloading.BuildTask
             var method = new MethodDefinition(overridableMethod.Method.Name, attributes, md.ImportReference(typeof(void)));
             method.ImplAttributes = overridableMethod.Method.ImplAttributes;
             method.SemanticsAttributes = overridableMethod.Method.SemanticsAttributes;
-            method.DeclaringType = type;
+            method.DeclaringType = overridableMethod.Method.DeclaringType;
+
+            //if (overridableMethod.Method.HasGenericParameters)
+            //    method.DeclaringType = overridableMethod.Method.DeclaringType;
+            //else
+                //method.DeclaringType = type;
 
             foreach (var genericParameter in overridableMethod.Method.GenericParameters)
             {
@@ -445,7 +490,7 @@ namespace HotReloading.BuildTask
             {
                 type.Interfaces.Add(new InterfaceImplementation(md.ImportReference(typeof(IInstanceClass))));
                 PropertyDefinition instanceMethods = CreateInstanceMethodsProperty(md, type, out instanceMethodGetters);
-                getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods.GetMethod.GetReference(type, type, md), type, hasImplementedIInstanceClass);
+                getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods.GetMethod.GetReference1(type, md),type,hasImplementedIInstanceClass);
             }
         }
 

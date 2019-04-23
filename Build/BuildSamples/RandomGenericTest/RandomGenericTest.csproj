@@ -5,6 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="RandomTests\" />
+    <ProjectReference Include="..\BaseAssembly\BaseAssembly.csproj" />
   </ItemGroup>
 </Project>
