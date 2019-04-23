@@ -112,7 +112,7 @@ namespace HotReloading.BuildTask
                 MethodDefinition getInstanceMethod = null;
                 MethodDefinition instanceMethodGetters = null;
 
-                if (type.IsDelegate(md) || type.IsEnum)
+                if (type.IsDelegate(md) || type.IsEnum || type.IsValueType)
                     continue;
 
                 var hasImplementedIInstanceClass = type.HasImplementedIInstanceClass(iInstanceClassType, out getInstanceMethod, out instanceMethodGetters);
