@@ -133,12 +133,12 @@ namespace HotReloading.BuildTask
                     if (method.Parameters.Any(x => x.ParameterType is ByReferenceType))
                         continue;
 
-                    WrapMethod(md, type, method, getInstanceMethod.GetReference1(type, md));
+                    WrapMethod(md, type, method, getInstanceMethod.GetReference(type, md));
                 }
 
                 if (!type.IsAbstract && !type.IsSealed)
                 {
-                    AddOverrideMethod(type, md, getInstanceMethod.GetReference1(type, md));
+                    AddOverrideMethod(type, md, getInstanceMethod.GetReference(type, md));
                 }
             }
 
@@ -392,13 +392,13 @@ namespace HotReloading.BuildTask
                 method.GenericParameters.Add(new GenericParameter(GetUniqueGenericParameterName(targetType), method));
             }
 
-            TypeReference returnType = overridableMethod.Method.ReturnType.CopyType1(targetType, sourceType, md, method);
+            TypeReference returnType = overridableMethod.Method.ReturnType.CopyType(targetType, sourceType, md, method);
 
             method.ReturnType = returnType;
 
             foreach (var parameter in overridableMethod.Method.Parameters)
             {
-                TypeReference parameterType = parameter.ParameterType.CopyType1(targetType, sourceType, md, method);
+                TypeReference parameterType = parameter.ParameterType.CopyType(targetType, sourceType, md, method);
                 method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType)
                 {
                     IsOptional = parameter.IsOptional,
@@ -415,51 +415,6 @@ namespace HotReloading.BuildTask
                 MethodReference = baseMethodReference
             };
         }
-
-        private OverridableMethod CopyMethod(TypeDefinition type, OverridableMethod overridableMethod, ModuleDefinition md)
-        {
-            Logger.LogMessage("\tOverriding: " + overridableMethod.Method.FullName);
-            var attributes = overridableMethod.Method.Attributes & ~MethodAttributes.NewSlot | MethodAttributes.ReuseSlot;
-            var method = new MethodDefinition(overridableMethod.Method.Name, attributes, md.ImportReference(typeof(void)));
-            method.ImplAttributes = overridableMethod.Method.ImplAttributes;
-            method.SemanticsAttributes = overridableMethod.Method.SemanticsAttributes;
-            method.DeclaringType = overridableMethod.Method.DeclaringType;
-
-            //if (overridableMethod.Method.HasGenericParameters)
-            //    method.DeclaringType = overridableMethod.Method.DeclaringType;
-            //else
-                //method.DeclaringType = type;
-
-            foreach (var genericParameter in overridableMethod.Method.GenericParameters)
-            {
-                method.GenericParameters.Add(new GenericParameter(genericParameter.Name, method));
-            }
-
-            TypeReference returnType = overridableMethod.Method.ReturnType.CopyType(md, type, method);
-
-            method.ReturnType = returnType;
-
-            foreach (var parameter in overridableMethod.Method.Parameters)
-            {
-                TypeReference parameterType = parameter.ParameterType.CopyType(md, type, method);
-                method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType)
-                { 
-                    IsOptional = parameter.IsOptional,
-                    IsIn = parameter.IsIn,
-                    IsOut = parameter.IsOut
-                });
-            }
-
-            var baseMethodReference = overridableMethod.Method.GetReference(type, type.BaseType, md, false);
-
-            return new OverridableMethod
-            {
-                Method = method,
-                BaseMethod = overridableMethod,
-                MethodReference = baseMethodReference
-            };
-        }
-
 
         private MethodReference GetBaseMethod(OverridableMethod overridableMethod)
         {
@@ -504,7 +459,7 @@ namespace HotReloading.BuildTask
             {
                 type.Interfaces.Add(new InterfaceImplementation(md.ImportReference(typeof(IInstanceClass))));
                 PropertyDefinition instanceMethods = CreateInstanceMethodsProperty(md, type, out instanceMethodGetters);
-                getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods.GetMethod.GetReference1(type, md),type,hasImplementedIInstanceClass);
+                getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods.GetMethod.GetReference(type, md),type,hasImplementedIInstanceClass);
             }
         }
 
