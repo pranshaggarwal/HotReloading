@@ -23,7 +23,7 @@ namespace HotReloading.BuildTask.Extensions
         {
             if (typeDefinition.Interfaces.Any(x => x.InterfaceType.FullName == iInstanceClassType.FullName))
             {
-                getInstanceMethod = typeDefinition.Methods.FirstOrDefault(x => x.Name == "GetInstanceMethod");
+                getInstanceMethod = typeDefinition.Methods.FirstOrDefault(x => x.Name == Constants.GetInstanceMethodName);
                 instanceMethodGetters = typeDefinition.Methods.FirstOrDefault(x => x.Name == "get_InstanceMethods");
                 return true;
             }
