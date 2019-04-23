@@ -104,5 +104,33 @@ namespace HotReloading.BuildTask.Extensions
             return reference;
         }
 
+        public static bool IsEqual(this MethodDefinition method1, MethodDefinition method2)
+        {
+            if (method1.Name != method2.Name)
+                return false;
+
+            if (method1.Parameters.Count != method2.Parameters.Count)
+                return false;
+
+            for (var i = 0; i < method1.Parameters.Count; i++)
+            {
+                if (method1.Parameters[i].ParameterType.Name != method2.Parameters[i].ParameterType.Name)
+                    return false;
+
+                var genericInstanceType1 = method1.Parameters[i].ParameterType as GenericInstanceType;
+                var genericInstanceType2 = method2.Parameters[i].ParameterType as GenericInstanceType;
+
+                if (genericInstanceType1 == null && genericInstanceType2 == null)
+                    continue;
+
+                if (genericInstanceType1 == null || genericInstanceType2 == null)
+                    return false;
+
+                if (genericInstanceType1.GenericArguments.Count != genericInstanceType2.GenericArguments.Count)
+                    return false;
+            }
+
+            return true;
+        }
     }
 }

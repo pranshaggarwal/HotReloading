@@ -199,7 +199,7 @@ namespace HotReloading.BuildTask
                     continue;
                 baseMethodCalls.Add(baseMethod);
 
-                if (!type.Methods.Any(x => AreEquals(x, overridableMethod.Method)))
+                if (!type.Methods.Any(x => x.IsEqual(overridableMethod.Method)))
                 {
                     var method = overridableMethod.Method;
 
@@ -341,7 +341,7 @@ namespace HotReloading.BuildTask
                     //Ignore Xamarin.iOS protocols method
                     if (baseTypeDefinition.Interfaces.Where(x => x.InterfaceType.Name.EndsWith("Delegate", StringComparison.InvariantCulture))
                     .Select(x => x.InterfaceType).OfType<TypeDefinition>()
-                    .SelectMany(x => x.Methods).Any(x => AreEquals(x, method)))
+                    .SelectMany(x => x.Methods).Any(x => x.IsEqual(method)))
                         continue;
 
                     retVal.Add(CopyMethod(new OverridableMethod { Method = method, DeclaringType = type.BaseType }, type, type.BaseType, md));
@@ -354,9 +354,9 @@ namespace HotReloading.BuildTask
 
             foreach(var method in baseOverriableMethods)
             {
-                if (retVal.Any(x => AreEquals(x.Method, method.Method)))
+                if (retVal.Any(x => x.Method.IsEqual(method.Method)))
                     continue;
-                if (sealedMethods.Any(x => AreEquals(x, method.Method)))
+                if (sealedMethods.Any(x => x.IsEqual(method.Method)))
                     continue;
                 retVal.Add(CopyMethod(method, type, type.BaseType, md));
             }
@@ -408,35 +408,6 @@ namespace HotReloading.BuildTask
                 return overridableMethod.MethodReference;
 
             return GetBaseMethod(overridableMethod.BaseMethod);
-        }
-
-        private static bool AreEquals(MethodDefinition method1, MethodDefinition method2)
-        {
-            if (method1.Name != method2.Name)
-                return false;
-
-            if (method1.Parameters.Count != method2.Parameters.Count)
-                return false;
-
-            for (var i = 0; i < method1.Parameters.Count; i++)
-            {
-                if (method1.Parameters[i].ParameterType.Name != method2.Parameters[i].ParameterType.Name)
-                    return false;
-
-                var genericInstanceType1 = method1.Parameters[i].ParameterType as GenericInstanceType;
-                var genericInstanceType2 = method2.Parameters[i].ParameterType as GenericInstanceType;
-
-                if (genericInstanceType1 == null && genericInstanceType2 == null)
-                    continue;
-
-                if (genericInstanceType1 == null || genericInstanceType2 == null)
-                    return false;
-
-                if (genericInstanceType1.GenericArguments.Count != genericInstanceType2.GenericArguments.Count)
-                    return false;
-            }
-
-            return true;
         }
 
         private static void ImplementIInstanceClass(ModuleDefinition md, TypeDefinition type, ref MethodDefinition getInstanceMethod, ref MethodDefinition instanceMethodGetters, bool hasImplementedIInstanceClass)
