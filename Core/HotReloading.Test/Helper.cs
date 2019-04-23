@@ -70,7 +70,7 @@ namespace HotReloading.Test
         public static void Setup()
         {
             Tracker.Reset();
-            CodeChangeHandler.Methods.Clear();
+            RuntimeMemory.Methods.Clear();
             CodeChangeHandler.instanceClasses.Clear();
             StatementConverter.CodeChangeHandler.GetMethod = CodeChangeHandler.GetMethod;
         }

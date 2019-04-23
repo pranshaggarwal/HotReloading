@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using BaseAssembly;
 using FluentAssertions;
+using HotReloading.Core;
 using Moq;
 using NUnit.Framework;
 
@@ -112,7 +113,7 @@ namespace HotReloading.BuildTask.Test
             {
                 methodContainer.Object
             };
-            CodeChangeHandler.Methods.Add(type, methods);
+            RuntimeMemory.Methods.Add(type, methods);
         }
     }
 }

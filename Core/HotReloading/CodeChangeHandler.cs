@@ -22,16 +22,14 @@ namespace HotReloading
             }
         }
 
-        public static Dictionary<Type, List<IMethodContainer>> Methods { get; private set; } = new Dictionary<Type, List<IMethodContainer>>();
-
         private static void HandleMethodChange(Method method)
         {
-            if(!Methods.ContainsKey(method.ParentType))
+            if(!RuntimeMemory.Methods.ContainsKey(method.ParentType))
             {
-                Methods.Add(method.ParentType, new List<IMethodContainer>());
+                RuntimeMemory.Methods.Add(method.ParentType, new List<IMethodContainer>());
             }
 
-            var methods = Methods[method.ParentType];
+            var methods = RuntimeMemory.Methods[method.ParentType];
 
             var methodKey = GetMethodKey(method);
 
@@ -80,16 +78,16 @@ namespace HotReloading
         {
             Debug.WriteLine("GetMethodDelegate called");
 
-            if(Methods.ContainsKey(parentType))
-                return Methods[parentType].SingleOrDefault(x => GetMethodKey(x.Method) == key)?.GetDelegate();
+            if(RuntimeMemory.Methods.ContainsKey(parentType))
+                return RuntimeMemory.Methods[parentType].SingleOrDefault(x => GetMethodKey(x.Method) == key)?.GetDelegate();
             return null;
         }
 
         public static CSharpLamdaExpression GetMethod(Type @class, string key)
         {
-            if(Methods.ContainsKey(@class))
+            if(RuntimeMemory.Methods.ContainsKey(@class))
             {
-                var method = Methods[@class].SingleOrDefault(x => GetMethodKey(x.Method) == key);
+                var method = RuntimeMemory.Methods[@class].SingleOrDefault(x => GetMethodKey(x.Method) == key);
                 if (method != null)
                     return method.GetExpression();
             }
@@ -104,8 +102,8 @@ namespace HotReloading
             var type = instanceClass.GetType();
             var instanceMethods = new Dictionary<string, Delegate>();
 
-            if (Methods.ContainsKey(type))
-                foreach (var instanceMethod in Methods[type])
+            if (RuntimeMemory.Methods.ContainsKey(type))
+                foreach (var instanceMethod in RuntimeMemory.Methods[type])
                     instanceMethods.Add(GetMethodKey(instanceMethod.Method), instanceMethod.GetDelegate());
 
             return instanceMethods;

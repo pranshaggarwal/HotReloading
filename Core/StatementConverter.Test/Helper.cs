@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using CSharpExpressions.Microsoft.CSharp;
+using HotReloading.Core;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -82,7 +83,7 @@ namespace StatementConverter.Test
         public static void Setup()
         {
             Tracker.Reset();
-            HotReloading.CodeChangeHandler.Methods.Clear();
+            RuntimeMemory.Methods.Clear();
             HotReloading.CodeChangeHandler.instanceClasses.Clear();
             CodeChangeHandler.GetMethod = HotReloading.CodeChangeHandler.GetMethod;
         }

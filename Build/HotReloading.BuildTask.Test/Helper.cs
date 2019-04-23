@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using BaseAssembly;
+using HotReloading.Core;
 
 namespace HotReloading.BuildTask.Test
 {
@@ -31,7 +32,7 @@ namespace HotReloading.BuildTask.Test
         public static void Reset()
         {
             CodeChangeHandler.instanceClasses.Clear();
-            CodeChangeHandler.Methods.Clear();
+            RuntimeMemory.Methods.Clear();
             Tracker.LastValue = null;
         }
     }
