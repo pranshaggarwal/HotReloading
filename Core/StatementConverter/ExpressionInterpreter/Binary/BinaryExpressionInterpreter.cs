@@ -139,8 +139,8 @@ namespace StatementConverter.ExpressionInterpreter
                     {
                         var left1 = Expression.Convert(left, Enum.GetUnderlyingType(left.Type));
                         var right1 = Expression.Convert(convertedRight, Enum.GetUnderlyingType(convertedRight.Type));
-                        var orExpression = Expression.AndAssign(left1, right1);
-                        return Expression.Convert(orExpression, Enum.GetUnderlyingType(left.Type));
+                        var orExpression = Expression.And(left1, right1);
+                        return Expression.Assign(left, Expression.Convert(orExpression, left.Type));
                     }
                     return Expression.AndAssign(left, convertedRight);
                 case BinaryOperand.BitwiseOrAssign:
@@ -148,8 +148,8 @@ namespace StatementConverter.ExpressionInterpreter
                     {
                         var left1 = Expression.Convert(left, Enum.GetUnderlyingType(left.Type));
                         var right1 = Expression.Convert(convertedRight, Enum.GetUnderlyingType(convertedRight.Type));
-                        var orExpression = Expression.OrAssign(left1, right1);
-                        return Expression.Convert(orExpression, Enum.GetUnderlyingType(left.Type));
+                        var orExpression = Expression.Or(left1, right1);
+                        return Expression.Assign(left, Expression.Convert(orExpression, left.Type));
                     }
                     return Expression.OrAssign(left, convertedRight);
                 case BinaryOperand.XorAssign:
@@ -157,8 +157,8 @@ namespace StatementConverter.ExpressionInterpreter
                     {
                         var left1 = Expression.Convert(left, Enum.GetUnderlyingType(left.Type));
                         var right1 = Expression.Convert(convertedRight, Enum.GetUnderlyingType(convertedRight.Type));
-                        var orExpression = Expression.ExclusiveOrAssign(left1, right1);
-                        return Expression.Convert(orExpression, Enum.GetUnderlyingType(left.Type));
+                        var orExpression = Expression.ExclusiveOr(left1, right1);
+                        return Expression.Assign(left, Expression.Convert(orExpression, left.Type));
                     }
                     return Expression.ExclusiveOrAssign(left, convertedRight);
                 case BinaryOperand.LeftShiftAssign:

@@ -153,10 +153,30 @@ namespace StatementConverter.Test
             Tracker.Call(t);
         }
 
+        public static void BitwiseOrEnum()
+        {
+            CustomEnum t = CustomEnum.Value1 | CustomEnum.Value2;
+            Tracker.Call((int)t);
+        }
+
         public static void BitwiseOrAssign()
         {
             var t = 0b0101;
             t |= 0b1010;
+            Tracker.Call(t);
+        }
+
+        public static void BitwiseOrAddEnumValue()
+        {
+            CustomEnum t = CustomEnum.Value1;
+            t |= CustomEnum.Value2;
+            Tracker.Call((int)t);
+        }
+
+        public static void BitwiseOrRemoveEnumValue()
+        {
+            CustomEnum t = CustomEnum.Value1 | CustomEnum.Value2;
+            t &= ~CustomEnum.Value2;
             Tracker.Call(t);
         }
 

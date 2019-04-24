@@ -40,9 +40,15 @@ namespace StatementConverter.ExpressionInterpreter
                                             GetExpression(
                                                 unaryStatement.Operand));
                 case UnaryOperand.OnesComplement:
-                    return Expression.OnesComplement(expressionInterpreterHandler
+                    var operand = expressionInterpreterHandler
                                                     .GetExpression(
-                                                        unaryStatement.Operand));
+                                                        unaryStatement.Operand);
+                    if(operand.Type.IsEnum)
+                    {
+                        var operand1 = Expression.Convert(operand, Enum.GetUnderlyingType(operand.Type));
+                        return Expression.OnesComplement(operand1);
+                    }
+                    return Expression.OnesComplement(operand);
                 default:
                     throw new NotSupportedException(unaryStatement.Operand + " is not suppoted unary statement");
             }

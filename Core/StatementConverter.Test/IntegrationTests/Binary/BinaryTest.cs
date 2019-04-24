@@ -302,6 +302,18 @@ namespace StatementConverter.Test
         }
 
         [Test]
+        public void TestBitwiseOrEnum()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("BinaryTestClass", "BitwiseOrEnum");
+
+            var del = lamdaExpression.Compile();
+
+            del.DynamicInvoke();
+
+            Tracker.LastValue.Should().Be(3);
+        }
+
+        [Test]
         public void TestBitwiseOrAssign()
         {
             var lamdaExpression = Helper.GetLamdaExpression("BinaryTestClass", "BitwiseOrAssign");
@@ -311,6 +323,30 @@ namespace StatementConverter.Test
             del.DynamicInvoke();
 
             Tracker.LastValue.Should().Be(0b1111);
+        }
+
+        [Test]
+        public void TestBitwiseOrAddEnumValue()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("BinaryTestClass", "BitwiseOrAddEnumValue");
+
+            var del = lamdaExpression.Compile();
+
+            del.DynamicInvoke();
+
+            Tracker.LastValue.Should().Be(3);
+        }
+
+        [Test]
+        public void TestBitwiseOrRemoveEnumValue()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("BinaryTestClass", "BitwiseOrRemoveEnumValue");
+
+            var del = lamdaExpression.Compile();
+
+            del.DynamicInvoke();
+
+            Tracker.LastValue.Should().Be(1);
         }
 
         [Test]
