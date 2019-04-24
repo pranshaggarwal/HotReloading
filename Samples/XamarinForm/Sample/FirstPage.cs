@@ -12,11 +12,16 @@ namespace Sample
             SetupView();
         }
 
+        public void HotReloading_Init()
+        {
+            SetupView();
+        }
+
         public void SetupView()
         {
             button = new Button()
             {
-                Text = "Click Me",
+                Text = "Click Me1",
                 TextColor = Color.Red,
                 FontAttributes = FontAttributes.Italic,
                 FontSize = 24
