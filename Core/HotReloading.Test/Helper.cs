@@ -9,19 +9,21 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using StatementConverter.ExpressionInterpreter;
+using StatementConverter.Extensions;
 using StatementConverter.StatementInterpreter;
 
 namespace HotReloading.Test
 {
     public static class Helper
     {
-        public static Method GetMethod(string codeFile, string methodName)
+        public static Method GetMethod(string codeFile, string methodKey)
         {
             var syntaxTree = GetSyntaxTree(codeFile);
 
-            var mds = GetMethodDeclarationSyntax((CompilationUnitSyntax)syntaxTree.GetRoot(), methodName);
-
             var semanticModel = GetSemanticModel(syntaxTree);
+
+            var mds = GetMethodDeclarationSyntax((CompilationUnitSyntax)syntaxTree.GetRoot(), methodKey, semanticModel);
+
             var statementInterpreterHandler = new StatementInterpreterHandler(mds, semanticModel);
 
             return statementInterpreterHandler.GetMethod();
@@ -44,10 +46,11 @@ namespace HotReloading.Test
             }
         }
 
-        public static MethodDeclarationSyntax GetMethodDeclarationSyntax(CompilationUnitSyntax compilationUnit, string methodName)
+        public static MethodDeclarationSyntax GetMethodDeclarationSyntax(CompilationUnitSyntax compilationUnit, string methodKey, SemanticModel semanticModel)
         {
             return compilationUnit.Members.OfType<NamespaceDeclarationSyntax>().First().Members.OfType<ClassDeclarationSyntax>().First()
-                .Members.OfType<MethodDeclarationSyntax>().Cast<MethodDeclarationSyntax>().First(x => x.Identifier.Text == methodName);
+                .Members.OfType<MethodDeclarationSyntax>().Cast<MethodDeclarationSyntax>().FirstOrDefault(x => HotReloading.Core.Helper.GetMethodKey(x.Identifier.Text,
+                                    x.ParameterList.Parameters.Select(p => ((Type)p.Type.GetClassType(semanticModel)).FullName).ToArray()) == methodKey);
         }
 
 
@@ -67,8 +70,7 @@ namespace HotReloading.Test
         public static void Setup()
         {
             Tracker.Reset();
-            CodeChangeHandler.Methods.Clear();
-            StatementConverter.CodeChangeHandler.GetMethod = CodeChangeHandler.GetMethod;
+            RuntimeMemory.Reset();
         }
     }
 }

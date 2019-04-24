@@ -5,7 +5,7 @@ using StatementConverter.ExpressionInterpreter;
 
 namespace HotReloading
 {
-    public class MethodContainer
+    public class MethodContainer : IMethodContainer
     {
         public Method Method { get; set; }
         private Delegate @delegate;

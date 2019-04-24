@@ -4,5 +4,6 @@
     {
         public ClassType ParentType { get; set; }
         public string Name { get; set; }
+        public AccessModifier AccessModifier { get; set; }
     }
 }

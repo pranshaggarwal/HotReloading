@@ -66,7 +66,7 @@ namespace StatementConverter.ExpressionInterpreter
                         parameterExpressions).GetExpression();
                     return expression;
                 case ThisStatement thisStatement:
-                    expression = new ThisExpressionInterpreter(thisStatement, thisExpression).GetExpression();
+                    expression = new ThisExpressionInterpreter(thisExpression).GetExpression();
                     return expression;
                 case BinaryStatement binaryStatement:
                     expression = new BinaryExpressionInterpreter(this, binaryStatement).GetExpression();
@@ -146,6 +146,9 @@ namespace StatementConverter.ExpressionInterpreter
                     return expression;
                 case UsingStatement usingStatement:
                     expression = new UsingExpressionInterpreter(this, usingStatement, scopedLocalVariable).GetExpression();
+                    return expression;
+                case BaseStatement baseStatement:
+                    expression = new ThisExpressionInterpreter(thisExpression).GetExpression();
                     return expression;
                 default:
                     throw new NotImplementedException(statement.GetType() + " is not supported yet.");

@@ -62,10 +62,31 @@ namespace StatementConverter.ExpressionInterpreter
                 case BinaryOperand.GreaterThanEqual:
                     return Expression.GreaterThanOrEqual(left, right);
                 case BinaryOperand.BitwiseAnd:
+                    if (left.Type.IsEnum)
+                    {
+                        var left1 = Expression.Convert(left, Enum.GetUnderlyingType(left.Type));
+                        var right1 = Expression.Convert(right, Enum.GetUnderlyingType(right.Type));
+                        var orExpression = Expression.And(left1, right1);
+                        return Expression.Convert(orExpression, Enum.GetUnderlyingType(left.Type));
+                    }
                     return Expression.And(left, right);
                 case BinaryOperand.BitwiseOr:
+                    if(left.Type.IsEnum)
+                    {
+                        var left1 = Expression.Convert(left, Enum.GetUnderlyingType(left.Type));
+                        var right1 = Expression.Convert(right, Enum.GetUnderlyingType(right.Type));
+                        var orExpression = Expression.Or(left1, right1);
+                        return Expression.Convert(orExpression, Enum.GetUnderlyingType(left.Type));
+                    }
                     return Expression.Or(left, right);
                 case BinaryOperand.Xor:
+                    if (left.Type.IsEnum)
+                    {
+                        var left1 = Expression.Convert(left, Enum.GetUnderlyingType(left.Type));
+                        var right1 = Expression.Convert(right, Enum.GetUnderlyingType(right.Type));
+                        var orExpression = Expression.ExclusiveOr(left1, right1);
+                        return Expression.Convert(orExpression, Enum.GetUnderlyingType(left.Type));
+                    }
                     return Expression.ExclusiveOr(left, right);
                 case BinaryOperand.LeftShift:
                     return Expression.LeftShift(left, right);
@@ -114,10 +135,31 @@ namespace StatementConverter.ExpressionInterpreter
                 case BinaryOperand.ModuloAssign:
                     return Expression.ModuloAssign(left, convertedRight);
                 case BinaryOperand.BitwiseAndAssign:
+                    if (left.Type.IsEnum)
+                    {
+                        var left1 = Expression.Convert(left, Enum.GetUnderlyingType(left.Type));
+                        var right1 = Expression.Convert(convertedRight, Enum.GetUnderlyingType(convertedRight.Type));
+                        var orExpression = Expression.AndAssign(left1, right1);
+                        return Expression.Convert(orExpression, Enum.GetUnderlyingType(left.Type));
+                    }
                     return Expression.AndAssign(left, convertedRight);
                 case BinaryOperand.BitwiseOrAssign:
+                    if (left.Type.IsEnum)
+                    {
+                        var left1 = Expression.Convert(left, Enum.GetUnderlyingType(left.Type));
+                        var right1 = Expression.Convert(convertedRight, Enum.GetUnderlyingType(convertedRight.Type));
+                        var orExpression = Expression.OrAssign(left1, right1);
+                        return Expression.Convert(orExpression, Enum.GetUnderlyingType(left.Type));
+                    }
                     return Expression.OrAssign(left, convertedRight);
                 case BinaryOperand.XorAssign:
+                    if (left.Type.IsEnum)
+                    {
+                        var left1 = Expression.Convert(left, Enum.GetUnderlyingType(left.Type));
+                        var right1 = Expression.Convert(convertedRight, Enum.GetUnderlyingType(convertedRight.Type));
+                        var orExpression = Expression.ExclusiveOrAssign(left1, right1);
+                        return Expression.Convert(orExpression, Enum.GetUnderlyingType(left.Type));
+                    }
                     return Expression.ExclusiveOrAssign(left, convertedRight);
                 case BinaryOperand.LeftShiftAssign:
                     return Expression.LeftShiftAssign(left, convertedRight);

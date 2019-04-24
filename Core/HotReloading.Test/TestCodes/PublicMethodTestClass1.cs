@@ -7,5 +7,11 @@ namespace HotReloading.Test.TestCodes
         {
             PublicMethodTestClass.UpdateStaticMethod();
         }
+
+        public void AddedInstanceMethodAndCalledFromAnotherClass()
+        {
+            var instance = new PublicMethodTestClass();
+            instance.UpdateInstanceMethod();
+        }
     }
 }

@@ -23,7 +23,7 @@ namespace HotReloading.BuildTask.Extensions
         {
             if (typeDefinition.Interfaces.Any(x => x.InterfaceType.FullName == iInstanceClassType.FullName))
             {
-                getInstanceMethod = typeDefinition.Methods.FirstOrDefault(x => x.Name == "GetInstanceMethod");
+                getInstanceMethod = typeDefinition.Methods.FirstOrDefault(x => x.Name == Constants.GetInstanceMethodName);
                 instanceMethodGetters = typeDefinition.Methods.FirstOrDefault(x => x.Name == "get_InstanceMethods");
                 return true;
             }
@@ -87,7 +87,7 @@ namespace HotReloading.BuildTask.Extensions
             TypeReference retTypeReference, List<Instruction> instructions, MethodAttributes attributes = MethodAttributes.Public, bool vir = false)
         {
             if (vir)
-                attributes |= MethodAttributes.NewSlot | MethodAttributes.Virtual;
+                attributes |= MethodAttributes.NewSlot | MethodAttributes.Virtual | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.Final | MethodAttributes.FamANDAssem | MethodAttributes.Family;
 
             var getter = new MethodDefinition($"get_{propertyName}", attributes, retTypeReference);
 
@@ -142,7 +142,6 @@ namespace HotReloading.BuildTask.Extensions
             return setter;
         }
 
-
         private static MethodDefinition CreateAutoPropertySetter(this TypeDefinition typeDefinition, ModuleDefinition moduleDefinition, string propertyName,
             FieldDefinition field, TypeReference retTypeReference, bool vir = false)
         {
@@ -159,6 +158,20 @@ namespace HotReloading.BuildTask.Extensions
                 moduleDefinition.ImportReference(typeof(CompilerGeneratedAttribute).GetConstructor(Type.EmptyTypes))));
 
             return setter;
+        }
+
+        public static string GetUniqueGenericParameterName(this TypeReference typeReference)
+        {
+            string name = "T";
+            int count = 0;
+
+            while (typeReference.GenericParameters.Any(x => x.Name == name))
+            {
+                count++;
+                name = "T" + count;
+            }
+
+            return name;
         }
     }
 }

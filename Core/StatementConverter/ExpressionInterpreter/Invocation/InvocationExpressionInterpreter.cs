@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
+using HotReloading.Core;
 using HotReloading.Core.Statements;
 
 namespace StatementConverter.ExpressionInterpreter
@@ -26,17 +28,31 @@ namespace StatementConverter.ExpressionInterpreter
 
             var parameterTypes = invocationStatement.ParametersSignature.Select(x => (Type)x).ToArray();
 
-            var lamdaExpression = CodeChangeHandler.GetMethod(invocationStatement.Method.ParentType, invocationStatement.Method.Name);
+            var methodKey = GetMethodKey();
 
-            if(lamdaExpression != null)
+            var lamdaExpression = RuntimeMemory.GetMethod(invocationStatement.Method.ParentType, methodKey);
+
+            var instanceMember = invocationStatement.Method as InstanceMethodMemberStatement;
+
+            if (lamdaExpression != null)
             {
-                return Expression.Invoke(lamdaExpression.GetExpression(), arguments);
+                var expression = lamdaExpression.GetExpression();
+                var arguments1 = new List<Expression>();
+                if (instanceMember != null)
+                    arguments1.Add(expressionInterpreterHandler.GetExpression(instanceMember.Parent));
+                arguments1.AddRange(arguments);
+                return Expression.Invoke(expression, arguments1);
             }
 
-            var methodInfo =
-                ((Type) invocationStatement.Method.ParentType).GetMethod(invocationStatement.Method.Name,
-                    parameterTypes);
+            BindingFlags bindingFlags = instanceMember == null ? BindingFlags.Static : BindingFlags.Instance;
 
+            bindingFlags |= invocationStatement.Method.AccessModifier == HotReloading.Core.AccessModifier.Public ?
+                BindingFlags.Public : BindingFlags.NonPublic;
+
+            Type declareType = (Type)invocationStatement.Method.ParentType;
+            var methodInfo =
+                declareType.GetMethod(invocationStatement.Method.Name,
+                    bindingFlags, Type.DefaultBinder, parameterTypes, null);
             Expression[] convertedArguments = new Expression[arguments.Length];
 
             for(int i=0; i < convertedArguments.Length; i++)
@@ -55,12 +71,34 @@ namespace StatementConverter.ExpressionInterpreter
                 }
             }
 
-            if (invocationStatement.Method is InstanceMethodMemberStatement instanceStatement)
+            if (instanceMember != null)
+            {
+                var caller = expressionInterpreterHandler.GetExpression(instanceMember.Parent);
                 return Expression.Call(
-                    expressionInterpreterHandler.GetExpression(instanceStatement.Parent),
-                    methodInfo, convertedArguments);
+                            caller,
+                            methodInfo, convertedArguments);
+
+            }
 
             return Expression.Call(methodInfo, convertedArguments);
+        }
+
+        private Type GetDelegateType(MethodInfo methodInfo)
+        {
+            var parameterTypes = methodInfo.GetParameters().Select(x => x.ParameterType).ToList();
+            parameterTypes.Add(methodInfo.ReturnType);
+            return Expression.GetDelegateType(parameterTypes.ToArray());
+        }
+
+        private string GetMethodKey()
+        {
+            string key = invocationStatement.Method.Name;
+
+            foreach (var type in invocationStatement.ParametersSignature)
+            {
+                key += $"`{((Type)type).FullName}";
+            }
+            return key;
         }
     }
 }

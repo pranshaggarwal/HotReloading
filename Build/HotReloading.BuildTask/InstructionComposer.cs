@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -16,6 +17,12 @@ namespace HotReloading.BuildTask
         }
 
         public List<Instruction> Instructions { get; }
+
+        public InstructionComposer LoadArg(ParameterDefinition parameterDefinition)
+        {
+            Instructions.Add(Instruction.Create(OpCodes.Ldarg, parameterDefinition));
+            return this;
+        }
 
         public InstructionComposer LoadArg_0()
         {
@@ -59,7 +66,7 @@ namespace HotReloading.BuildTask
             return this;
         }
 
-        public InstructionComposer Load(FieldDefinition field)
+        public InstructionComposer Load(FieldReference field)
         {
             Instructions.Add(Instruction.Create(OpCodes.Ldfld, field));
             return this;
@@ -77,6 +84,40 @@ namespace HotReloading.BuildTask
             return this;
         }
 
+        public InstructionComposer LoadArray(int length, Type type, string[] elements)
+        {
+            SetupArray(length, type);
+
+            for (var i = 0; i < elements.Length; i++)
+            {
+                AddArrayElement(i, elements[i]);
+            }
+
+            return this;
+        }
+
+        public InstructionComposer ArrayElementAccess(int index)
+        {
+            Instructions.Add(Instruction.Create(OpCodes.Ldc_I4, index));
+            Instructions.Add(Instruction.Create(OpCodes.Ldelem_Ref));
+            return this;
+        }
+
+        private void SetupArray(int length, Type type)
+        {
+            Instructions.Add(Instruction.Create(OpCodes.Ldc_I4, length));
+            var typeReference = moduleDefinition.ImportReference(type);
+            Instructions.Add(Instruction.Create(OpCodes.Newarr, typeReference));
+        }
+
+        private void AddArrayElement(int index, string element)
+        {
+            Instructions.Add(Instruction.Create(OpCodes.Dup));
+            Instructions.Add(Instruction.Create(OpCodes.Ldc_I4, index));
+            Instructions.Add(Instruction.Create(OpCodes.Ldstr, element));
+            Instructions.Add(Instruction.Create(OpCodes.Stelem_Ref));
+        }
+
         public InstructionComposer LoadArray(ParameterDefinition[] array, bool isInstance = false)
         {
             var offset = 0;
@@ -84,10 +125,7 @@ namespace HotReloading.BuildTask
             if (isInstance)
                 offset = 1;
 
-            Instructions.Add(Instruction.Create(OpCodes.Ldc_I4, array.Length + offset));
-            var objectType = typeof(object);
-            var objectReference = moduleDefinition.ImportReference(objectType);
-            Instructions.Add(Instruction.Create(OpCodes.Newarr, objectReference));
+            SetupArray(array.Length + offset, typeof(object));
 
             if (isInstance)
             {
@@ -156,6 +194,12 @@ namespace HotReloading.BuildTask
             return this;
         }
 
+        public InstructionComposer BaseCall(MethodReference methodReference)
+        {
+            Instructions.Add(Instruction.Create(OpCodes.Call, methodReference));
+            return this;
+        }
+
         public InstructionComposer InstanceCall(Method method)
         {
             var methodInfo = method.ParentType.GetMethod(method.MethodName, method.ParameterSignature);
@@ -164,9 +208,9 @@ namespace HotReloading.BuildTask
             return this;
         }
 
-        public InstructionComposer InstanceCall(MethodDefinition setMethod)
+        public InstructionComposer InstanceCall(MethodReference setMethod)
         {
-            Instructions.Add(Instruction.Create(OpCodes.Call, setMethod));
+            Instructions.Add(Instruction.Create(OpCodes.Callvirt, setMethod));
             return this;
         }
 
@@ -176,7 +220,7 @@ namespace HotReloading.BuildTask
             return this;
         }
 
-        public InstructionComposer Store(FieldDefinition field)
+        public InstructionComposer Store(FieldReference field)
         {
             Instructions.Add(Instruction.Create(OpCodes.Stfld, field));
             return this;
@@ -282,6 +326,12 @@ namespace HotReloading.BuildTask
         public InstructionComposer Append(InstructionComposer composer2)
         {
             Instructions.AddRange(composer2.Instructions);
+            return this;
+        }
+
+        public InstructionComposer CastClass(TypeReference targetType)
+        {
+            Instructions.Add(Instruction.Create(OpCodes.Castclass, targetType));
             return this;
         }
     }

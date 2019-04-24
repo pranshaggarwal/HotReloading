@@ -25,7 +25,7 @@ namespace StatementConverter.Test
 
             del.DynamicInvoke(instance);
 
-            await Task.Delay(3);
+            await Task.Delay(500);
 
             Tracker.LastValue.Should().Be("hello");
         }
@@ -41,7 +41,7 @@ namespace StatementConverter.Test
 
             del.DynamicInvoke(instance);
 
-            await Task.Delay(3);
+            await Task.Delay(500);
 
             Tracker.LastValue.Should().Be("hello");
         }

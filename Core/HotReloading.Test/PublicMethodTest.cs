@@ -26,7 +26,7 @@ namespace HotReloading.Test
         {
             var method = Helper.GetMethod("PublicMethodTestClass", "UpdateStaticMethod");
 
-            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            Runtime.HandleCodeChange(new Core.CodeChange
             {
                 Methods = new System.Collections.Generic.List<Core.Method>
                 {
@@ -45,7 +45,7 @@ namespace HotReloading.Test
             var existingMethod = Helper.GetMethod("PublicMethodTestClass", "AddedStaticMethodAndCalledFromSameClass1");
             var newMethod = Helper.GetMethod("PublicMethodTestClass", "AddedStaticMethodAndCalledFromSameClass2");
 
-            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            Runtime.HandleCodeChange(new Core.CodeChange
             {
                 Methods = new System.Collections.Generic.List<Core.Method>
                 {
@@ -63,7 +63,7 @@ namespace HotReloading.Test
         {
             var method = Helper.GetMethod("PublicMethodTestClass1", "AddedStaticMethodAndCalledFromAnotherClass");
 
-            CodeChangeHandler.HandleCodeChange(new Core.CodeChange
+            Runtime.HandleCodeChange(new Core.CodeChange
             {
                 Methods = new System.Collections.Generic.List<Core.Method>
                 {
@@ -76,24 +76,124 @@ namespace HotReloading.Test
             Tracker.LastValue.Should().Be("default");
         }
 
+        [Test]
         public void UpdateInstanceMethod()
         {
+            var method = Helper.GetMethod("PublicMethodTestClass", "UpdateInstanceMethod");
 
+            Runtime.HandleCodeChange(new Core.CodeChange
+            {
+                Methods = new System.Collections.Generic.List<Core.Method>
+                {
+                    method
+                }
+            });
+
+            var instance = new PublicMethodTestClass();
+
+            instance.UpdateInstanceMethod();
+
+            Tracker.LastValue.Should().Be("change");
         }
 
+        [Test]
         public void AddedInstanceMethodAndCalledFromSameClass()
         {
+            var existingMethod = Helper.GetMethod("PublicMethodTestClass", "AddedInstanceMethodAndCalledFromSameClass");
+            var newMethod = Helper.GetMethod("PublicMethodTestClass", "AddedInstanceMethodAndCalledFromSameClass1");
 
+            Runtime.HandleCodeChange(new Core.CodeChange
+            {
+                Methods = new System.Collections.Generic.List<Core.Method>
+                {
+                    existingMethod, newMethod
+                }
+            });
+
+            var instance = new PublicMethodTestClass();
+
+            instance.AddedInstanceMethodAndCalledFromSameClass();
+
+            Tracker.LastValue.Should().Be("change");
         }
 
+        [Test]
+        public void AddedStaticMethodAndCalledFromInstanceMethod()
+        {
+            var instanceMethod = Helper.GetMethod("PublicMethodTestClass", "AddedStaticMethodAndCalledFromInstanceMethod");
+            var newMethod = Helper.GetMethod("PublicMethodTestClass", "AddedStaticMethodAndCalledFromInstanceMethod1");
+
+            Runtime.HandleCodeChange(new Core.CodeChange
+            {
+                Methods = new System.Collections.Generic.List<Core.Method>
+                {
+                    instanceMethod, newMethod
+                }
+            });
+
+            var instance = new PublicMethodTestClass();
+
+            instance.AddedStaticMethodAndCalledFromInstanceMethod();
+
+            Tracker.LastValue.Should().Be("change");
+        }
+
+        [Test]
         public void AddedInstanceMethodAndCalledFromAnotherClass()
         {
+            var method = Helper.GetMethod("PublicMethodTestClass1", "AddedInstanceMethodAndCalledFromAnotherClass");
 
+            Runtime.HandleCodeChange(new Core.CodeChange
+            {
+                Methods = new System.Collections.Generic.List<Core.Method>
+                {
+                    method
+                }
+            });
+
+            var instance = new PublicMethodTestClass1();
+
+            instance.AddedInstanceMethodAndCalledFromAnotherClass();
+
+            Tracker.LastValue.Should().Be("default");
         }
 
-        public void MethodOverload()
+        [Test]
+        public void MethodOverload1()
         {
+            var method1 = Helper.GetMethod("PublicMethodTestClass", HotReloading.Core.Helper.GetMethodKey("MethodOverload"));
+            var method2 = Helper.GetMethod("PublicMethodTestClass",  HotReloading.Core.Helper.GetMethodKey("MethodOverload", typeof(string).FullName));
 
+            Runtime.HandleCodeChange(new Core.CodeChange
+            {
+                Methods = new System.Collections.Generic.List<Core.Method>
+                {
+                    method1, method2
+                }
+            });
+
+            PublicMethodTestClass.MethodOverload();
+
+            Tracker.LastValue.Should().Be("overload1");
+        }
+
+        [Test]
+        public void MethodOverload2()
+        {
+            var method1 = Helper.GetMethod("PublicMethodTestClass", HotReloading.Core.Helper.GetMethodKey("MethodOverload"));
+            var method2 = Helper.GetMethod("PublicMethodTestClass", HotReloading.Core.Helper.GetMethodKey("MethodOverload", typeof(string).FullName));
+
+            Runtime.HandleCodeChange(new Core.CodeChange
+            {
+                Methods = new System.Collections.Generic.List<Core.Method>
+                {
+                    method1, method2
+                }
+            });
+
+            PublicMethodTestClass.MethodOverload("test");
+
+            Tracker.LastValue.Should().Be("overload2");
         }
     }
 }

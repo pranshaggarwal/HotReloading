@@ -46,14 +46,14 @@
     <Folder Include="StatementInterpreter\Loop\" />
     <Folder Include="ExpressionInterpreter\Using\" />
     <Folder Include="StatementInterpreter\Using\" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.10.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.10.0" />
+    <Folder Include="StatementInterpreter\Inheritance\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExpressionFuture\CSharpExpressions\CSharpExpressions.csproj" />
     <ProjectReference Include="..\ExpressionFuture\Debugging\Debugging.csproj" />
     <ProjectReference Include="..\HotReloading.Core\HotReloading.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.10.0" />
   </ItemGroup>
 </Project>

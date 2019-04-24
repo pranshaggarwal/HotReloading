@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using HotReloading.BuildTask.Extensions;
+using HotReloading.Core;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Mono.Cecil;
@@ -27,47 +29,95 @@ namespace HotReloading.BuildTask
         [Required] public string AssemblyFile { get; set; }
 
         [Required] public string ProjectDirectory { get; set; }
+        [Required]
+        public string References { get; set; }
 
         public bool DebugSymbols { get; set; }
         public string DebugType { get; set; }
 
         public override bool Execute()
         {
-            var filePath = Path.Combine(ProjectDirectory, AssemblyFile);
+            var assemblyPath = Path.Combine(ProjectDirectory, AssemblyFile);
+            InjectCode(assemblyPath, assemblyPath);
 
+            Logger.LogMessage("Injection done");
+            return true;
+        }
+
+        public void InjectCode(string assemblyPath, string outputAssemblyPath)
+        {
             var debug = DebugSymbols || !string.IsNullOrEmpty(DebugType) && DebugType.ToLowerInvariant() != "none";
 
-            var ad = AssemblyDefinition.ReadAssembly(filePath, new ReaderParameters
+            var assemblyReferenceResolver = new AssemblyReferenceResolver();
+
+            if (!string.IsNullOrEmpty(References))
+            {
+                var paths = References.Replace("//", "/").Split(';').Distinct();
+                foreach (var p in paths)
+                {
+                    var searchpath = Path.GetDirectoryName(p);
+                    Logger.LogMessage($"Adding searchpath {searchpath}");
+                    assemblyReferenceResolver.AddSearchDirectory(searchpath);
+                }
+            }
+
+            var ad = AssemblyDefinition.ReadAssembly(assemblyPath, new ReaderParameters
             {
                 ReadWrite = true,
-                ReadSymbols = true
+                ReadSymbols = true,
+                AssemblyResolver = assemblyReferenceResolver
             });
 
             var md = ad.MainModule;
 
+            var test1 = md.AssemblyReferences;
+
             var types = md.Types.Where(x => x.BaseType != null).ToList();
+
+            var typesWithCorrectOrder = new List<TypeDefinition>();
+
+            foreach(var type in types)
+            {
+                if (type.BaseType is TypeDefinition baseTypeDeginition)
+                {
+                    var baseTypes = GetBaseTypesWithCorrectOrder(baseTypeDeginition);
+
+                    foreach(var baseType in baseTypes)
+                    {
+                        if (!typesWithCorrectOrder.Contains(baseType))
+                        {
+                            typesWithCorrectOrder.Add(baseType);
+                        }
+                    }
+                    typesWithCorrectOrder.Add(type);
+                }
+                else
+                {
+                    if(!typesWithCorrectOrder.Contains(type))
+                    {
+                        typesWithCorrectOrder.Add(type);
+                    }
+                }
+            }
 
             var iInstanceClassType = md.ImportReference(typeof(IInstanceClass));
 
-            foreach (var type in types)
+            foreach (var type in typesWithCorrectOrder)
             {
+                if (type.Name.EndsWith("Delegate", StringComparison.InvariantCulture))
+                    continue;
+                Logger.LogMessage("Weaving Type: " + type.Name);
                 var methods = type.Methods;
 
-                PropertyDefinition instanceMethods = null;
                 MethodDefinition getInstanceMethod = null;
                 MethodDefinition instanceMethodGetters = null;
 
-                if (type.IsDelegate(md))
+                if (type.IsDelegate(md) || type.IsEnum || type.IsValueType)
                     continue;
 
                 var hasImplementedIInstanceClass = type.HasImplementedIInstanceClass(iInstanceClassType, out getInstanceMethod, out instanceMethodGetters);
 
-                if (!type.IsAbstract && !hasImplementedIInstanceClass)
-                {
-                    type.Interfaces.Add(new InterfaceImplementation(md.ImportReference(typeof(IInstanceClass))));
-                    CreateInstanceMethodsProperty(md, type, out instanceMethods, out instanceMethodGetters);
-                    getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods);
-                }
+                ImplementIInstanceClass(md, type, ref getInstanceMethod, ref instanceMethodGetters, hasImplementedIInstanceClass);
 
                 foreach (var method in methods)
                 {
@@ -77,36 +127,305 @@ namespace HotReloading.BuildTask
                             .Any(x => x.AttributeType.Name == "GeneratedCodeAttribute"))
                         continue;
 
-                    if (method == instanceMethodGetters)
+                    if (method == instanceMethodGetters || method.IsConstructor || method == getInstanceMethod)
                         continue;
 
-                    Logger.LogMessage("Weaving Method " + method.Name);
+                    //Ignore method with ref parameter
+                    if (method.Parameters.Any(x => x.ParameterType is ByReferenceType))
+                        continue;
 
-                    if (method.IsConstructor && !type.IsAbstract && !method.IsStatic)
-                        AddInstanceMethodInitialiser(md, type, instanceMethods, method);
-                    else
-                        WrapMethod(md, type, method, getInstanceMethod);
+                    WrapMethod(md, type, method, getInstanceMethod.GetReference(type, md));
                 }
 
-                if (!type.IsAbstract & !hasImplementedIInstanceClass) 
-                    methods.Add(getInstanceMethod);
+                if (!type.IsAbstract && !type.IsSealed)
+                {
+                    AddOverrideMethod(type, md, getInstanceMethod.GetReference(type, md));
+                }
             }
 
-            ad.Write(new WriterParameters
+            if (assemblyPath == outputAssemblyPath)
             {
-                WriteSymbols = debug
-            });
+                ad.Write(new WriterParameters
+                {
+                    WriteSymbols = debug
+                });
+            }
+            else
+            {
+                ad.Write(outputAssemblyPath, new WriterParameters
+                {
+                    WriteSymbols = debug
+                });
+            }
 
             ad.Dispose();
-
-            Logger.LogMessage("Injection done");
-            return true;
         }
 
-        private static void CreateInstanceMethodsProperty(ModuleDefinition md, TypeDefinition type, out PropertyDefinition instanceMethods, out MethodDefinition instanceMethodGetters)
+        private List<TypeDefinition> GetBaseTypesWithCorrectOrder(TypeDefinition type)
+        {
+            var retVal = new List<TypeDefinition>();
+
+            if(type.BaseType is TypeDefinition baseTypeDefinition)
+            {
+                var baseTypes = GetBaseTypesWithCorrectOrder(baseTypeDefinition);
+
+                foreach(var baseType in baseTypes)
+                {
+                    if (!retVal.Contains(baseType))
+                    {
+                        retVal.Add(baseType);
+                    }
+                }
+            }
+
+            retVal.Add(type);
+
+            return retVal;
+        }
+
+        private void AddOverrideMethod(TypeDefinition type, ModuleDefinition md, MethodReference getInstanceMethod)
+        {
+            if (type.BaseType == null)
+                return;
+
+            var overridableMethods = GetOverridableMethods(type, md);
+
+            var baseMethodCalls = new List<MethodReference>();
+
+            foreach(var overridableMethod in overridableMethods)
+            {
+                MethodReference baseMethod = GetBaseMethod(overridableMethod);
+                //Ignore method with ref parameter
+                if (baseMethod.Parameters.Any(x => x.ParameterType is ByReferenceType))
+                    continue;
+                baseMethodCalls.Add(baseMethod);
+
+                if (!type.Methods.Any(x => x.IsEqual(overridableMethod.Method)))
+                {
+                    var method = overridableMethod.Method;
+
+                    var returnType = method.ReturnType;
+
+                    var composer = new InstructionComposer(md);
+
+                    composer.LoadArg_0();
+
+                    foreach(var parameter in method.Parameters)
+                    {
+                        composer.LoadArg(parameter);
+                    }
+
+                    composer.BaseCall(baseMethod);
+
+                    if (overridableMethod.Method.ReturnType.FullName != "System.Void")
+                    {
+                        var returnVariable = new VariableDefinition(returnType);
+
+                        method.Body.Variables.Add(returnVariable);
+
+                        composer.Store(returnVariable);
+                        composer.Load(returnVariable);
+                    }
+
+                    composer.Return();
+
+                    foreach(var instruction in composer.Instructions)
+                    {
+                        method.Body.GetILProcessor().Append(instruction);
+                    }
+
+                    WrapMethod(md, type, method, getInstanceMethod);
+
+                    method.DeclaringType = type;
+                    type.Methods.Add(method);
+                }
+            }
+
+            foreach (var baseMethod in baseMethodCalls)
+            {
+                //Ignore optional
+                if(baseMethod.Parameters.Any(x => x.IsOptional))
+                {
+                    continue;
+                }
+                var methodKey = Core.Helper.GetMethodKey(baseMethod.Name, baseMethod.Parameters.Select(x => x.ParameterType.FullName).ToArray());
+                var methodName = "HotReloadingBase_" + baseMethod.Name;
+                var hotReloadingBaseMethod = new MethodDefinition(methodName, MethodAttributes.Private | MethodAttributes.HideBySig, md.ImportReference(typeof(void)));
+
+                foreach (var parameter in baseMethod.GenericParameters)
+                {
+                    hotReloadingBaseMethod.GenericParameters.Add(parameter);
+                }
+
+                hotReloadingBaseMethod.ReturnType = baseMethod.ReturnType;
+                foreach (var parameter in baseMethod.Parameters)
+                {
+                    TypeReference parameterType = parameter.ParameterType;
+                    hotReloadingBaseMethod.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType)
+                    {
+                        IsIn = parameter.IsIn,
+                        IsOut = parameter.IsOut,
+                        IsOptional = parameter.IsOptional
+                    });
+                }
+
+                var retVar = new VariableDefinition(md.ImportReference(typeof(object)));
+                var baseCallComposer = new InstructionComposer(md)
+                    .LoadArg_0();
+
+                foreach (var parameter in hotReloadingBaseMethod.Parameters)
+                {
+                    baseCallComposer.LoadArg(parameter);
+                }
+
+                baseCallComposer.BaseCall(baseMethod);
+
+                if (hotReloadingBaseMethod.ReturnType.FullName != "System.Void")
+                {
+                    var returnVariable = new VariableDefinition(hotReloadingBaseMethod.ReturnType);
+
+                    hotReloadingBaseMethod.Body.Variables.Add(returnVariable);
+
+                    baseCallComposer.Store(returnVariable);
+                    baseCallComposer.Load(returnVariable);
+                }
+
+                baseCallComposer.Return();
+
+                foreach (var instruction in baseCallComposer.Instructions)
+                {
+                    hotReloadingBaseMethod.Body.GetILProcessor().Append(instruction);
+                }
+
+                type.Methods.Add(hotReloadingBaseMethod);
+            }
+        }
+
+        public class OverridableMethod
+        {
+            public MethodDefinition Method;
+            public OverridableMethod BaseMethod;
+            public MethodReference MethodReference;
+            public TypeReference DeclaringType;
+
+        }
+        private IEnumerable<OverridableMethod> GetOverridableMethods(TypeDefinition type, ModuleDefinition md)
+        {
+            if (type.BaseType == null)
+                return null;
+
+            var retVal = new List<OverridableMethod>();
+
+            var baseTypeDefinition = type.BaseType.Resolve();
+            IEnumerable<MethodDefinition> sealedMethods = new List<MethodDefinition>();
+            if (!baseTypeDefinition.Name.EndsWith("Delegate", StringComparison.InvariantCulture))
+            {
+                //Ignore non virtual, finalized, special name, private and internal
+                var methods = baseTypeDefinition.Methods.Where(x => x.IsVirtual &&
+                                                                    !x.IsSpecialName &&
+                                                                    x.Name != "Finalize" &&
+                                                                    (x.IsPublic ||
+                                                                    x.IsFamily ||
+                                                                    x.IsFamilyOrAssembly));
+
+
+                sealedMethods = methods.Where(x => x.IsFinal);
+                foreach (var method in methods)
+                {
+                    if (method.IsFinal)
+                        continue;
+
+                    //Ignore method with export method
+                    if (method.CustomAttributes.Any(x => x.AttributeType.Name == "ExportAttribute"))
+                        continue;
+
+                    //Ignore Xamarin.iOS protocols method
+                    if (baseTypeDefinition.Interfaces.Where(x => x.InterfaceType.Name.EndsWith("Delegate", StringComparison.InvariantCulture))
+                    .Select(x => x.InterfaceType).OfType<TypeDefinition>()
+                    .SelectMany(x => x.Methods).Any(x => x.IsEqual(method)))
+                        continue;
+
+                    retVal.Add(CopyMethod(new OverridableMethod { Method = method, DeclaringType = type.BaseType }, type, type.BaseType, md));
+                }
+            }
+
+            var baseOverriableMethods = GetOverridableMethods(baseTypeDefinition, md);
+            if (baseOverriableMethods == null)
+                return retVal;
+
+            foreach(var method in baseOverriableMethods)
+            {
+                if (retVal.Any(x => x.Method.IsEqual(method.Method)))
+                    continue;
+                if (sealedMethods.Any(x => x.IsEqual(method.Method)))
+                    continue;
+                retVal.Add(CopyMethod(method, type, type.BaseType, md));
+            }
+
+            return retVal;
+        }
+
+        private OverridableMethod CopyMethod(OverridableMethod overridableMethod, TypeReference targetType, TypeReference sourceType, ModuleDefinition md)
+        {
+            Logger.LogMessage("\tOverriding: " + overridableMethod.Method.FullName);
+            var attributes = overridableMethod.Method.Attributes & ~MethodAttributes.NewSlot | MethodAttributes.ReuseSlot;
+            var method = new MethodDefinition(overridableMethod.Method.Name, attributes, md.ImportReference(typeof(void)));
+            method.ImplAttributes = overridableMethod.Method.ImplAttributes;
+            method.SemanticsAttributes = overridableMethod.Method.SemanticsAttributes;
+            method.DeclaringType = targetType.Resolve();
+
+            foreach (var genericParameter in overridableMethod.Method.GenericParameters)
+            {
+                method.GenericParameters.Add(new GenericParameter(targetType.GetUniqueGenericParameterName(), method));
+            }
+
+            TypeReference returnType = overridableMethod.Method.ReturnType.CopyType(targetType, sourceType, md, method);
+
+            method.ReturnType = returnType;
+
+            foreach (var parameter in overridableMethod.Method.Parameters)
+            {
+                TypeReference parameterType = parameter.ParameterType.CopyType(targetType, sourceType, md, method);
+                method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType)
+                {
+                    IsOptional = parameter.IsOptional,
+                    IsIn = parameter.IsIn,
+                    IsOut = parameter.IsOut
+                });
+            }
+             var baseMethodReference = overridableMethod.Method.GetBaseReference(targetType, sourceType, md);  
+             
+             return new OverridableMethod
+            {
+                Method = method,
+                BaseMethod = overridableMethod,
+                MethodReference = baseMethodReference
+            };
+        }
+
+        private MethodReference GetBaseMethod(OverridableMethod overridableMethod)
+        {
+            if (overridableMethod.MethodReference != null)
+                return overridableMethod.MethodReference;
+
+            return GetBaseMethod(overridableMethod.BaseMethod);
+        }
+
+        private static void ImplementIInstanceClass(ModuleDefinition md, TypeDefinition type, ref MethodDefinition getInstanceMethod, ref MethodDefinition instanceMethodGetters, bool hasImplementedIInstanceClass)
+        {
+            if (!type.IsAbstract && !hasImplementedIInstanceClass)
+            {
+                type.Interfaces.Add(new InterfaceImplementation(md.ImportReference(typeof(IInstanceClass))));
+                PropertyDefinition instanceMethods = CreateInstanceMethodsProperty(md, type, out instanceMethodGetters);
+                getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods.GetMethod.GetReference(type, md),type,hasImplementedIInstanceClass);
+            }
+        }
+
+        private static PropertyDefinition CreateInstanceMethodsProperty(ModuleDefinition md, TypeDefinition type, out MethodDefinition instanceMethodGetters)
         {
             var instaceMethodType = md.ImportReference(typeof(Dictionary<string, Delegate>));
             var field = type.CreateField(md, "instanceMethods", instaceMethodType);
+            var fieldReference = field.GetReference();
 
             var returnComposer = new InstructionComposer(md)
                 .Load_1()
@@ -114,7 +433,7 @@ namespace HotReloading.BuildTask
 
             var getFieldComposer = new InstructionComposer(md)
                 .LoadArg_0()
-                .Load(field)
+                .Load(fieldReference)
                 .Store_1()
                 .MoveTo(returnComposer.Instructions.First());
 
@@ -124,16 +443,16 @@ namespace HotReloading.BuildTask
                 .LoadArg_0()
                 .StaticCall(new Method
                 {
-                    ParentType = typeof(CodeChangeHandler),
-                    MethodName = nameof(CodeChangeHandler.GetInitialInstanceMethods),
+                    ParentType = typeof(Runtime),
+                    MethodName = nameof(Runtime.GetInitialInstanceMethods),
                     ParameterSignature = new[] { typeof(IInstanceClass) }
                 })
-                .Store(field)
+                .Store(fieldReference)
                 .NoOperation();
 
             var getterComposer = new InstructionComposer(md);
             getterComposer.LoadArg_0()
-                .Load(field)
+                .Load(fieldReference)
                 .LoadNull()
                 .CompareEqual()
                 .Store_0()
@@ -151,11 +470,16 @@ namespace HotReloading.BuildTask
             var delegateVariable = new VariableDefinition(md.ImportReference(typeof(Delegate)));
             instanceMethodGetters.Body.Variables.Add(delegateVariable);
 
-            instanceMethods = type.CreateProperty("InstanceMethods", instaceMethodType, instanceMethodGetters, null);
+            return type.CreateProperty("InstanceMethods", instaceMethodType, instanceMethodGetters, null);
         }
 
-        private static void WrapMethod(ModuleDefinition md, TypeDefinition type, MethodDefinition method, MethodDefinition getInstanceMethod)
+        private void WrapMethod(ModuleDefinition md, TypeDefinition type, MethodDefinition method, MethodReference getInstanceMethod)
         {
+            Logger.LogMessage("\tWeaving Method " + method.Name);
+
+            var methodKeyVariable = new VariableDefinition(md.ImportReference(typeof(string)));
+            method.Body.Variables.Add(methodKeyVariable);
+
             var delegateVariable = new VariableDefinition(md.ImportReference(typeof(Delegate)));
             method.Body.Variables.Add(delegateVariable);
 
@@ -169,7 +493,7 @@ namespace HotReloading.BuildTask
             {
                 var secondLastInstruction =  instructions.ElementAt(instructions.Count - 2);
 
-                if (IsLoadInstruction(secondLastInstruction))
+                if (secondLastInstruction.IsLoadInstruction())
                     loadInstructionForReturn = secondLastInstruction;
             }
 
@@ -191,6 +515,7 @@ namespace HotReloading.BuildTask
             method.Body.Instructions.Add(retInstruction);
 
             foreach (var instruction in oldInstruction) ilprocessor.InsertBefore(lastInstruction, instruction);
+
             method.Body.InitLocals = true;
             var firstInstruction = method.Body.Instructions.First();
 
@@ -199,9 +524,9 @@ namespace HotReloading.BuildTask
             var composer = new InstructionComposer(md);
 
             if(method.IsStatic)
-                ComposeStaticMethodInstructions(type, method, delegateVariable, boolVariable, firstInstruction, parameters, composer);
+                ComposeStaticMethodInstructions(type, method, delegateVariable, boolVariable, methodKeyVariable, firstInstruction, parameters, composer);
             else
-                ComposeInstanceMethodInstructions(type, method, delegateVariable, boolVariable, firstInstruction, parameters, composer, getInstanceMethod);
+                ComposeInstanceMethodInstructions(type, method, delegateVariable, boolVariable, methodKeyVariable, firstInstruction, parameters, composer, getInstanceMethod);
 
             if (method.ReturnType.FullName == "System.Void") composer.Pop();
             else if (method.ReturnType.IsValueType)
@@ -215,7 +540,7 @@ namespace HotReloading.BuildTask
 
             if (loadInstructionForReturn != null)
             {
-                Instruction storeInstructionForReturn = GetStoreInstruction(loadInstructionForReturn);
+                Instruction storeInstructionForReturn = loadInstructionForReturn.GetStoreInstruction();
                 composer.Append(storeInstructionForReturn);
             }
 
@@ -224,10 +549,20 @@ namespace HotReloading.BuildTask
             foreach (var instruction in composer.Instructions) ilprocessor.InsertBefore(firstInstruction, instruction);
         }
 
-        private static void ComposeInstanceMethodInstructions(TypeDefinition type, MethodDefinition method, VariableDefinition delegateVariable, VariableDefinition boolVariable, Instruction firstInstruction, ParameterDefinition[] parameters, InstructionComposer composer, MethodDefinition getInstanceMethod)
+        private static void ComposeInstanceMethodInstructions(TypeDefinition type, MethodDefinition method, VariableDefinition delegateVariable, VariableDefinition boolVariable, VariableDefinition methodKeyVariable, Instruction firstInstruction, ParameterDefinition[] parameters, InstructionComposer composer, MethodReference getInstanceMethod)
         {
-            composer.LoadArg_0()
-                .LoadStr(method.Name)
+            composer
+            .Load(method.Name)
+                .LoadArray(parameters.Length, typeof(string), parameters.Select(x => x.ParameterType.FullName).ToArray())
+                .StaticCall(new Method
+                {
+                    ParentType = typeof(Core.Helper),
+                    MethodName = nameof(Core.Helper.GetMethodKey),
+                    ParameterSignature = new[] { typeof(string), typeof(string[]) }
+                }).
+                Store(methodKeyVariable)
+                .LoadArg_0()
+                .Load(methodKeyVariable)
                 .InstanceCall(getInstanceMethod)
                 .Store(delegateVariable)
                 .Load(delegateVariable)
@@ -246,20 +581,30 @@ namespace HotReloading.BuildTask
                 });
         }
 
-        private static void ComposeStaticMethodInstructions(TypeDefinition type, MethodDefinition method, VariableDefinition delegateVariable, VariableDefinition boolVariable, Instruction firstInstruction, ParameterDefinition[] parameters, InstructionComposer composer)
+        private static void ComposeStaticMethodInstructions(TypeDefinition type, MethodDefinition method, VariableDefinition delegateVariable, VariableDefinition boolVariable, VariableDefinition methodKeyVariable, Instruction firstInstruction, ParameterDefinition[] parameters, InstructionComposer composer)
         {
-            composer.Load(type)
+            composer
+            .Load(method.Name)
+                .LoadArray(parameters.Length, typeof(string), parameters.Select(x => x.ParameterType.FullName).ToArray())
+                .StaticCall(new Method
+                {
+                    ParentType = typeof(Core.Helper),
+                    MethodName = nameof(Core.Helper.GetMethodKey),
+                    ParameterSignature = new[] { typeof(string), typeof(string[])}
+                }).
+                Store(methodKeyVariable)
+                .Load(type)
                             .StaticCall(new Method
                             {
                                 ParentType = typeof(Type),
                                 MethodName = nameof(Type.GetTypeFromHandle),
                                 ParameterSignature = new[] { typeof(RuntimeTypeHandle) }
                             })
-                            .Load(method.Name)
+                            .Load(methodKeyVariable)
                             .StaticCall(new Method
                             {
-                                ParentType = typeof(CodeChangeHandler),
-                                MethodName = nameof(CodeChangeHandler.GetMethodDelegate),
+                                ParentType = typeof(Runtime),
+                                MethodName = nameof(Runtime.GetMethodDelegate),
                                 ParameterSignature = new[] { typeof(Type), typeof(string) }
                             })
                             .Store(delegateVariable)
@@ -279,9 +624,9 @@ namespace HotReloading.BuildTask
                             });
         }
 
-        private static MethodDefinition CreateGetInstanceMethod(ModuleDefinition md, PropertyDefinition instanceMethods)
+        private static MethodDefinition CreateGetInstanceMethod(ModuleDefinition md, MethodReference instanceMethodGetter, TypeDefinition type, bool hasImplementedIInstanceClass)
         {
-            var getInstanceMethod = new MethodDefinition("GetInstanceMethod", MethodAttributes.Family,
+            var getInstanceMethod = new MethodDefinition(Constants.GetInstanceMethodName, MethodAttributes.Family,
                 md.ImportReference(typeof(Delegate)));
 
             var methodName = new ParameterDefinition("methodName", ParameterAttributes.None,
@@ -304,7 +649,7 @@ namespace HotReloading.BuildTask
 
             var composer = new InstructionComposer(md)
                 .LoadArg_0()
-                .InstanceCall(instanceMethods.GetMethod)
+                .InstanceCall(instanceMethodGetter)
                 .Load(methodName)
                 .InstanceCall(new Method
                 {
@@ -316,7 +661,7 @@ namespace HotReloading.BuildTask
                 .Load(boolVariable)
                 .MoveToWhenFalse(composer2.Instructions.First())
                 .LoadArg_0()
-                .InstanceCall(instanceMethods.GetMethod)
+                .InstanceCall(instanceMethodGetter)
                 .Load(methodName)
                 .InstanceCall(new Method
                 {
@@ -333,74 +678,10 @@ namespace HotReloading.BuildTask
 
             foreach (var instruction in composer.Instructions) ilProcessor.Append(instruction);
 
+            if (!type.IsAbstract & !hasImplementedIInstanceClass)
+                type.Methods.Add(getInstanceMethod);
+
             return getInstanceMethod;
-        }
-
-        private static bool IsLoadInstruction(Instruction loadInstructionForReturn)
-        {
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_0)
-                return true;
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_1)
-                return true;
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_2)
-                return true;
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_3)
-                return true;
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_S)
-                return true;
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc)
-                return true;
-            return false;
-        }
-
-        private static Instruction GetStoreInstruction(Instruction loadInstructionForReturn)
-        {
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_0)
-                return Instruction.Create(OpCodes.Stloc_0);
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_1)
-                return Instruction.Create(OpCodes.Stloc_1);
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_2)
-                return Instruction.Create(OpCodes.Stloc_2);
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_3)
-                return Instruction.Create(OpCodes.Stloc_3);
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc_S)
-                return Instruction.Create(OpCodes.Stloc_S, (VariableDefinition)loadInstructionForReturn.Operand);
-            if (loadInstructionForReturn.OpCode == OpCodes.Ldloc)
-                return Instruction.Create(OpCodes.Stloc, (VariableDefinition)loadInstructionForReturn.Operand);
-            throw new Exception("Unable to get store locationn for opcode: " + loadInstructionForReturn.OpCode);
-        }
-
-        private static void AddInstanceMethodInitialiser(ModuleDefinition md, TypeDefinition type,
-            PropertyDefinition instanceMethods, MethodDefinition method)
-        {
-            return;
-            var composer = new InstructionComposer(md)
-                .LoadArg_0()
-                .StaticCall(new Method
-                {
-                    ParentType = typeof(CodeChangeHandler),
-                    MethodName = nameof(CodeChangeHandler.GetInitialInstanceMethods),
-                    ParameterSignature = new[] { typeof(IInstanceClass) }
-                })
-                .NoOperation();
-
-            var ilProcessor = method.Body.GetILProcessor();
-
-            var baseConstructorCall = method.Body.Instructions.Where(x => x.OpCode == OpCodes.Call)
-                .FirstOrDefault(x =>
-                {
-                    if (x.Operand is MethodReference methodReference)
-                        return methodReference.Name == ".ctor";
-                    return false;
-                });
-
-            var last = baseConstructorCall;
-
-            foreach (var instruction in composer.Instructions)
-            {
-                ilProcessor.InsertAfter(last, instruction);
-                last = instruction;
-            }
         }
     }
 }

@@ -21,5 +21,9 @@
     <Folder Include="Statements\Array\" />
     <Folder Include="Statements\Loop\" />
     <Folder Include="Statements\Using\" />
+    <Folder Include="Statements\Inheritance\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExpressionFuture\CSharpExpressions\CSharpExpressions.csproj" />
   </ItemGroup>
 </Project>

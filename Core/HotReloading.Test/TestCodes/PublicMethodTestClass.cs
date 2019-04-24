@@ -17,30 +17,40 @@
             Tracker.Call("change");
         }
 
-        public void AddedStaticMethodAndCalledFromAnotherClass()
-        {
-
-        }
 
         public void UpdateInstanceMethod()
         {
-
+            Tracker.Call("change");
         }
 
         public void AddedInstanceMethodAndCalledFromSameClass()
         {
-
+            AddedInstanceMethodAndCalledFromSameClass1();
         }
 
-        public void AddedInstanceMethodAndCalledFromAnotherClass()
+        public void AddedInstanceMethodAndCalledFromSameClass1()
         {
-
+            Tracker.Call("change");
         }
 
-        public void MethodOverload()
+        public void AddedStaticMethodAndCalledFromInstanceMethod()
         {
-
+            AddedStaticMethodAndCalledFromInstanceMethod1();
         }
 
+        public static void AddedStaticMethodAndCalledFromInstanceMethod1()
+        {
+            Tracker.Call("change");
+        }
+
+        public static void MethodOverload()
+        {
+            Tracker.Call("overload1");
+        }
+
+        public static void MethodOverload(string str)
+        {
+            Tracker.Call("overload2");
+        }
     }
 }

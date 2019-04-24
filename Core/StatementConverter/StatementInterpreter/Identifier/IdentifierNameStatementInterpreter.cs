@@ -32,8 +32,34 @@ namespace StatementConverter.StatementInterpreter
             if (varName == "nameof")
                 return new NameOfStatement();
 
+            if(parent is BaseStatement)
+            {
+                //Find HotReloadingBaseCall method
+                var callerMethod = GetCallingMethod(identifierNameSyntax);
+                var callerSymbol = semanticModel.GetDeclaredSymbol(callerMethod);
+                var methodSymbol = semanticModel.GetSymbolInfo(identifierNameSyntax).Symbol as IMethodSymbol;
+                return new InstanceMethodMemberStatement
+                {
+                    Name = "HotReloadingBase_" + methodSymbol.Name,
+                    ParentType = callerSymbol.ContainingType.GetClassType(),
+                    Parent = parent ?? new ThisStatement(),
+                    AccessModifier = AccessModifier.Private
+                };
+            }
+
             var symbolInfo = semanticModel.GetSymbolInfo(identifierNameSyntax);
             return GetStatement(symbolInfo, varName);
+        }
+
+        private MethodDeclarationSyntax GetCallingMethod(SyntaxNode syntaxNode)
+        {
+            if (syntaxNode is MethodDeclarationSyntax)
+                return syntaxNode as MethodDeclarationSyntax;
+
+            if (syntaxNode.Parent == null)
+                return null;
+
+            return GetCallingMethod(syntaxNode.Parent);
         }
 
         private Statement GetStatement(SymbolInfo symbolInfo, string varName)
@@ -105,14 +131,35 @@ namespace StatementConverter.StatementInterpreter
                 return new StaticMethodMemberStatement
                 {
                     Name = ms.Name,
-                    ParentType = ms.ContainingType.GetClassType()
+                    ParentType = ms.ContainingType.GetClassType(),
+                    AccessModifier = GetAccessModifier(ms)
                 };
             return new InstanceMethodMemberStatement
             {
                 Name = ms.Name,
                 ParentType = ms.ContainingType.GetClassType(),
-                Parent = parent ?? new ThisStatement()
+                Parent = parent ?? new ThisStatement(),
+                AccessModifier = GetAccessModifier(ms)
             };
+        }
+
+        private AccessModifier GetAccessModifier(IMethodSymbol ms)
+        {
+            switch(ms.DeclaredAccessibility)
+            {
+                case Accessibility.Public:
+                    return AccessModifier.Public;
+                case Accessibility.Private:
+                    return AccessModifier.Private;
+                case Accessibility.Protected:
+                    return AccessModifier.Protected;
+                case Accessibility.Internal:
+                    return AccessModifier.Internal;
+                case Accessibility.ProtectedOrInternal:
+                    return AccessModifier.ProtectedInternal;
+                default:
+                    throw new Exception("Accessibility is unknown");
+            }
         }
 
         private static Statement GetStatement(ILocalSymbol ls, string varName)

@@ -32,7 +32,7 @@ namespace HotReloading
 
                 if(message.Error == null)
                 {
-                    CodeChangeHandler.HandleCodeChange(message.CodeChange);
+                    Runtime.HandleCodeChange(message.CodeChange);
                     RequestHandled?.Invoke();
                 }
                 else if (message.Error.ParsingError != null)
@@ -53,7 +53,6 @@ namespace HotReloading
 
         public static async Task<bool> Run(string ideIP = "127.0.0.1", int idePort = Constants.DEFAULT_PORT)
         {
-            StatementConverter.CodeChangeHandler.GetMethod = CodeChangeHandler.GetMethod;
             Instance = new HotReloadingClient();
             return await Instance.RunInternal(ideIP, idePort);
         }
