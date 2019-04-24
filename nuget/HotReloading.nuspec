@@ -23,21 +23,21 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="../Core/HotReloading/bin/Debug/netstandard2.0/HotReloading.dll" target="lib/netstandard2.0/HotReloading.dll" />
-    <file src="../Core/HotReloading/bin/Debug/netstandard2.0/HotReloading.pdb" target="lib/netstandard2.0/HotReloading.pdb" />
-    <file src="../Core/HotReloading/bin/Debug/netstandard2.0/HotReloading.Core.dll" target="lib/netstandard2.0/HotReloading.Core.dll" />
-    <file src="../Core/HotReloading/bin/Debug/netstandard2.0/HotReloading.Core.pdb" target="lib/netstandard2.0/HotReloading.Core.pdb" />
-    <file src="../Core/HotReloading/bin/Debug/netstandard2.0/StatementConverter.dll" target="lib/netstandard2.0/StatementConverter.dll" />
-    <file src="../Core/HotReloading/bin/Debug/netstandard2.0/StatementConverter.pdb" target="lib/netstandard2.0/StatementConverter.pdb" />
-    <file src="../Core/HotReloading/bin/Debug/netstandard2.0/CSharpExpressions.dll" target="lib/netstandard2.0/CSharpExpressions.dll" />
-    <file src="../Core/HotReloading/bin/Debug/netstandard2.0/CSharpExpressions.pdb" target="lib/netstandard2.0/CSharpExpressions.pdb" />
-    <file src="../Core/HotReloading/bin/Debug/netstandard2.0/Debugging.dll" target="lib/netstandard2.0/Debugging.dll" />
-    <file src="../Core/HotReloading/bin/Debug/netstandard2.0/Debugging.pdb" target="lib/netstandard2.0/Debugging.pdb" />
+    <file src="../Core/HotReloading/bin/Release/netstandard2.0/HotReloading.dll" target="lib/netstandard2.0/HotReloading.dll" />
+    <file src="../Core/HotReloading/bin/Release/netstandard2.0/HotReloading.pdb" target="lib/netstandard2.0/HotReloading.pdb" />
+    <file src="../Core/HotReloading/bin/Release/netstandard2.0/HotReloading.Core.dll" target="lib/netstandard2.0/HotReloading.Core.dll" />
+    <file src="../Core/HotReloading/bin/Release/netstandard2.0/HotReloading.Core.pdb" target="lib/netstandard2.0/HotReloading.Core.pdb" />
+    <file src="../Core/HotReloading/bin/Release/netstandard2.0/StatementConverter.dll" target="lib/netstandard2.0/StatementConverter.dll" />
+    <file src="../Core/HotReloading/bin/Release/netstandard2.0/StatementConverter.pdb" target="lib/netstandard2.0/StatementConverter.pdb" />
+    <file src="../Core/HotReloading/bin/Release/netstandard2.0/CSharpExpressions.dll" target="lib/netstandard2.0/CSharpExpressions.dll" />
+    <file src="../Core/HotReloading/bin/Release/netstandard2.0/CSharpExpressions.pdb" target="lib/netstandard2.0/CSharpExpressions.pdb" />
+    <file src="../Core/HotReloading/bin/Release/netstandard2.0/Debugging.dll" target="lib/netstandard2.0/Debugging.dll" />
+    <file src="../Core/HotReloading/bin/Release/netstandard2.0/Debugging.pdb" target="lib/netstandard2.0/Debugging.pdb" />
     <file src="../Build/HotReloading.targets" target="build/HotReloading.targets" />
     <file src="../packages/Mono.Cecil.0.10.3/lib/net40/Mono.Cecil.dll" target="build\Mono.Cecil.dll" />
-    <file src="../Core/HotReloading/bin/Debug/netstandard2.0/HotReloading.dll" target="build/HotReloading.dll" />
-    <file src="../Core/HotReloading/bin/Debug/netstandard2.0/HotReloading.Core.dll" target="build/HotReloading.Core.dll" />
-    <file src="../Build/HotReloading.BuildTask/bin/Debug/HotReloading.BuildTask.dll" target="build/HotReloading.BuildTask.dll" />
-    <file src="../Core/HotReloading/bin/Debug/netstandard2.0/CSharpExpressions.dll" target="build/CSharpExpressions.dll" />
+    <file src="../Core/HotReloading/bin/Release/netstandard2.0/HotReloading.dll" target="build/HotReloading.dll" />
+    <file src="../Core/HotReloading/bin/Release/netstandard2.0/HotReloading.Core.dll" target="build/HotReloading.Core.dll" />
+    <file src="../Build/HotReloading.BuildTask/bin/Release/HotReloading.BuildTask.dll" target="build/HotReloading.BuildTask.dll" />
+    <file src="../Core/HotReloading/bin/Release/netstandard2.0/CSharpExpressions.dll" target="build/CSharpExpressions.dll" />
   </files>
   </package>
