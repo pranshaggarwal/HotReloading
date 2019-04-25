@@ -77,10 +77,10 @@ $ adb reverse tcp:8555 tcp:8555
 ```
 
 ## Demo
-https://youtu.be/iIYNJheYxFo
+https://youtu.be/nG2JSg-vZyk
 
 ## Contribution
-Feel free to create issue and feature feature. It is just first version of the tool with the support of community we can extend it to full fledged hot-reloading.
+Feel free to create issue and feature request. It is just first version of the tool and with the support of community we can extend it to full fledged hot-reloading.
 
 ## Attribution
 Special thanks to [@bartdesmet](https://github.com/bartdesmet) because of his work on [ExpressionFutures](https://github.com/bartdesmet/ExpressionFutures/tree/master/CSharpExpressions) I was able to add support for async/await.
