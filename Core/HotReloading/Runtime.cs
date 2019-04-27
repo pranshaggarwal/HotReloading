@@ -18,11 +18,18 @@ namespace HotReloading
             {
                 HandleMethodChange(method);
             }
+
+            foreach(var container in RuntimeMemory.Methods.SelectMany(x => 
+                                                                x.Value).Where(x => 
+                                                codeChange.Methods.Any(y => y == x.Method)))
+            {
+                UpdateInstanceMethod(container);
+            }
         }
 
         private static void HandleMethodChange(Method method)
         {
-            if(!RuntimeMemory.Methods.ContainsKey(method.ParentType))
+            if (!RuntimeMemory.Methods.ContainsKey(method.ParentType))
             {
                 RuntimeMemory.Methods.Add(method.ParentType, new List<IMethodContainer>());
             }
@@ -33,17 +40,21 @@ namespace HotReloading
 
             var existingMethod = methods.SingleOrDefault(x => Helper.GetMethodKey(x.Method) == methodKey);
 
-            if(existingMethod != null)
+            if (existingMethod != null)
             {
                 methods.Remove(existingMethod);
             }
 
             MethodContainer container = new MethodContainer(method);
             methods.Add(container);
+        }
 
-            if (!method.IsStatic)
+        private static void UpdateInstanceMethod(IMethodContainer container)
+        {
+            var methodKey = Helper.GetMethodKey(container.Method);
+            if (!container.Method.IsStatic)
             {
-                foreach (var list in RuntimeMemory.MemoryInstances.Where(x => x.GetType() == method.ParentType))
+                foreach (var list in RuntimeMemory.MemoryInstances.Where(x => x.GetType() == container.Method.ParentType))
                 {
                     if (list.InstanceMethods.ContainsKey(methodKey))
                     {
