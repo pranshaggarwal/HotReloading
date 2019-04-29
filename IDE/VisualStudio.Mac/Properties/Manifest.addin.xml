@@ -3,4 +3,21 @@
     <Extension path="/MonoDevelop/Ide/StartupHandlers">
         <Class class="VisualStudio.Mac.StartupHandler" />
     </Extension>
+    <Extension path = "/MonoDevelop/Ide/Commands">
+        <Command id = "VisualStudio.Mac.Commands.EnableHotReloading"
+                 _label = "Enable HotReloading"
+                 defaultHandler="VisualStudio.Mac.Commands.EnableCommands" />
+    </Extension>
+    <Extension path = "/MonoDevelop/Ide/Commands">
+        <Command id = "VisualStudio.Mac.Commands.AllowOverride"
+                 _label = "Allow Adding Override Method at runtime"
+                 defaultHandler="VisualStudio.Mac.Commands.AllowOverrideCommands" />
+    </Extension>
+    <Extension path = "/MonoDevelop/Ide/MainMenu/Tools">
+        <ItemSet id="HotReloading" Lable="HotReloading">
+            <CommandItem id="VisualStudio.Mac.Commands.EnableHotReloading" />
+            <SeparatorItem />
+            <CommandItem id="VisualStudio.Mac.Commands.AllowOverride" />
+        </ItemSet>
+    </Extension>
 </ExtensionModel>
