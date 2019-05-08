@@ -1,6 +1,8 @@
 ﻿using System;
 using MonoDevelop.Components.Commands;
 using MonoDevelop.Core;
+using PubSub.Extension;
+using VisualStudio.Mac.Events;
 
 namespace VisualStudio.Mac.Commands
 {
@@ -11,6 +13,7 @@ namespace VisualStudio.Mac.Commands
         protected override void Run()
         {
             Settings.Enabled = !info.Checked;
+            this.Publish<EnableHotReloadingChangeEvent>();
         }
 
         protected override void Update(CommandInfo info)

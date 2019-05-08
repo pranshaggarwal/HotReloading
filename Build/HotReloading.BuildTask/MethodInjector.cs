@@ -32,6 +32,7 @@ namespace HotReloading.BuildTask
         [Required]
         public string References { get; set; }
 
+        public bool AllowOverride { get; set; }
         public bool DebugSymbols { get; set; }
         public string DebugType { get; set; }
 
@@ -137,7 +138,7 @@ namespace HotReloading.BuildTask
                     WrapMethod(md, type, method, getInstanceMethod.GetReference(type, md));
                 }
 
-                if (!type.IsAbstract && !type.IsSealed)
+                if (!type.IsAbstract && !type.IsSealed && AllowOverride)
                 {
                     AddOverrideMethod(type, md, getInstanceMethod.GetReference(type, md));
                 }

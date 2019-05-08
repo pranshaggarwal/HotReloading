@@ -20,4 +20,10 @@
             <CommandItem id="VisualStudio.Mac.Commands.AllowOverride" />
         </ItemSet>
     </Extension>
+    
+    <Extension path="/MonoDevelop/ProjectModel/MSBuildGlobalPropertyProviders">
+        <Type
+            id="HotReloadingMSBuildGlobalPropertyProvider"
+            class="VisualStudio.Mac.ProjectModels.HotReloadingGlobalPropertyProvider" />
+    </Extension>
 </ExtensionModel>

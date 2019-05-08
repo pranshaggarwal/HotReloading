@@ -5,8 +5,8 @@ namespace VisualStudio.Mac
 {
     public static class Settings
     {
-        private const string EnabledHotReloadingKey = "EnableHotReloading";
-        private const string AllowOverrideKey = "AllowOverride";
+        public const string EnabledHotReloadingKey = "EnableHotReloading";
+        public const string AllowOverrideKey = "AllowOverride";
 
         public static bool Enabled
         {

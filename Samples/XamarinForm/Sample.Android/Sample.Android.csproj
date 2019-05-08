@@ -111,7 +111,7 @@
  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 
 <UsingTask TaskName="MethodInjector" AssemblyFile="..\..\..\Build\HotReloading.BuildTask\bin\$(Configuration)\HotReloading.BuildTask.dll" />
-<Target Name="MethodInjector" AfterTargets="AfterCompile" Condition="Exists('@(IntermediateAssembly)') And $(DesignTimeBuild) != true And $(Configuration) == 'Debug'" Inputs="@(IntermediateAssembly);$(ProjectWeaverXml)" Outputs="$(TargetPath)">
-  <MethodInjector References="@(ReferencePath)" AssemblyFile="@(IntermediateAssembly)" ProjectDirectory="$(MSBuildProjectDirectory)" DebugSymbols="$(DebugSymbols)" DebugType="$(DebugType)" />
+<Target Name="MethodInjector" AfterTargets="AfterCompile" Condition="Exists('@(IntermediateAssembly)') And $(DesignTimeBuild) != true And $(Configuration) == 'Debug' AND $(EnableHotReloading) == 'true'" Inputs="@(IntermediateAssembly);$(ProjectWeaverXml)" Outputs="$(TargetPath)">
+    <MethodInjector AllowOverride="$(AllowOverride)" References="@(ReferencePath)" AssemblyFile="@(IntermediateAssembly)" ProjectDirectory="$(MSBuildProjectDirectory)" DebugSymbols="$(DebugSymbols)" DebugType="$(DebugType)" />
 </Target>
 </Project>

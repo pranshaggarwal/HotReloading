@@ -1,5 +1,7 @@
 ﻿using System;
 using MonoDevelop.Components.Commands;
+using PubSub.Extension;
+using VisualStudio.Mac.Events;
 
 namespace VisualStudio.Mac.Commands
 {
@@ -9,6 +11,7 @@ namespace VisualStudio.Mac.Commands
         protected override void Run()
         {
             Settings.AllowOverride = !info.Checked;
+            this.Publish<AllowOverrideChangeEvent>();
         }
 
         protected override void Update(CommandInfo info)
