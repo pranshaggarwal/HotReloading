@@ -12,14 +12,14 @@ using Mono.Cecil.Cil;
 
 namespace HotReloading.BuildTask
 {
-    public class MethodInjector : Task
+    public class HotReloadingBuildTask : Task
     {
-        public MethodInjector()
+        public HotReloadingBuildTask()
         {
             Logger = new Logger(Log);
         }
 
-        public MethodInjector(ILogger logger)
+        public HotReloadingBuildTask(ILogger logger)
         {
             Logger = logger;
         }
