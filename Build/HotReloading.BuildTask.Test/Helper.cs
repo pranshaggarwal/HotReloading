@@ -12,7 +12,10 @@ namespace HotReloading.BuildTask.Test
 
         public static string GetInjectedAssembly(string assemblyToTest)
         {
-            var methodInjectorTask = new MethodInjector(new TestLogger());
+            var methodInjectorTask = new MethodInjector(new TestLogger())
+            {
+                AllowOverride = true
+            };
 
             methodInjectorTask.References = "/Users/pranshuaggarwal/.nuget/packages/xamarin.forms/3.2.0.839982/lib/netstandard2.0/Xamarin.Forms.Core.dll;/Users/pranshuaggarwal/.nuget/packages/prism.forms/7.1.0.431/lib/netstandard2.0/Prism.Forms.dll;/Users/pranshuaggarwal/.nuget/packages/prism.core/7.1.0.431/lib/netstandard2.0/Prism.dll";
 

@@ -143,7 +143,7 @@
       <Name>WrapOverrideMethodWithGenericNested</Name>
     </ProjectReference>
     <ProjectReference Include="..\BuildSamples\RandomGenericTest\RandomGenericTest.csproj">
-      <Project>{FD78EA86-74C0-4F1E-9478-A9F44A3468A1}</Project>
+      <Project>{72114D3A-37DF-42CE-B26D-05A86A53C9E9}</Project>
       <Name>RandomGenericTest</Name>
     </ProjectReference>
   </ItemGroup>
