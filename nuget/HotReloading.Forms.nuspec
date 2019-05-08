@@ -22,15 +22,15 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="../Forms/HotReloading.Forms/bin/Release/netstandard2.0/HotReloading.Forms.dll" target="lib/netstandard2.0/HotReloading.Forms.dll" />
-    <file src="../Forms/HotReloading.Forms/bin/Release/netstandard2.0/HotReloading.Forms.pdb" target="lib/netstandard2.0/HotReloading.Forms.pdb" />
-    <file src="../Forms/HotReloading.Forms/bin/Release/netstandard2.0/HotReloading.Forms.dll" target="lib/Xamarin.iOS10/HotReloading.Forms.dll" />
-    <file src="../Forms/HotReloading.Forms/bin/Release/netstandard2.0/HotReloading.Forms.pdb" target="lib/Xamarin.iOS10/HotReloading.Forms.pdb" />
-    <file src="../Forms/HotReloading.Forms/bin/Release/netstandard2.0/HotReloading.Forms.dll" target="lib/MonoAndroid10/HotReloading.Forms.dll" />
-    <file src="../Forms/HotReloading.Forms/bin/Release/netstandard2.0/HotReloading.Forms.pdb" target="lib/MonoAndroid10/HotReloading.Forms.pdb" />
-    <file src="../Forms/HotReloading.iOS/bin/Release/HotReloading.iOS.dll" target="lib/Xamarin.iOS10/HotReloading.iOS.dll" />
-    <file src="../Forms/HotReloading.iOS/bin/Release/HotReloading.iOS.pdb" target="lib/Xamarin.iOS10/HotReloading.iOS.pdb" />
-    <file src="../Forms/HotReloading.Android/bin/Release/HotReloading.Android.dll" target="lib/MonoAndroid10/HotReloading.Android.dll" />
-    <file src="../Forms/HotReloading.Android/bin/Release/HotReloading.Android.pdb" target="lib/MonoAndroid10/HotReloading.Android.pdb" />
+    <file src="../Forms/HotReloading.Forms/bin/Debug/netstandard2.0/HotReloading.Forms.dll" target="lib/netstandard2.0/HotReloading.Forms.dll" />
+    <file src="../Forms/HotReloading.Forms/bin/Debug/netstandard2.0/HotReloading.Forms.pdb" target="lib/netstandard2.0/HotReloading.Forms.pdb" />
+    <file src="../Forms/HotReloading.Forms/bin/Debug/netstandard2.0/HotReloading.Forms.dll" target="lib/Xamarin.iOS10/HotReloading.Forms.dll" />
+    <file src="../Forms/HotReloading.Forms/bin/Debug/netstandard2.0/HotReloading.Forms.pdb" target="lib/Xamarin.iOS10/HotReloading.Forms.pdb" />
+    <file src="../Forms/HotReloading.Forms/bin/Debug/netstandard2.0/HotReloading.Forms.dll" target="lib/MonoAndroid10/HotReloading.Forms.dll" />
+    <file src="../Forms/HotReloading.Forms/bin/Debug/netstandard2.0/HotReloading.Forms.pdb" target="lib/MonoAndroid10/HotReloading.Forms.pdb" />
+    <file src="../Forms/HotReloading.iOS/bin/Debug/HotReloading.iOS.dll" target="lib/Xamarin.iOS10/HotReloading.iOS.dll" />
+    <file src="../Forms/HotReloading.iOS/bin/Debug/HotReloading.iOS.pdb" target="lib/Xamarin.iOS10/HotReloading.iOS.pdb" />
+    <file src="../Forms/HotReloading.Android/bin/Debug/HotReloading.Android.dll" target="lib/MonoAndroid10/HotReloading.Android.dll" />
+    <file src="../Forms/HotReloading.Android/bin/Debug/HotReloading.Android.pdb" target="lib/MonoAndroid10/HotReloading.Android.pdb" />
   </files>
   </package>
