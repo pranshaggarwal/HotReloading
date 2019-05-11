@@ -22,7 +22,7 @@ namespace StatementConverter.Test
 
             var del = lamdaExpression.Compile();
 
-            var instance = new DelegateTestClass();
+            var instance = new ExpressionTestClass();
 
             del.DynamicInvoke(instance);
 
@@ -37,7 +37,7 @@ namespace StatementConverter.Test
 
             var del = lamdaExpression.Compile();
 
-            var instance = new DelegateTestClass();
+            var instance = new ExpressionTestClass();
 
             del.DynamicInvoke(instance);
 
