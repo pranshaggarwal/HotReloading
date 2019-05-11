@@ -13,6 +13,7 @@ namespace StatementConverter.Test
             Helper.Setup();
         }
 
+        [Ignore("Ignoring for now")]
         [Test]
         public void NoException()
         {
@@ -25,6 +26,7 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
+        [Ignore("Ignoring for now")]
         [Test]
         public void Exception()
         {
@@ -37,6 +39,7 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
+        [Ignore("Ignoring for now")]
         [Test]
         public void MultipleCatchStatement()
         {
@@ -49,6 +52,7 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
+        [Ignore("Ignoring for now")]
         [Test]
         public void FinallyBlockWithNoException()
         {
@@ -61,6 +65,7 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
+        [Ignore("Ignoring for now")]
         [Test]
         public void FinallyBlockWithException()
         {
