@@ -36,6 +36,7 @@
     <EmbeddedResource Include="TestCodes\DelegateTestClass.cs" />
     <EmbeddedResource Include="TestCodes\ExpressionTestClass.cs" />
     <EmbeddedResource Include="TestCodes\EventTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\TryCatchTestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="IntegrationTests\" />
@@ -54,6 +55,7 @@
     <Folder Include="IntegrationTests\Using\" />
     <Folder Include="IntegrationTests\Inheritance\" />
     <Folder Include="IntegrationTests\Delegate\" />
+    <Folder Include="IntegrationTests\TryCatch\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="TestCodes\AssignmentTestClass.cs" />
@@ -77,6 +79,7 @@
     <Compile Remove="TestCodes\DelegateTestClass.cs" />
     <Compile Remove="TestCodes\ExpressionTestClass.cs" />
     <Compile Remove="TestCodes\EventTestClass.cs" />
+    <Compile Remove="TestCodes\TryCatchTestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StatementConverter\StatementConverter.csproj" />
