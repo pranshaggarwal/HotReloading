@@ -33,6 +33,8 @@
     <EmbeddedResource Include="TestCodes\ListDictionaryTestClass.cs" />
     <EmbeddedResource Include="TestCodes\OverrideMethodTestClass.cs" />
     <EmbeddedResource Include="TestCodes\GenericMethodTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\DelegateTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\ExpressionTestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="IntegrationTests\" />
@@ -50,6 +52,7 @@
     <Folder Include="IntegrationTests\Loop\" />
     <Folder Include="IntegrationTests\Using\" />
     <Folder Include="IntegrationTests\Inheritance\" />
+    <Folder Include="IntegrationTests\Delegate\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="TestCodes\AssignmentTestClass.cs" />
@@ -70,6 +73,8 @@
     <Compile Remove="TestCodes\ListDictionaryTestClass.cs" />
     <Compile Remove="TestCodes\OverrideMethodTestClass.cs" />
     <Compile Remove="TestCodes\GenericMethodTestClass.cs" />
+    <Compile Remove="TestCodes\DelegateTestClass.cs" />
+    <Compile Remove="TestCodes\ExpressionTestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StatementConverter\StatementConverter.csproj" />
