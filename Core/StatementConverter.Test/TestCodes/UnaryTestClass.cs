@@ -3,6 +3,18 @@ namespace StatementConverter.Test.TestCodes
 {
     public class UnaryTestClass
     {
+        public static void NegativeNumber()
+        {
+            int t = 5;
+            Tracker.Call(-t);
+        }
+
+        public static void PositiveNumber()
+        {
+            int t = 5;
+            Tracker.Call(+5);
+        }
+
         public static void Decrement()
         {
             int t = 5;

@@ -36,6 +36,12 @@ namespace StatementConverter.StatementInterpreter
                 case Microsoft.CodeAnalysis.CSharp.SyntaxKind.BitwiseNotExpression:
                     statement.Operator = UnaryOperand.OnesComplement;
                     break;
+                case Microsoft.CodeAnalysis.CSharp.SyntaxKind.UnaryMinusExpression:
+                    statement.Operator = UnaryOperand.UnaryMinus;
+                    break;
+                case Microsoft.CodeAnalysis.CSharp.SyntaxKind.UnaryPlusExpression:
+                    statement.Operator = UnaryOperand.UnaryPlus;
+                    break;
                 default:
                     throw new NotSupportedException(prefixUnaryExpressionSyntax.Kind() + " is not supported unary operation");
             }

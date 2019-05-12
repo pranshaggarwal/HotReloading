@@ -8,5 +8,7 @@
         PreIncrementAssign,
         OnesComplement,
         Not,
+        UnaryPlus,
+        UnaryMinus,
     }
 }

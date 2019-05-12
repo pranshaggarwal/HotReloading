@@ -3,7 +3,7 @@
 [assembly: Addin(
     "VisualStudio.Mac",
     Namespace = "VisualStudio.Mac",
-    Version = "0.3.2"
+    Version = "0.3.4"
 )]
 
 [assembly: AddinName("HotReloading")]

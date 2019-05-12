@@ -11,7 +11,31 @@ namespace StatementConverter.Test
         {
             Helper.Setup();
         }
-        
+
+        [Test]
+        public void NegativeNumber()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("UnaryTestClass", "NegativeNumber");
+
+            var del = lamdaExpression.Compile();
+
+            del.DynamicInvoke();
+
+            Tracker.LastValue.Should().Be(-5);
+        }
+
+        [Test]
+        public void PositiveNumber()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("UnaryTestClass", "PositiveNumber");
+
+            var del = lamdaExpression.Compile();
+
+            del.DynamicInvoke();
+
+            Tracker.LastValue.Should().Be(5);
+        }
+
         [Test]
         public void Decrement()
         {

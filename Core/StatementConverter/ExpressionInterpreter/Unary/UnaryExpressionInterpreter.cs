@@ -49,6 +49,14 @@ namespace StatementConverter.ExpressionInterpreter
                         return Expression.OnesComplement(operand1);
                     }
                     return Expression.OnesComplement(operand);
+                case UnaryOperand.UnaryMinus:
+                    return Expression.Negate(expressionInterpreterHandler
+                                                    .GetExpression(
+                                                        unaryStatement.Operand));
+                case UnaryOperand.UnaryPlus:
+                    return expressionInterpreterHandler
+                                                    .GetExpression(
+                                                        unaryStatement.Operand);
                 default:
                     throw new NotSupportedException(unaryStatement.Operand + " is not suppoted unary statement");
             }
