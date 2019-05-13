@@ -96,9 +96,9 @@ namespace StatementConverter.ExpressionInterpreter
                 case BinaryOperand.LessThanEqual:
                     return Expression.LessThanOrEqual(convertedLeft, convertedRight);
                 case BinaryOperand.GreaterThan:
-                    return Expression.GreaterThan(convertedLeft, right);
+                    return Expression.GreaterThan(convertedLeft, convertedRight);
                 case BinaryOperand.GreaterThanEqual:
-                    return Expression.GreaterThanOrEqual(convertedLeft, right);
+                    return Expression.GreaterThanOrEqual(convertedLeft, convertedRight);
                 case BinaryOperand.BitwiseAnd:
                     if (left.Type.IsEnum)
                     {
