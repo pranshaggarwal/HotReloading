@@ -150,6 +150,9 @@ namespace StatementConverter.StatementInterpreter
                 case BaseExpressionSyntax baseExpressionSyntax:
                     statement = new BaseStatementInterpreter(baseExpressionSyntax).GetStatement();
                     return statement;
+                case ParenthesizedExpressionSyntax parenthesizedExpressionSyntax:
+                    statement = new ParenthesizedStatementInterpreter(this, parenthesizedExpressionSyntax).GetStatement();
+                    return statement;
                 default:
                     throw new NotImplementedException(syntax.GetType() + " is not supported yet");
             }

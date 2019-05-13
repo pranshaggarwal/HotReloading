@@ -12,7 +12,19 @@ namespace StatementConverter.Test
         {
             Helper.Setup();
         }
-        
+
+        [Test]
+        public void TestParenthesisExpression()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("BinaryTestClass", "ParenthesisExpression");
+
+            var del = lamdaExpression.Compile();
+
+            del.DynamicInvoke();
+
+            Tracker.LastValue.Should().Be(50);
+        }
+
         [Test]
         public void TestAdd()
         {

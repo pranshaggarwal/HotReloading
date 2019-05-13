@@ -3,6 +3,12 @@ namespace StatementConverter.Test
 {
     public class BinaryTestClass
     {
+        public static void ParenthesisExpression()
+        {
+            var t = (5 + 5) * 5;
+            Tracker.Call(t);
+        }
+
         public static void Add()
         {
             var t = 5 + 5;
