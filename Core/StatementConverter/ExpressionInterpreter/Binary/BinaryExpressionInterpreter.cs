@@ -270,12 +270,12 @@ namespace StatementConverter.ExpressionInterpreter
 
         private Expression ConvertType(Expression expressionToConvert, Type fromType, Type toType)
         {
-            var precedentType = GetNumericTypePrecendence(fromType) > GetNumericTypePrecendence(toType) ?
+            var precedentType = GetTypePrecendence(fromType) > GetTypePrecendence(toType) ?
                                         fromType : toType;
             return Expression.Convert(expressionToConvert, precedentType);
         }
 
-        private int GetNumericTypePrecendence(Type type)
+        private int GetTypePrecendence(Type type)
         {
             if(type == typeof(Byte))
                 return 1;
@@ -301,8 +301,9 @@ namespace StatementConverter.ExpressionInterpreter
                 return 11;
             if (type == typeof(Decimal))
                 return 12;
-
-            throw new Exception($"Binary expression for {type.FullName} is not supported yet");
+            if (type == typeof(Object))
+                return int.MaxValue;
+            return -1;
         }
     }
 }

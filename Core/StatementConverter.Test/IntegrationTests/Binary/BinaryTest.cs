@@ -710,6 +710,18 @@ namespace StatementConverter.Test
         }
 
         [Test]
+        public void TestEqual2()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("BinaryTestClass", "Equal2");
+
+            var del = lamdaExpression.Compile();
+
+            del.DynamicInvoke();
+
+            Tracker.LastValue.Should().Be(true);
+        }
+
+        [Test]
         public void TestNotEqual()
         {
             var lamdaExpression = Helper.GetLamdaExpression("BinaryTestClass", "NotEqual");

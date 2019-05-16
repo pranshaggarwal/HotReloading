@@ -431,6 +431,13 @@ namespace StatementConverter.Test
             Tracker.Call(t);
         }
 
+        public static void Equal2()
+        {
+            byte? x = null;
+            var t = x == null;
+            Tracker.Call(t);
+        }
+
         public static void NotEqual()
         {
             var t = 5 != 2;
