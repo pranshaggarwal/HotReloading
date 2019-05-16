@@ -153,6 +153,9 @@ namespace StatementConverter.StatementInterpreter
                 case ParenthesizedExpressionSyntax parenthesizedExpressionSyntax:
                     statement = new ParenthesizedStatementInterpreter(this, parenthesizedExpressionSyntax).GetStatement();
                     return statement;
+                case InterpolatedStringExpressionSyntax interpolatedStringExpressionSyntax:
+                    statement = new InterpolatedStringStatementInterpreter(this, interpolatedStringExpressionSyntax).GetStatement();
+                    return statement;
                 default:
                     throw new NotImplementedException(syntax.GetType() + " is not supported yet");
             }
