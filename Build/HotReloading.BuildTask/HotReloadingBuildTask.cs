@@ -57,7 +57,7 @@ namespace HotReloading.BuildTask
                 foreach (var p in paths)
                 {
                     var searchpath = Path.GetDirectoryName(p);
-                    Logger.LogMessage($"Adding searchpath {searchpath}");
+                    //Logger.LogMessage($"Adding searchpath {searchpath}");
                     assemblyReferenceResolver.AddSearchDirectory(searchpath);
                 }
             }
@@ -108,7 +108,7 @@ namespace HotReloading.BuildTask
                 if (type.Name.EndsWith("Delegate", StringComparison.InvariantCulture))
                     continue;
                 Logger.LogMessage("Weaving Type: " + type.Name);
-                var methods = type.Methods;
+                var methods = type.Methods.ToList();
 
                 MethodDefinition getInstanceMethod = null;
                 MethodDefinition instanceMethodGetters = null;
@@ -136,11 +136,23 @@ namespace HotReloading.BuildTask
                         continue;
 
                     WrapMethod(md, type, method, getInstanceMethod.GetReference(type, md));
+
+                    if (method.IsVirtual)
+                    {
+                        var baseMethod = GetBaseMethod(type, method, md);
+
+                        if (baseMethod != null)
+                        {
+                            var hotReloadingBaseMethod = CreateBaseCallMethod(md, baseMethod);
+
+                            type.Methods.Add(hotReloadingBaseMethod);
+                        }
+                    }
                 }
 
                 if (!type.IsAbstract && !type.IsSealed && AllowOverride)
                 {
-                    AddOverrideMethod(type, md, getInstanceMethod.GetReference(type, md));
+                    AddOverrideMethod(type, md, getInstanceMethod.GetReference(type, md), methods);
                 }
             }
 
@@ -160,6 +172,21 @@ namespace HotReloading.BuildTask
             }
 
             ad.Dispose();
+        }
+
+        private MethodReference GetBaseMethod(TypeDefinition type, MethodDefinition method, ModuleDefinition md)
+        {
+            if (type.BaseType == null)
+                return null;
+            var baseTypeDefinition = type.BaseType.Resolve();
+
+            foreach(var baseMethod in baseTypeDefinition.Methods)
+            {
+                if (baseMethod.IsEqual(method))
+                    return baseMethod.GetBaseReference(type, type.BaseType, md);
+            }
+
+            return GetBaseMethod(baseTypeDefinition, method, md);
         }
 
         private List<TypeDefinition> GetBaseTypesWithCorrectOrder(TypeDefinition type)
@@ -184,7 +211,10 @@ namespace HotReloading.BuildTask
             return retVal;
         }
 
-        private void AddOverrideMethod(TypeDefinition type, ModuleDefinition md, MethodReference getInstanceMethod)
+        private void AddOverrideMethod(TypeDefinition type, 
+            ModuleDefinition md, 
+            MethodReference getInstanceMethod, 
+            List<MethodDefinition> existingMethods)
         {
             if (type.BaseType == null)
                 return;
@@ -195,7 +225,9 @@ namespace HotReloading.BuildTask
 
             foreach(var overridableMethod in overridableMethods)
             {
-                MethodReference baseMethod = GetBaseMethod(overridableMethod);
+                if (existingMethods.Any(x => x.FullName == overridableMethod.Method.FullName))
+                    continue;
+                var baseMethod = overridableMethod.BaseMethodReference;
                 //Ignore method with ref parameter
                 if (baseMethod.Parameters.Any(x => x.ParameterType is ByReferenceType))
                     continue;
@@ -245,70 +277,74 @@ namespace HotReloading.BuildTask
             foreach (var baseMethod in baseMethodCalls)
             {
                 //Ignore optional
-                if(baseMethod.Parameters.Any(x => x.IsOptional))
+                if (baseMethod.Parameters.Any(x => x.IsOptional))
                 {
                     continue;
                 }
-                var methodKey = Core.Helper.GetMethodKey(baseMethod.Name, baseMethod.Parameters.Select(x => x.ParameterType.FullName).ToArray());
-                var methodName = "HotReloadingBase_" + baseMethod.Name;
-                var hotReloadingBaseMethod = new MethodDefinition(methodName, MethodAttributes.Private | MethodAttributes.HideBySig, md.ImportReference(typeof(void)));
-
-                foreach (var parameter in baseMethod.GenericParameters)
-                {
-                    hotReloadingBaseMethod.GenericParameters.Add(parameter);
-                }
-
-                hotReloadingBaseMethod.ReturnType = baseMethod.ReturnType;
-                foreach (var parameter in baseMethod.Parameters)
-                {
-                    TypeReference parameterType = parameter.ParameterType;
-                    hotReloadingBaseMethod.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType)
-                    {
-                        IsIn = parameter.IsIn,
-                        IsOut = parameter.IsOut,
-                        IsOptional = parameter.IsOptional
-                    });
-                }
-
-                var retVar = new VariableDefinition(md.ImportReference(typeof(object)));
-                var baseCallComposer = new InstructionComposer(md)
-                    .LoadArg_0();
-
-                foreach (var parameter in hotReloadingBaseMethod.Parameters)
-                {
-                    baseCallComposer.LoadArg(parameter);
-                }
-
-                baseCallComposer.BaseCall(baseMethod);
-
-                if (hotReloadingBaseMethod.ReturnType.FullName != "System.Void")
-                {
-                    var returnVariable = new VariableDefinition(hotReloadingBaseMethod.ReturnType);
-
-                    hotReloadingBaseMethod.Body.Variables.Add(returnVariable);
-
-                    baseCallComposer.Store(returnVariable);
-                    baseCallComposer.Load(returnVariable);
-                }
-
-                baseCallComposer.Return();
-
-                foreach (var instruction in baseCallComposer.Instructions)
-                {
-                    hotReloadingBaseMethod.Body.GetILProcessor().Append(instruction);
-                }
+                var hotReloadingBaseMethod = CreateBaseCallMethod(md, baseMethod);
 
                 type.Methods.Add(hotReloadingBaseMethod);
             }
         }
 
+        private static MethodDefinition CreateBaseCallMethod(ModuleDefinition md, MethodReference baseMethod)
+        {
+            var methodKey = Core.Helper.GetMethodKey(baseMethod.Name, baseMethod.Parameters.Select(x => x.ParameterType.FullName).ToArray());
+            var methodName = "HotReloadingBase_" + baseMethod.Name;
+            var hotReloadingBaseMethod = new MethodDefinition(methodName, MethodAttributes.Private | MethodAttributes.HideBySig, md.ImportReference(typeof(void)));
+
+            foreach (var parameter in baseMethod.GenericParameters)
+            {
+                hotReloadingBaseMethod.GenericParameters.Add(parameter);
+            }
+
+            hotReloadingBaseMethod.ReturnType = baseMethod.ReturnType;
+            foreach (var parameter in baseMethod.Parameters)
+            {
+                TypeReference parameterType = parameter.ParameterType;
+                hotReloadingBaseMethod.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType)
+                {
+                    IsIn = parameter.IsIn,
+                    IsOut = parameter.IsOut,
+                    IsOptional = parameter.IsOptional
+                });
+            }
+
+            var retVar = new VariableDefinition(md.ImportReference(typeof(object)));
+            var baseCallComposer = new InstructionComposer(md)
+                .LoadArg_0();
+
+            foreach (var parameter in hotReloadingBaseMethod.Parameters)
+            {
+                baseCallComposer.LoadArg(parameter);
+            }
+
+            baseCallComposer.BaseCall(baseMethod);
+
+            if (hotReloadingBaseMethod.ReturnType.FullName != "System.Void")
+            {
+                var returnVariable = new VariableDefinition(hotReloadingBaseMethod.ReturnType);
+
+                hotReloadingBaseMethod.Body.Variables.Add(returnVariable);
+
+                baseCallComposer.Store(returnVariable);
+                baseCallComposer.Load(returnVariable);
+            }
+
+            baseCallComposer.Return();
+
+            foreach (var instruction in baseCallComposer.Instructions)
+            {
+                hotReloadingBaseMethod.Body.GetILProcessor().Append(instruction);
+            }
+
+            return hotReloadingBaseMethod;
+        }
+
         public class OverridableMethod
         {
             public MethodDefinition Method;
-            public OverridableMethod BaseMethod;
-            public MethodReference MethodReference;
-            public TypeReference DeclaringType;
-
+            public MethodReference BaseMethodReference;
         }
         private IEnumerable<OverridableMethod> GetOverridableMethods(TypeDefinition type, ModuleDefinition md)
         {
@@ -346,7 +382,7 @@ namespace HotReloading.BuildTask
                     .SelectMany(x => x.Methods).Any(x => x.IsEqual(method)))
                         continue;
 
-                    retVal.Add(CopyMethod(new OverridableMethod { Method = method, DeclaringType = type.BaseType }, type, type.BaseType, md));
+                    retVal.Add(CopyMethod(method, type, type.BaseType, md));
                 }
             }
 
@@ -360,31 +396,31 @@ namespace HotReloading.BuildTask
                     continue;
                 if (sealedMethods.Any(x => x.IsEqual(method.Method)))
                     continue;
-                retVal.Add(CopyMethod(method, type, type.BaseType, md));
+                retVal.Add(CopyMethod(method.Method, type, type.BaseType, md));
             }
 
             return retVal;
         }
 
-        private OverridableMethod CopyMethod(OverridableMethod overridableMethod, TypeReference targetType, TypeReference sourceType, ModuleDefinition md)
+        private OverridableMethod CopyMethod(MethodDefinition overridableMethod, TypeReference targetType, TypeReference sourceType, ModuleDefinition md)
         {
-            Logger.LogMessage("\tOverriding: " + overridableMethod.Method.FullName);
-            var attributes = overridableMethod.Method.Attributes & ~MethodAttributes.NewSlot | MethodAttributes.ReuseSlot;
-            var method = new MethodDefinition(overridableMethod.Method.Name, attributes, md.ImportReference(typeof(void)));
-            method.ImplAttributes = overridableMethod.Method.ImplAttributes;
-            method.SemanticsAttributes = overridableMethod.Method.SemanticsAttributes;
+            Logger.LogMessage("\tOverriding: " + overridableMethod.FullName);
+            var attributes = overridableMethod.Attributes & ~MethodAttributes.NewSlot | MethodAttributes.ReuseSlot;
+            var method = new MethodDefinition(overridableMethod.Name, attributes, md.ImportReference(typeof(void)));
+            method.ImplAttributes = overridableMethod.ImplAttributes;
+            method.SemanticsAttributes = overridableMethod.SemanticsAttributes;
             method.DeclaringType = targetType.Resolve();
 
-            foreach (var genericParameter in overridableMethod.Method.GenericParameters)
+            foreach (var genericParameter in overridableMethod.GenericParameters)
             {
                 method.GenericParameters.Add(new GenericParameter(targetType.GetUniqueGenericParameterName(), method));
             }
 
-            TypeReference returnType = overridableMethod.Method.ReturnType.CopyType(targetType, sourceType, md, method);
+            TypeReference returnType = overridableMethod.ReturnType.CopyType(targetType, sourceType, md, method);
 
             method.ReturnType = returnType;
 
-            foreach (var parameter in overridableMethod.Method.Parameters)
+            foreach (var parameter in overridableMethod.Parameters)
             {
                 TypeReference parameterType = parameter.ParameterType.CopyType(targetType, sourceType, md, method);
                 method.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameterType)
@@ -394,22 +430,13 @@ namespace HotReloading.BuildTask
                     IsOut = parameter.IsOut
                 });
             }
-             var baseMethodReference = overridableMethod.Method.GetBaseReference(targetType, sourceType, md);  
+            var baseMethodReference = overridableMethod.GetBaseReference(targetType, sourceType, md);  
              
-             return new OverridableMethod
+            return new OverridableMethod
             {
                 Method = method,
-                BaseMethod = overridableMethod,
-                MethodReference = baseMethodReference
+                BaseMethodReference = baseMethodReference
             };
-        }
-
-        private MethodReference GetBaseMethod(OverridableMethod overridableMethod)
-        {
-            if (overridableMethod.MethodReference != null)
-                return overridableMethod.MethodReference;
-
-            return GetBaseMethod(overridableMethod.BaseMethod);
         }
 
         private static void ImplementIInstanceClass(ModuleDefinition md, TypeDefinition type, ref MethodDefinition getInstanceMethod, ref MethodDefinition instanceMethodGetters, bool hasImplementedIInstanceClass)
