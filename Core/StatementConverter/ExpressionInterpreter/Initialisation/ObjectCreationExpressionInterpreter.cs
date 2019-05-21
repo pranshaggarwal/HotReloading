@@ -30,9 +30,9 @@ namespace StatementConverter.ExpressionInterpreter
                 arguments.Add(expressionInterpreterHandler.GetExpression(argument));
             }
 
-            var argumentTypes = arguments.Select(x => x.Type).ToArray();
+            var parameterTypes = creationStatement.ParametersSignature.Select(x => (Type)x).ToArray();
 
-            var ctorInfo = instanceType.GetConstructor(argumentTypes);
+            var ctorInfo = instanceType.GetConstructor(parameterTypes);
 
             Expression[] convertedArguments = new Expression[arguments.Count];
 
