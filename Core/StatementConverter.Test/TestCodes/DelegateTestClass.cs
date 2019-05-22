@@ -74,6 +74,13 @@ namespace StatementConverter.Test
             action("hello");
         }
 
+        public void DefineDelegate9()
+        {
+            var func = new Func<string, string>((str) => TestFunction(str));
+
+            Tracker.Call(func("hello"));
+        }
+
         public void AddDelegate()
         {
             int counter = 0;

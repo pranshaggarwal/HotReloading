@@ -96,13 +96,10 @@ namespace StatementConverter.StatementInterpreter
 
         private Statement CreateDelegateStatement(ClassType classType)
         {
-            var objectCreationStatement = new DelegateObjectCreationStatement
-            {
-                Type = classType
-            };
-
             if (objectCreationExpressionSyntax.ArgumentList.Arguments.Count != 1)
                 throw new Exception("Cannot create instance of delegate type: " + classType.TypeString);
+
+            var objectCreationStatement = new DelegateObjectCreationStatement();
 
             objectCreationStatement.Method = statementInterpreterHandler.GetStatement(objectCreationExpressionSyntax.ArgumentList.Arguments[0]);
 

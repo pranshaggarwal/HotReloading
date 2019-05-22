@@ -26,6 +26,15 @@ namespace StatementConverter.StatementInterpreter
         {
             var method = statementInterpreterHandler.GetStatement(ies.Expression);
 
+            if(method is DelegateIdentifierStatement delegateMethodMemberStatement)
+            {
+                return new DelegateInvocationStatement
+                {
+                    Delegate = delegateMethodMemberStatement,
+                    Arguments = ies.ArgumentList.Arguments.Select(x => statementInterpreterHandler.GetStatement(x))
+                };
+            }
+
             if (method is NameOfStatement)
             {
                 //nameof()

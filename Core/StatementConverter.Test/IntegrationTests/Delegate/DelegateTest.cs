@@ -127,6 +127,20 @@ namespace StatementConverter.Test
         }
 
         [Test]
+        public void DefineDelegate9()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("DelegateTestClass", "DefineDelegate9");
+
+            var del = lamdaExpression.Compile();
+
+            var instance = new DelegateTestClass();
+
+            del.DynamicInvoke(instance);
+
+            Tracker.LastValue.Should().Be("hello");
+        }
+
+        [Test]
         public void AddDelegate()
         {
             var lamdaExpression = Helper.GetLamdaExpression("DelegateTestClass", "AddDelegate");

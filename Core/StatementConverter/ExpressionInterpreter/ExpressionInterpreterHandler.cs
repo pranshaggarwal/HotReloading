@@ -159,6 +159,12 @@ namespace StatementConverter.ExpressionInterpreter
                 case DelegateObjectCreationStatement delegateObjectCreationStatement:
                     expression = new DelegateObjectCreationExpressionInterpreter(this, delegateObjectCreationStatement).GetExpression();
                     return expression;
+                case DelegateInvocationStatement delegateInvocationStatement:
+                    expression = new DelegateInvocationExpressionInterpreter(this, delegateInvocationStatement).GetExpression();
+                    return expression;
+                case MethodPointerStatement methodPointerStatement:
+                    expression = new MethodPointerExpressionInterpreter(this, methodPointerStatement).GetExpression();
+                    return expression;
                 default:
                     throw new NotImplementedException(statement.GetType() + " is not supported yet.");
             }

@@ -6,6 +6,7 @@ using System.Reflection;
 using CSharpExpressions.Microsoft.CSharp;
 using HotReloading.Core;
 using HotReloading.Core.Statements;
+using StatementConverter.Extensions;
 
 namespace StatementConverter.ExpressionInterpreter
 {
@@ -23,11 +24,6 @@ namespace StatementConverter.ExpressionInterpreter
 
         public Expression GetExpression()
         {
-            if (invocationStatement.Method is DelegateMethodMemberStatement delegateMethodMemberStatement)
-            {
-                return InvokeDelegateExpression();
-            }
-
             var methodKey = GetMethodKey();
 
             var lamdaExpression = RuntimeMemory.GetMethod(invocationStatement.Method.ParentType, methodKey);
@@ -56,7 +52,10 @@ namespace StatementConverter.ExpressionInterpreter
                 declareType.GetMethod(invocationStatement.Method.Name,
                     bindingFlags, Type.DefaultBinder, parameterTypes, null);
 
-            Expression[] convertedArguments = GetArgumentsExpression(methodInfo);
+            var arguments = invocationStatement.Arguments
+                           .Select(x => expressionInterpreterHandler.GetExpression(x)).ToArray();
+
+            Expression[] convertedArguments = methodInfo.ConvertArguments(arguments);
 
             if (instanceMember != null)
             {
@@ -80,53 +79,6 @@ namespace StatementConverter.ExpressionInterpreter
             arguments.AddRange(invocationStatement.Arguments
                 .Select(x => expressionInterpreterHandler.GetExpression(x)).ToArray());
             return Expression.Invoke(expression, arguments);
-        }
-
-        private Expression InvokeDelegateExpression()
-        {
-            Type declareType = (Type)invocationStatement.Method.ParentType;
-
-            var methodInfo =
-                declareType.GetMethod("Invoke");
-            Expression[] convertedArguments = GetArgumentsExpression(methodInfo);
-
-            var caller = expressionInterpreterHandler.GetExpression(((DelegateMethodMemberStatement)invocationStatement.Method).Delegate);
-            return Expression.Call(
-                        caller,
-                        methodInfo, convertedArguments);
-
-        }
-
-        private Expression[] GetArgumentsExpression(MethodInfo methodInfo)
-        {
-            var arguments = invocationStatement.Arguments
-                           .Select(x => expressionInterpreterHandler.GetExpression(x)).ToArray();
-            Expression[] convertedArguments = new Expression[arguments.Length];
-
-            for (int i = 0; i < convertedArguments.Length; i++)
-            {
-                var argument = arguments[i];
-
-                var parameter = methodInfo.GetParameters()[i];
-
-                if (parameter.ParameterType != argument.Type)
-                {
-                    convertedArguments[i] = Expression.Convert(argument, parameter.ParameterType);
-                }
-                else
-                {
-                    convertedArguments[i] = argument;
-                }
-            }
-
-            return convertedArguments;
-        }
-
-        private Type GetDelegateType(MethodInfo methodInfo)
-        {
-            var parameterTypes = methodInfo.GetParameters().Select(x => x.ParameterType).ToList();
-            parameterTypes.Add(methodInfo.ReturnType);
-            return Expression.GetDelegateType(parameterTypes.ToArray());
         }
 
         private string GetMethodKey()

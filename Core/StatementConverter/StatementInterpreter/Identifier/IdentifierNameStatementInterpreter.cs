@@ -51,14 +51,21 @@ namespace StatementConverter.StatementInterpreter
             var statement = GetStatement(symbolInfo, varName);
             var typeInfo = semanticModel.GetTypeInfo(identifierNameSyntax);
 
-            if(typeInfo.Type?.TypeKind == TypeKind.Delegate)
+            if(typeInfo.Type?.TypeKind == TypeKind.Delegate )
             {
-                return new DelegateMethodMemberStatement
+                return new DelegateIdentifierStatement
                 {
-                    Delegate = statement,
-                    Name = varName,
-                    AccessModifier = AccessModifier.Public,
-                    ParentType = typeInfo.GetClassType()
+                    Target = statement,
+                    Type = typeInfo.GetClassType()
+                };
+            }
+
+            if(typeInfo.ConvertedType?.TypeKind == TypeKind.Delegate)
+            {
+                return new MethodPointerStatement
+                {
+                    Method = statement,
+                    Type = typeInfo.ConvertedType.GetClassType()
                 };
             }
 
