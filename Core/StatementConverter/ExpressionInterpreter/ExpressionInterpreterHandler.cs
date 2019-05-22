@@ -150,6 +150,12 @@ namespace StatementConverter.ExpressionInterpreter
                 case BaseStatement baseStatement:
                     expression = new ThisExpressionInterpreter(thisExpression).GetExpression();
                     return expression;
+                case TryStatement tryStatement:
+                    expression = new TryExpressionInterpreter(this, tryStatement, scopedLocalVariable).GetExpression();
+                    return expression;
+                case ThrowStatement throwStatement:
+                    expression = new ThrowExpressionInterpreter(this, throwStatement).GetExpression();
+                    return expression;
                 default:
                     throw new NotImplementedException(statement.GetType() + " is not supported yet.");
             }

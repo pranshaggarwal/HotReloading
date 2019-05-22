@@ -156,6 +156,18 @@ namespace StatementConverter.StatementInterpreter
                 case InterpolatedStringExpressionSyntax interpolatedStringExpressionSyntax:
                     statement = new InterpolatedStringStatementInterpreter(this, interpolatedStringExpressionSyntax).GetStatement();
                     return statement;
+                case TryStatementSyntax tryStatementSyntax:
+                    statement = new TryStatementInterpreter(this, tryStatementSyntax).GetStatement();
+                    return statement;
+                case CatchClauseSyntax catchClauseSyntax:
+                    statement = new CatchStatementInterpreter(this, catchClauseSyntax, semanticModel).GetStatement();
+                    return statement;
+                case ThrowStatementSyntax throwStatementSyntax:
+                    statement = new ThrowStatementInterpreter(this, throwStatementSyntax).GetStatement();
+                    return statement;
+                case FinallyClauseSyntax finallyClauseSyntax:
+                    statement = new FinallyStatementInterpreter(this, finallyClauseSyntax).GetStatement();
+                    return statement;
                 default:
                     throw new NotImplementedException(syntax.GetType() + " is not supported yet");
             }

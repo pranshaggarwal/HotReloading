@@ -66,7 +66,7 @@ namespace StatementConverter.Test
         {
             try
             {
-                new Exception();
+                throw new Exception();
                 Tracker.Call("hello1");
             }
             catch (Exception ex)
@@ -76,6 +76,46 @@ namespace StatementConverter.Test
             finally
             {
                 Tracker.Call("hello");
+            }
+        }
+
+        public static void AccessCatchVariable()
+        {
+            try
+            {
+                throw new Exception("hello");
+            }
+            catch(Exception ex)
+            {
+                Tracker.Call(ex.Message);
+            }
+        }
+
+        public static void CatchWithoutVariable()
+        {
+            try
+            {
+                throw new Exception();
+            }
+            catch
+            {
+                Tracker.Call("hello");
+            }
+        }
+
+        public static void CatchFilter()
+        {
+            try
+            {
+                throw new Exception("hello");
+            }
+            catch(Exception ex) when (ex.Message == "hello")
+            {
+                Tracker.Call(ex.Message);
+            }
+            catch(Exception)
+            {
+                Tracker.Call("hello1");
             }
         }
     }

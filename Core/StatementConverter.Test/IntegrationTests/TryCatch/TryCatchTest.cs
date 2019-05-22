@@ -13,7 +13,6 @@ namespace StatementConverter.Test
             Helper.Setup();
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void NoException()
         {
@@ -26,7 +25,6 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void Exception()
         {
@@ -39,7 +37,6 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void MultipleCatchStatement()
         {
@@ -52,7 +49,6 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void FinallyBlockWithNoException()
         {
@@ -65,11 +61,46 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void FinallyBlockWithException()
         {
             var lamdaExpression = Helper.GetLamdaExpression("TryCatchTestClass", "FinallyBlockWithException");
+
+            var del = lamdaExpression.Compile();
+
+            del.DynamicInvoke();
+
+            Tracker.LastValue.Should().Be("hello");
+        }
+
+        [Test]
+        public void AccessCatchVariable()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("TryCatchTestClass", "AccessCatchVariable");
+
+            var del = lamdaExpression.Compile();
+
+            del.DynamicInvoke();
+
+            Tracker.LastValue.Should().Be("hello");
+        }
+
+        [Test]
+        public void CatchWithoutVariable()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("TryCatchTestClass", "CatchWithoutVariable");
+
+            var del = lamdaExpression.Compile();
+
+            del.DynamicInvoke();
+
+            Tracker.LastValue.Should().Be("hello");
+        }
+
+        [Test]
+        public void CatchFilter()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("TryCatchTestClass", "CatchFilter");
 
             var del = lamdaExpression.Compile();
 
