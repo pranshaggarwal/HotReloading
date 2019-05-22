@@ -14,7 +14,6 @@ namespace StatementConverter.Test
             Helper.Setup();
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void DefineDelegate1()
         {
@@ -29,7 +28,6 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void DefineDelegate2()
         {
@@ -44,7 +42,6 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void DefineDelegate3()
         {
@@ -59,7 +56,6 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void DefineDelegate4()
         {
@@ -74,7 +70,6 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void DefineDelegate5()
         {
@@ -89,7 +84,6 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void DefineDelegate6()
         {
@@ -104,7 +98,6 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public async Task DefineDelegate7()
         {
@@ -119,7 +112,6 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void DefineDelegate8()
         {
@@ -134,7 +126,6 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void AddDelegate()
         {
@@ -149,7 +140,6 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be(2);
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void RemoveDelegate()
         {
@@ -164,7 +154,6 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void PassDelegateToMethod1()
         {
@@ -179,7 +168,6 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void PassDelegateToMethod2()
         {
@@ -194,6 +182,4 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
     }
-
-
 }

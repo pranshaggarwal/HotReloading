@@ -38,7 +38,7 @@ namespace StatementConverter.StatementInterpreter
                 var callerMethod = GetCallingMethod(identifierNameSyntax);
                 var callerSymbol = semanticModel.GetDeclaredSymbol(callerMethod);
                 var methodSymbol = semanticModel.GetSymbolInfo(identifierNameSyntax).Symbol as IMethodSymbol;
-                return new InstanceMethodMemberStatement
+                return new  InstanceMethodMemberStatement
                 {
                     Name = "HotReloadingBase_" + methodSymbol.Name,
                     ParentType = callerSymbol.ContainingType.GetClassType(),
@@ -48,7 +48,21 @@ namespace StatementConverter.StatementInterpreter
             }
 
             var symbolInfo = semanticModel.GetSymbolInfo(identifierNameSyntax);
-            return GetStatement(symbolInfo, varName);
+            var statement = GetStatement(symbolInfo, varName);
+            var typeInfo = semanticModel.GetTypeInfo(identifierNameSyntax);
+
+            if(typeInfo.Type?.TypeKind == TypeKind.Delegate)
+            {
+                return new DelegateMethodMemberStatement
+                {
+                    Delegate = statement,
+                    Name = varName,
+                    AccessModifier = AccessModifier.Public,
+                    ParentType = typeInfo.GetClassType()
+                };
+            }
+
+            return statement;
         }
 
         private MethodDeclarationSyntax GetCallingMethod(SyntaxNode syntaxNode)

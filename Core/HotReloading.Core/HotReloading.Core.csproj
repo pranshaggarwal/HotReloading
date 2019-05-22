@@ -23,6 +23,7 @@
     <Folder Include="Statements\Using\" />
     <Folder Include="Statements\Inheritance\" />
     <Folder Include="Statements\TryCatch\" />
+    <Folder Include="Statements\Delegate\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExpressionFuture\CSharpExpressions\CSharpExpressions.csproj" />

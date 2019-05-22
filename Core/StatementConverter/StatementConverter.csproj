@@ -49,6 +49,7 @@
     <Folder Include="StatementInterpreter\Inheritance\" />
     <Folder Include="StatementInterpreter\TryCatch\" />
     <Folder Include="ExpressionInterpreter\TryCatch\" />
+    <Folder Include="ExpressionInterpreter\Delegate\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExpressionFuture\CSharpExpressions\CSharpExpressions.csproj" />

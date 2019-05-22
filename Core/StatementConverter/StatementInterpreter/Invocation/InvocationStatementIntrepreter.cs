@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using HotReloading.Core.Statements;
 using Microsoft.CodeAnalysis;
@@ -63,6 +64,10 @@ namespace StatementConverter.StatementInterpreter
                     }
                 }
                 invocationStatement.ParametersSignature = methodSymbol.Parameters.Select(x => x.Type.GetClassType()).ToArray();
+            }
+            else
+            {
+                arguments.AddRange(ies.ArgumentList.Arguments.Select(x => statementInterpreterHandler.GetStatement(x)));
             }
 
             invocationStatement.Method = method as MethodMemberStatement;
