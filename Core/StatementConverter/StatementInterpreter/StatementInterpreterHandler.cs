@@ -171,6 +171,11 @@ namespace StatementConverter.StatementInterpreter
                 case ParameterSyntax parameterSyntax:
                     statement = new ParameterInterpreter(parameterSyntax, semanticModel).GetStatement();
                     return statement;
+                case AnonymousMethodExpressionSyntax anonymousMethodExpressionSyntax:
+                    statement = new AnonymousMethodStatementInterpreter(this, 
+                        anonymousMethodExpressionSyntax,
+                        semanticModel).GetStatement();
+                    return statement;
                 default:
                     throw new NotImplementedException(syntax.GetType() + " is not supported yet");
             }
