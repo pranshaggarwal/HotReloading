@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using HotReloading.Core.Statements;
 
@@ -6,11 +7,11 @@ namespace StatementConverter.ExpressionInterpreter
 {
     internal class ParameterIdentifierExpressionInterpreter : IExpressionInterpreter
     {
-        private readonly ParameterExpression[] parameterExpressions;
+        private readonly IEnumerable<ParameterExpression> parameterExpressions;
         private readonly ParameterIdentifierStatement parameterIdentifierStatement;
 
         public ParameterIdentifierExpressionInterpreter(ParameterIdentifierStatement parameterIdentifierStatement,
-            ParameterExpression[] parameterExpressions)
+            IEnumerable<ParameterExpression> parameterExpressions)
         {
             this.parameterIdentifierStatement = parameterIdentifierStatement;
             this.parameterExpressions = parameterExpressions;

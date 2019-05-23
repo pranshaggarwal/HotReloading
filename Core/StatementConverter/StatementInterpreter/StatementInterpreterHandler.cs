@@ -15,15 +15,12 @@ namespace StatementConverter.StatementInterpreter
         private readonly MethodDeclarationSyntax declarationSyntax;
         public readonly List<LocalVariableDeclaration> scopedLocalVariableDeclarations;
         private readonly SemanticModel semanticModel;
-        private readonly ParameterInterpreter parameterInterpreter;
         private List<Parameter> parameters;
 
         public StatementInterpreterHandler(MethodDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
         {
             this.declarationSyntax = declarationSyntax;
             this.semanticModel = semanticModel;
-
-            parameterInterpreter = new ParameterInterpreter(declarationSyntax, semanticModel);
 
             scopedLocalVariableDeclarations = new List<LocalVariableDeclaration>();
         }
@@ -168,6 +165,12 @@ namespace StatementConverter.StatementInterpreter
                 case FinallyClauseSyntax finallyClauseSyntax:
                     statement = new FinallyStatementInterpreter(this, finallyClauseSyntax).GetStatement();
                     return statement;
+                case ParenthesizedLambdaExpressionSyntax parenthesizedLambdaExpressionSyntax:
+                    statement = new LamdaStatementInterpreter(this, parenthesizedLambdaExpressionSyntax, semanticModel).GetStatement();
+                    return statement;
+                case ParameterSyntax parameterSyntax:
+                    statement = new ParameterInterpreter(parameterSyntax, semanticModel).GetStatement();
+                    return statement;
                 default:
                     throw new NotImplementedException(syntax.GetType() + " is not supported yet");
             }
@@ -198,7 +201,7 @@ namespace StatementConverter.StatementInterpreter
             newMethodData.ParentType = parentNamedType.GetClassType();
             newMethodData.IsStatic = declarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
 
-            parameters = parameterInterpreter.GetParameters();
+            parameters = declarationSyntax.ParameterList.Parameters.Select(x => GetStatement(x)).Cast<Parameter>().ToList();
             newMethodData.Parameters = parameters;
 
             newMethodData.Block = new Block();
