@@ -168,6 +168,9 @@ namespace StatementConverter.ExpressionInterpreter
                 case LamdaStatement lamdaStatement:
                     expression = new LamdaExpressionInterpreter(this, lamdaStatement, parameterExpressions).GetExpression();
                     return expression;
+                case DelegateIdentifierStatement delegateIdentifierStatement:
+                    expression = new DelegateIdentifierExpressionInterpreter(this, delegateIdentifierStatement).GetExpression();
+                    return expression;
                 default:
                     throw new NotImplementedException(statement.GetType() + " is not supported yet.");
             }
