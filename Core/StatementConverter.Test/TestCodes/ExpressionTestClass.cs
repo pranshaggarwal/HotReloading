@@ -17,5 +17,10 @@ namespace StatementConverter.Test
         {
             TestFunction(() => Tracker.Call("hello"));
         }
+
+        private void TestFunction(Expression<Action> expression)
+        {
+            expression.Compile()();
+        }
     }
 }

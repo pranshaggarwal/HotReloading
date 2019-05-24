@@ -14,7 +14,6 @@ namespace StatementConverter.Test
             Helper.Setup();
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void AssignExpression()
         {
@@ -29,7 +28,6 @@ namespace StatementConverter.Test
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void PassExpressionInMethod()
         {
