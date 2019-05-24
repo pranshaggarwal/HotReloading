@@ -154,12 +154,30 @@ namespace StatementConverter.ExpressionInterpreter
                         var addExpression = GetExpression(convertedLeft, convertedRight, BinaryOperand.Add);
                         return Expression.Assign(left, Expression.Convert(addExpression, left.Type));
                     }
+                    if(left.Type.IsSubclassOf(typeof(MulticastDelegate)))
+                    {
+                        //Delegate.Combine
+                        var delegateCombine = typeof(Delegate).GetMethod("Combine", new Type[] { typeof(Delegate), typeof(Delegate) });
+                        return Expression.Assign(left, 
+                            Expression.Convert(Expression.Call(null, 
+                                delegateCombine, left, convertedRight), 
+                                left.Type));
+                    }
                     return Expression.AddAssign(left, convertedRight);
                 case BinaryOperand.SubAssign:
                     if (IsByteType(left.Type))
                     {
                         var addExpression = GetExpression(convertedLeft, convertedRight, BinaryOperand.Sub);
                         return Expression.Assign(left, Expression.Convert(addExpression, left.Type));
+                    }
+                    if (left.Type.IsSubclassOf(typeof(MulticastDelegate)))
+                    {
+                        //Delegate.Remove
+                        var delegateCombine = typeof(Delegate).GetMethod("Remove", new Type[] { typeof(Delegate), typeof(Delegate) });
+                        return Expression.Assign(left,
+                            Expression.Convert(Expression.Call(null,
+                                delegateCombine, left, convertedRight),
+                                left.Type));
                     }
                     return Expression.SubtractAssign(left, convertedRight);
                 case BinaryOperand.MultiplyAssign:

@@ -103,7 +103,8 @@ namespace StatementConverter.Test
         public void RemoveDelegate()
         {
             Tracker.Call("hello");
-            Action<string> action = Tracker.Call;
+            Action<object> action = (obj) => { };
+            action += Tracker.Call;
 
             action -= Tracker.Call;
 
