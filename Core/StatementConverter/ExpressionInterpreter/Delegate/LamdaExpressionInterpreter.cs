@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using HotReloading.Core.Statements;
+using Microsoft.CSharp.Expressions;
 
 namespace StatementConverter.ExpressionInterpreter
 {
@@ -26,7 +27,11 @@ namespace StatementConverter.ExpressionInterpreter
             var body = expressionInterpreterHandler.GetExpression(lamdaStatement.Body);
             parameterExpressions.RemoveAll(x => parameters.Any(y => y == x));
 
-            var lamda = Expression.Lambda(lamdaStatement.Type, body, parameters);
+            Expression lamda;
+            if (lamdaStatement.IsAsync)
+                lamda = CSharpExpression.AsyncLambda(lamdaStatement.Type, body, parameters);
+            else
+                lamda = Expression.Lambda(lamdaStatement.Type, body, parameters);
 
             return lamda;
         }

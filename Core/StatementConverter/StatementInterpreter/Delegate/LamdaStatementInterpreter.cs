@@ -35,6 +35,8 @@ namespace StatementConverter.StatementInterpreter
 
             lamdaStatement.Type = typeInfo.ConvertedType.GetClassType();
 
+            lamdaStatement.IsAsync = parenthesizedLambdaExpressionSyntax.AsyncKeyword.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.AsyncKeyword);
+
             return lamdaStatement;
         }
     }

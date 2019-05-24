@@ -706,7 +706,7 @@ namespace Microsoft.CSharp.Expressions
             var count = parameters.Count;
 
             var method = delegateType.GetMethod("Invoke"); // TODO: use cache from LINQ
-            var parametersCached = method.GetParametersCached();
+            var parametersCached = method.GetParameters();
 
             if (parametersCached.Length != 0)
             {
