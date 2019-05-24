@@ -126,7 +126,7 @@ namespace StatementConverter.StatementInterpreter
                     statement = GetStatement(nts, varName);
                     break;
                 default:
-                    throw new NotSupportedException($"{symbol.GetType()} is not supported identifier yet.");
+                    throw new NotSupportedException($"Identifier: {varName} - {symbol.GetType()} is not supported identifier yet.");
             }
 
             return statement;
