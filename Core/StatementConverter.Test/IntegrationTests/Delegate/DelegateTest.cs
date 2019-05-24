@@ -113,9 +113,23 @@ namespace StatementConverter.Test
         }
 
         [Test]
-        public void DefineDelegate8()
+        public async Task DefineDelegate8()
         {
             var lamdaExpression = Helper.GetLamdaExpression("DelegateTestClass", "DefineDelegate8");
+
+            var del = lamdaExpression.Compile();
+
+            var instance = new DelegateTestClass();
+
+            await (Task)del.DynamicInvoke(instance);
+
+            Tracker.LastValue.Should().Be("hello");
+        }
+
+        [Test]
+        public void DefineDelegate9()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("DelegateTestClass", "DefineDelegate9");
 
             var del = lamdaExpression.Compile();
 
@@ -127,9 +141,9 @@ namespace StatementConverter.Test
         }
 
         [Test]
-        public void DefineDelegate9()
+        public void DefineDelegate10()
         {
-            var lamdaExpression = Helper.GetLamdaExpression("DelegateTestClass", "DefineDelegate9");
+            var lamdaExpression = Helper.GetLamdaExpression("DelegateTestClass", "DefineDelegate10");
 
             var del = lamdaExpression.Compile();
 

@@ -67,12 +67,14 @@ namespace System.Linq.Expressions
         }
 
         private static readonly MethodInfo s_MethodCallExpression_Rewrite = typeof(MethodCallExpression).GetMethod("Rewrite", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance, null, new[] { typeof(Expression), typeof(IList<Expression>) }, null);
+        private static readonly MethodInfo s_MethodCallExpression_Rewrite1 = typeof(MethodCallExpression).GetMethod("Rewrite", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance, null, new[] { typeof(Expression), typeof(IReadOnlyList<Expression>) }, null);
 
         public static MethodCallExpression Rewrite(this MethodCallExpression expression, Expression instance, IList<Expression> args)
         {
             try
             {
-                return (MethodCallExpression)s_MethodCallExpression_Rewrite.Invoke(expression, new object[] { instance, args });
+                var rewrite = s_MethodCallExpression_Rewrite ?? s_MethodCallExpression_Rewrite1;
+                return (MethodCallExpression)rewrite.Invoke(expression, new object[] { instance, args });
             }
             catch (TargetInvocationException ex)
             {

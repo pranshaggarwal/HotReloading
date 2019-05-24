@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+
 namespace StatementConverter.Test
 {
     public partial class DelegateTestClass
@@ -11,6 +13,11 @@ namespace StatementConverter.Test
         private void TestFunction1(Action action)
         {
             action();
+        }
+
+        private async Task<string> TestFunction2(string arg)
+        {
+            return arg;
         }
     }
 }

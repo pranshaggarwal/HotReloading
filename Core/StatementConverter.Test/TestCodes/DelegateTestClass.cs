@@ -67,14 +67,21 @@ namespace StatementConverter.Test
             Tracker.Call(await func("hello"));
         }
 
-        public void DefineDelegate8()
+        public async Task DefineDelegate8()
         {
-            Action<string> action = Tracker.Call;
+            Func<string, Task<string>> func = TestFunction2;
+
+            Tracker.Call(await func("hello"));
+        }
+
+        public void DefineDelegate9()
+        {
+            Action<object> action = Tracker.Call;
 
             action("hello");
         }
 
-        public void DefineDelegate9()
+        public void DefineDelegate10()
         {
             var func = new Func<string,string>((str) => TestFunction(str));
 
@@ -123,6 +130,11 @@ namespace StatementConverter.Test
         private void TestFunction1(Action action)
         {
             action();
+        }
+
+        private async Task<string> TestFunction2(string arg)
+        {
+            return arg;
         }
     }
 }
