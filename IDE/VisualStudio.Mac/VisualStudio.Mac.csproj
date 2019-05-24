@@ -12,10 +12,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ide.Core\Ide.Core.csproj" />
+    <ProjectReference Include="..\ildynarec\ildynarec.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands\" />
     <Folder Include="Events\" />
     <Folder Include="ProjectModels\" />
+    <Folder Include="hotswap\" />
   </ItemGroup>
 </Project>

@@ -13,11 +13,25 @@
                  _label = "Allow Adding Override Method at runtime"
                  defaultHandler="VisualStudio.Mac.Commands.AllowOverrideCommands" />
     </Extension>
+    <Extension path = "/MonoDevelop/Ide/Commands">
+        <Command id = "VisualStudio.Mac.Commands.HotPath"
+                 _label = "Hot-Patch"
+                 defaultHandler="VisualStudio.Mac.Commands.HotPathCommand" />
+    </Extension>
+    <Extension path = "/MonoDevelop/Ide/Commands">
+        <Command id = "VisualStudio.Mac.Commands.HotSwap"
+                 _label = "Hot-Swap"
+                 defaultHandler="VisualStudio.Mac.Commands.HotSwapCommand" />
+    </Extension>
     <Extension path = "/MonoDevelop/Ide/MainMenu/Tools">
         <ItemSet id="HotReloading" Lable="HotReloading">
             <CommandItem id="VisualStudio.Mac.Commands.EnableHotReloading" />
             <SeparatorItem />
             <CommandItem id="VisualStudio.Mac.Commands.AllowOverride" />
+            <SeparatorItem />
+            <CommandItem id="VisualStudio.Mac.Commands.HotPath" />
+            <SeparatorItem />
+            <CommandItem id="VisualStudio.Mac.Commands.HotSwap" />
         </ItemSet>
     </Extension>
     

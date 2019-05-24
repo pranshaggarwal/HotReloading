@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualStudio.Mac", "IDE\Vis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotReloading.Test", "Core\HotReloading.Test\HotReloading.Test.csproj", "{07C0ACD2-819C-4EFE-8EAF-6CDC895B0BE1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ildynarec", "IDE\ildynarec\ildynarec.csproj", "{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -637,6 +639,54 @@ Global
 		{07C0ACD2-819C-4EFE-8EAF-6CDC895B0BE1}.netstandard_Release|Any CPU.Build.0 = Debug|Any CPU
 		{07C0ACD2-819C-4EFE-8EAF-6CDC895B0BE1}.netstandard_Release_ReadOnly|Any CPU.ActiveCfg = Debug|Any CPU
 		{07C0ACD2-819C-4EFE-8EAF-6CDC895B0BE1}.netstandard_Release_ReadOnly|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.Release|iPhone.Build.0 = Release|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.AppStore|iPhone.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_3_5_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_3_5_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_3_5_Debug_ReadOnly|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_3_5_Debug_ReadOnly|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_3_5_Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_3_5_Release|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_3_5_Release_ReadOnly|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_3_5_Release_ReadOnly|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_4_0_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_4_0_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_4_0_Debug_ReadOnly|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_4_0_Debug_ReadOnly|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_4_0_Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_4_0_Release|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_4_0_Release_ReadOnly|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_4_0_Release_ReadOnly|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_462_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_462_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_462_Debug_ReadOnly|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_462_Debug_ReadOnly|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_462_Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_462_Release|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_462_Release_ReadOnly|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.net_462_Release_ReadOnly|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.netstandard_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.netstandard_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.netstandard_Debug_ReadOnly|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.netstandard_Debug_ReadOnly|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.netstandard_Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.netstandard_Release|Any CPU.Build.0 = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.netstandard_Release_ReadOnly|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B}.netstandard_Release_ReadOnly|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7556F489-417B-4D29-8FF7-4041B6DCA0D3} = {073377F8-07C6-4A35-81F2-C3599BE21022}
@@ -652,5 +702,6 @@ Global
 		{008448A8-6DD9-4EF6-9A24-934F09D7417C} = {C5202716-D2E0-4F72-9FA1-239769C89123}
 		{809D2CC0-33B7-49B9-9279-C665875E3ED0} = {C5202716-D2E0-4F72-9FA1-239769C89123}
 		{07C0ACD2-819C-4EFE-8EAF-6CDC895B0BE1} = {0F506371-1339-4D70-A80E-65959DB969FB}
+		{9ED3926A-AEDC-41BD-99F0-2936D2A7695B} = {C5202716-D2E0-4F72-9FA1-239769C89123}
 	EndGlobalSection
 EndGlobal
