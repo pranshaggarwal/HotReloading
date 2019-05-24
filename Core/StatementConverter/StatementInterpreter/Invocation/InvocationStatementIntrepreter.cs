@@ -48,19 +48,32 @@ namespace StatementConverter.StatementInterpreter
 
             var arguments = new List<Statement>();
 
-            if (methodSymbolInfo.Symbol is IMethodSymbol methodSymbol)
+            var symbol = methodSymbolInfo.Symbol;
+
+            if(methodSymbolInfo.CandidateReason == CandidateReason.OverloadResolutionFailure)
+            {
+                symbol = semanticModel.ResolveOverload(methodSymbolInfo, ies.Expression);
+            }
+
+            if (symbol is IMethodSymbol methodSymbol)
             {
                 for (int i = 0; i < methodSymbol.Parameters.Length; i++)
                 {
                     var parameter = methodSymbol.Parameters[i];
-                    if(!parameter.IsOptional)
-                        arguments.Add(statementInterpreterHandler.GetStatement(ies.ArgumentList.Arguments[i]));
+                    var argumentSyntax = ies.ArgumentList.Arguments.FirstOrDefault(x => x.NameColon != null && x.NameColon.Name.Identifier.ValueText == parameter.Name);
+
+                    if (!parameter.IsOptional)
+                    {
+                        if (argumentSyntax == null)
+                            arguments.Add(statementInterpreterHandler.GetStatement(ies.ArgumentList.Arguments[i]));
+                        else
+                            arguments.Add(statementInterpreterHandler.GetStatement(argumentSyntax));
+                    }
                     else
                     {
-                        var argumentSyntax = ies.ArgumentList.Arguments.FirstOrDefault(x => x.NameColon != null && x.NameColon.Name.Identifier.ValueText == parameter.Name);
-                        if(argumentSyntax == null)
+                        if (argumentSyntax == null)
                         {
-                            if(ies.ArgumentList.Arguments.Count <= i)
+                            if (ies.ArgumentList.Arguments.Count <= i)
                             {
                                 //use default value
                                 arguments.Add(new ConstantStatement(parameter.ExplicitDefaultValue));

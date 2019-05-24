@@ -47,5 +47,22 @@ namespace StatementConverter.Extensions
                 return namedTypeSymbol.ContainingNamespace.GetNamespace() + "." +
                     typeName;
         }
+
+        public static bool IsAssignableTo(this ITypeSymbol type, ITypeSymbol targetType)
+        {
+            if (type == null)
+                return false;
+            if(type.GetFullyQualifiedName() == targetType.GetFullyQualifiedName())
+            {
+                return true;
+            }
+
+            return type.BaseType.IsAssignableTo(targetType);
+        }
+
+        public static bool IsSubClassOf(this ITypeSymbol type, ITypeSymbol targetType)
+        {
+            return type.BaseType.IsAssignableTo(targetType);
+        }
     }
 }

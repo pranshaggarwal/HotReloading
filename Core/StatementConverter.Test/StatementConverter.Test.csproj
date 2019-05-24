@@ -40,6 +40,7 @@
     <EmbeddedResource Include="TestCodes\LockTestClass.cs" />
     <EmbeddedResource Include="TestCodes\RefOutTestClass.cs" />
     <EmbeddedResource Include="TestCodes\StringTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\MethodOverloadingTestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="IntegrationTests\" />
@@ -62,6 +63,7 @@
     <Folder Include="IntegrationTests\Lock\" />
     <Folder Include="IntegrationTests\RefOut\" />
     <Folder Include="IntegrationTests\String\" />
+    <Folder Include="IntegrationTests\Overload\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="TestCodes\AssignmentTestClass.cs" />
@@ -89,6 +91,7 @@
     <Compile Remove="TestCodes\LockTestClass.cs" />
     <Compile Remove="TestCodes\RefOutTestClass.cs" />
     <Compile Remove="TestCodes\StringTestClass.cs" />
+    <Compile Remove="TestCodes\MethodOverloadingTestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StatementConverter\StatementConverter.csproj" />

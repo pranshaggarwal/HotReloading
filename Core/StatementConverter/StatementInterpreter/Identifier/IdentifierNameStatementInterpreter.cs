@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HotReloading.Core;
 using HotReloading.Core.Statements;
 using Microsoft.CodeAnalysis;
@@ -48,7 +49,20 @@ namespace StatementConverter.StatementInterpreter
             }
 
             var symbolInfo = semanticModel.GetSymbolInfo(identifierNameSyntax);
-            var statement = GetStatement(symbolInfo, varName);
+
+            var symbol = symbolInfo.Symbol;
+
+            if(symbol == null)
+            {
+                if (symbolInfo.CandidateReason == CandidateReason.OverloadResolutionFailure)
+                {
+                    //Resolve overload
+                    symbol = semanticModel.ResolveOverload(symbolInfo, identifierNameSyntax);
+                }
+                else
+                    throw new Exception($"Identifier: not able to find symbol for {symbolInfo.GetType()}. Candidate Reason: {symbolInfo.CandidateReason}");
+            }
+            var statement = GetStatement(symbol, varName);
             var typeInfo = semanticModel.GetTypeInfo(identifierNameSyntax);
 
             if(typeInfo.Type?.TypeKind == TypeKind.Delegate )
@@ -72,6 +86,8 @@ namespace StatementConverter.StatementInterpreter
             return statement;
         }
 
+
+
         private MethodDeclarationSyntax GetCallingMethod(SyntaxNode syntaxNode)
         {
             if (syntaxNode is MethodDeclarationSyntax)
@@ -83,10 +99,10 @@ namespace StatementConverter.StatementInterpreter
             return GetCallingMethod(syntaxNode.Parent);
         }
 
-        private Statement GetStatement(SymbolInfo symbolInfo, string varName)
+        private Statement GetStatement(ISymbol symbol, string varName)
         {
             Statement statement;
-            switch (symbolInfo.Symbol)
+            switch (symbol)
             {
                 case IFieldSymbol fs:
                     statement = GetStatement(fs, varName);
@@ -110,7 +126,7 @@ namespace StatementConverter.StatementInterpreter
                     statement = GetStatement(nts, varName);
                     break;
                 default:
-                    throw new NotSupportedException($"{symbolInfo.Symbol.GetType()} is not supported yet.");
+                    throw new NotSupportedException($"{symbol.GetType()} is not supported identifier yet.");
             }
 
             return statement;
