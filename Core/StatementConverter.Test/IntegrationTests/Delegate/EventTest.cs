@@ -12,7 +12,6 @@ namespace StatementConverter.Test
             Helper.Setup();
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void AddEventHandler1()
         {
@@ -20,14 +19,13 @@ namespace StatementConverter.Test
 
             var del = lamdaExpression.Compile();
 
-            var instance = new ExpressionTestClass();
+            var instance = new EventTestClass();
 
             del.DynamicInvoke(instance);
 
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void AddEventHandler2()
         {
@@ -35,14 +33,13 @@ namespace StatementConverter.Test
 
             var del = lamdaExpression.Compile();
 
-            var instance = new ExpressionTestClass();
+            var instance = new EventTestClass();
 
             del.DynamicInvoke(instance);
 
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
         [Test]
         public void AddEventHandler3()
         {
@@ -50,14 +47,27 @@ namespace StatementConverter.Test
 
             var del = lamdaExpression.Compile();
 
-            var instance = new ExpressionTestClass();
+            var instance = new EventTestClass();
 
             del.DynamicInvoke(instance);
 
             Tracker.LastValue.Should().Be("hello");
         }
 
-        [Ignore("Ignoring for now")]
+        [Test]
+        public void AddEventHandler4()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("EventTestClass", "AddEventHandler4");
+
+            var del = lamdaExpression.Compile();
+
+            var instance = new EventTestClass();
+
+            del.DynamicInvoke(instance);
+
+            Tracker.LastValue.Should().Be("hello");
+        }
+
         [Test]
         public void RemoveEventHandler4()
         {
@@ -65,7 +75,35 @@ namespace StatementConverter.Test
 
             var del = lamdaExpression.Compile();
 
-            var instance = new ExpressionTestClass();
+            var instance = new EventTestClass();
+
+            del.DynamicInvoke(instance);
+
+            Tracker.LastValue.Should().Be("hello1");
+        }
+
+        [Test]
+        public void TestEventInvoke()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("EventTestClass", "TestEventInvoke");
+
+            var del = lamdaExpression.Compile();
+
+            var instance = new EventTestClass();
+
+            del.DynamicInvoke(instance);
+
+            Tracker.LastValue.Should().Be("hello");
+        }
+
+        [Test]
+        public void TestStaticEventInvoke()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("EventTestClass", "TestStaticEventInvoke");
+
+            var del = lamdaExpression.Compile();
+
+            var instance = new EventTestClass();
 
             del.DynamicInvoke(instance);
 

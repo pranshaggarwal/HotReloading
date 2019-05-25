@@ -2,5 +2,6 @@
 {
     public abstract class MemberAccessStatement : Statement
     {
+        public AccessModifier AccessModifier { get; set; }
     }
 }

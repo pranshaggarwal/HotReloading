@@ -5,7 +5,7 @@ namespace StatementConverter.Test
 	{
         private string field;
 
-        public string Field
+        private string Field
         {
             get => field;
         }
