@@ -16,9 +16,20 @@ namespace StatementConverter.ExpressionInterpreter
 
         public Expression GetExpression()
         {
-            return Expression.Condition(expressionInterpreterHandler.GetExpression(conditionalStatement.Condition),
-                expressionInterpreterHandler.GetExpression(conditionalStatement.IfTrue),
-                expressionInterpreterHandler.GetExpression(conditionalStatement.IfFalse));
+            Expression condition = expressionInterpreterHandler.GetExpression(conditionalStatement.Condition);
+            Expression ifTrue = expressionInterpreterHandler.GetExpression(conditionalStatement.IfTrue);
+            Expression ifFalse = expressionInterpreterHandler.GetExpression(conditionalStatement.IfFalse);
+
+            if(ifTrue.Type != ifFalse.Type)
+            {
+                if (ifTrue.Type.IsSubclassOf(ifFalse.Type))
+                    ifFalse = Expression.Convert(ifFalse, ifTrue.Type);
+                else
+                    ifTrue = Expression.Convert(ifTrue, ifFalse.Type);
+            }
+            return Expression.Condition(condition,
+ifTrue,
+ifFalse);
         }
     }
 }

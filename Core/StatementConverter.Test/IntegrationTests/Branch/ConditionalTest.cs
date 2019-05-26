@@ -170,6 +170,54 @@ namespace StatementConverter.Test
 
             Tracker.LastValue.Should().Be("hello");
         }
+
+        [Test]
+        public static void ConditionalAccess1()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("ConditionalTestClass", "ConditionalAccess1");
+
+            var del = lamdaExpression.Compile();
+
+            del.DynamicInvoke();
+
+            Tracker.LastValue.Should().Be("hello");
+        }
+
+        [Test]
+        public static void ConditionalAccess2()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("ConditionalTestClass", "ConditionalAccess2");
+
+            var del = lamdaExpression.Compile();
+
+            del.DynamicInvoke();
+
+            Tracker.LastValue.Should().Be("hello");
+        }
+
+        [Test]
+        public static void ConditionalAccess3()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("ConditionalTestClass", "ConditionalAccess3");
+
+            var del = lamdaExpression.Compile();
+
+            del.DynamicInvoke();
+
+            Tracker.LastValue.Should().Be("hello");
+        }
+
+        [Test]
+        public static void ConditionalAccess4()
+        {
+            var lamdaExpression = Helper.GetLamdaExpression("ConditionalTestClass", "ConditionalAccess4");
+
+            var del = lamdaExpression.Compile();
+
+            del.DynamicInvoke();
+
+            Tracker.LastValue.Should().Be("hello");
+        }
     }
 
 }
