@@ -29,6 +29,26 @@ namespace HotReloading.Test
             return statementInterpreterHandler.GetMethod();
         }
 
+        public static Field GetField(string codeFile, string fieldKey)
+        {
+            var syntaxTree = GetSyntaxTree(codeFile);
+
+            var semanticModel = GetSemanticModel(syntaxTree);
+
+            var fds = GeFieldDeclarationSyntax((CompilationUnitSyntax)syntaxTree.GetRoot(), fieldKey, semanticModel);
+
+            var fieldInterpreterHandler = new FieldInterpreterHandler(fds, semanticModel);
+
+            return fieldInterpreterHandler.GetFields().FirstOrDefault();
+        }
+
+        private static FieldDeclarationSyntax GeFieldDeclarationSyntax(CompilationUnitSyntax compilationUnit, string fieldKey, SemanticModel semanticModel)
+        {
+            return compilationUnit.Members.OfType<NamespaceDeclarationSyntax>().First().Members.OfType<ClassDeclarationSyntax>().First()
+                .Members.OfType<FieldDeclarationSyntax>().Cast<FieldDeclarationSyntax>().FirstOrDefault(x => HotReloading.Core.Helper.GetFieldKey(
+                    x.Declaration.Variables.FirstOrDefault().Identifier.Text) == fieldKey);
+        }
+
         public static SyntaxTree GetSyntaxTree(string codeFileName)
         {
             var assembly = Assembly.GetExecutingAssembly();

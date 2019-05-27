@@ -9,6 +9,8 @@ namespace HotReloading.Core
     {
         public static List<IInstanceClass> MemoryInstances = new List<IInstanceClass>();
         public static Dictionary<Type, List<IMethodContainer>> Methods { get; private set; } = new Dictionary<Type, List<IMethodContainer>>();
+        public static Dictionary<Type, List<FieldContainer>> Fields { get; private set; } = new Dictionary<Type, List<FieldContainer>>();
+        public static Dictionary<Type, List<IPropertyContainer>> Properties { get; private set; } = new Dictionary<Type, List<IPropertyContainer>>();
 
         public static CSharpLamdaExpression GetMethod(Type @class, string key)
         {
@@ -22,10 +24,34 @@ namespace HotReloading.Core
             return null;
         }
 
+        public static FieldContainer GetField(Type @class, string key)
+        {
+            if (RuntimeMemory.Fields.ContainsKey(@class))
+            {
+                var field = RuntimeMemory.Fields[@class].SingleOrDefault(x => Helper.GetFieldKey(x.Field) == key);
+                return field;
+            }
+
+            return null;
+        }
+
+        public static IPropertyContainer GetProperty(Type @class, string key)
+        {
+            if (RuntimeMemory.Properties.ContainsKey(@class))
+            {
+                var propertyContainer = RuntimeMemory.Properties[@class].SingleOrDefault(x => Helper.GetPropertyKey(x.Property) == key);
+                return propertyContainer;
+            }
+
+            return null;
+        }
+
         public static void Reset()
         {
             MemoryInstances.Clear();
             Methods.Clear();
+            Fields.Clear();
+            Properties.Clear();
         }
     }
 }

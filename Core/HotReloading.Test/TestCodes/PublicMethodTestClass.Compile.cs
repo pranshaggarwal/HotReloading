@@ -7,6 +7,7 @@ namespace HotReloading.Test.TestCodes
     public partial class PublicMethodTestClass : IInstanceClass
     {
         private Dictionary<string, Delegate> instanceMethods;
+        private Dictionary<string, FieldContainer> instanceFields;
 
         public virtual Dictionary<string, Delegate> InstanceMethods
         {
@@ -19,6 +20,10 @@ namespace HotReloading.Test.TestCodes
                 return instanceMethods;
             }
         }
+
+        public Dictionary<string, FieldContainer> InstanceFields => throw new NotImplementedException();
+
+        public Dictionary<string, IPropertyContainer> InstanceProperties => throw new NotImplementedException();
 
         public static void UpdateStaticMethod()
         {

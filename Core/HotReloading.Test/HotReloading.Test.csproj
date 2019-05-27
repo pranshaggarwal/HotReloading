@@ -23,9 +23,11 @@
   <ItemGroup>
     <Compile Remove="TestCodes\PublicMethodTestClass.cs" />
     <Compile Remove="TestCodes\PublicMethodTestClass1.cs" />
+    <Compile Remove="TestCodes\FieldTestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestCodes\PublicMethodTestClass.cs" />
     <EmbeddedResource Include="TestCodes\PublicMethodTestClass1.cs" />
+    <EmbeddedResource Include="TestCodes\FieldTestClass.cs" />
   </ItemGroup>
 </Project>

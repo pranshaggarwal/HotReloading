@@ -83,13 +83,8 @@ namespace StatementConverter.ExpressionInterpreter
 
         private string GetMethodKey()
         {
-            string key = invocationStatement.Method.Name;
-
-            foreach (var type in invocationStatement.ParametersSignature)
-            {
-                key += $"`{((Type)type).FullName}";
-            }
-            return key;
+            return HotReloading.Core.Helper.GetMethodKey(invocationStatement.Method.Name,
+                invocationStatement.ParametersSignature.Select(x => ((Type)x).FullName).ToArray());
         }
     }
 }
