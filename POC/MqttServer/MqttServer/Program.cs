@@ -12,8 +12,8 @@ namespace MqttServer
             Console.WriteLine("Server!");
             var mqttServer = new MqttFactory().CreateMqttServer();
 
-            var optionsBuilder = new MqttServerOptionsBuilder()
-                .WithDefaultEndpointPort(8076);
+                var optionsBuilder = new MqttServerOptionsBuilder()
+                    .WithDefaultEndpointPort(8076);
 
             mqttServer.ClientConnectedHandler = new MqttServerClientConnectedHandlerDelegate((arg) =>
             {

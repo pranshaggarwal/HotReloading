@@ -2,21 +2,21 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using HotReloading.Core;
+using Mqtt;
+using Topics = HotReloading.Core.Topics;
 
 namespace HotReloading
 {
     public class HotReloadingClient
     {
-        private readonly TcpCommunicatorClient client;
+        private static MqttCommunicatorClient mqttClient;
 
         private bool isRunning;
 
-        public HotReloadingClient()
+        public HotReloadingClient(string address, int port)
         {
-            client = new TcpCommunicatorClient();
-            client.DataReceived += HandleDataReceived;
+            mqttClient = new MqttCommunicatorClient(address, port);
         }
-
 
         private static HotReloadingClient Instance { get; set; }
 
@@ -53,7 +53,7 @@ namespace HotReloading
 
         public static async Task<bool> Run(string ideIP = "127.0.0.1", int idePort = Constants.DEFAULT_PORT)
         {
-            Instance = new HotReloadingClient();
+            Instance = new HotReloadingClient(ideIP, idePort);
             return await Instance.RunInternal(ideIP, idePort);
         }
 
@@ -70,7 +70,7 @@ namespace HotReloading
         {
             try
             {
-                await client.Connect(ideIP, idePort);
+                await mqttClient.ConnectAsync("Phone Client");
                 Debug.WriteLine("Connected to: " + ideIP);
             }
             catch (Exception ex)
