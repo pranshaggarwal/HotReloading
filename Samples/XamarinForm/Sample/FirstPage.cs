@@ -21,7 +21,7 @@ namespace Sample
         {
             button = new Button()
             {
-                Text = "Click Me1",
+                Text = "Click Me",
                 TextColor = Color.Red,
                 FontAttributes = FontAttributes.Italic,
                 FontSize = 24
@@ -36,7 +36,7 @@ namespace Sample
 
         void Button_Clicked(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("button clicked");
+            System.Diagnostics.Debug.WriteLine("button clicked1");
         }
 
 

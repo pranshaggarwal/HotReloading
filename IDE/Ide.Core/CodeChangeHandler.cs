@@ -12,6 +12,8 @@ using MQTTnet.Client;
 using MQTTnet.Client.Connecting;
 using MQTTnet.Client.Options;
 using System.Reflection;
+using Mqtt;
+using Serializer = HotReloading.Core.Serializer;
 
 namespace Ide.Core
 {
@@ -20,12 +22,10 @@ namespace Ide.Core
         private Document currentDocument;
 
         public IIde ide;
-        private readonly TcpCommunicatorServer server;
 
         internal CodeChangeHandler(IIde ide)
         {
             this.ide = ide;
-            server = new TcpCommunicatorServer(Constants.DEFAULT_PORT);
 
             ide.DocumentSaved += Ide_DocumentSaved;
             ide.DocumentChanged += Ide_DocumentChanged;
@@ -87,7 +87,7 @@ namespace Ide.Core
                 };
             }
 
-            await server.Send(request);
+            await Send(request);
         }
 
         public CodeChange CompareTree(SyntaxTree newSyntaxTree, SyntaxTree oldSyntaxTree,
@@ -113,6 +113,11 @@ namespace Ide.Core
             {
                 Methods = updatedMethods
             };
+        }
+
+        private Task Send(CodeChangeMessage message)
+        {
+            return Initializer.mqttClient.Publish(Serializer.SerializeJson(message), Topics.CODE_CHANGE);
         }
     }
 }

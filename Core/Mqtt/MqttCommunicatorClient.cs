@@ -179,10 +179,12 @@ namespace Mqtt
             debugListener.Resume();
             if(arg.ApplicationMessage.Topic.StartsWith(Topics.PING_RESPONSE.Split('/')[0], StringComparison.Ordinal))
             {
-                pingSuccess = true;
-                return;
+                var clientId = arg.ApplicationMessage.Topic.Split('/')[1];
+                if(clientId == ClientId)
+                    pingSuccess = true;
             }
-            MessageReceived?.Invoke(arg);
+            else
+                MessageReceived?.Invoke(arg);
         }
 
         private async Task OnDisconnected(MqttClientDisconnectedEventArgs arg)

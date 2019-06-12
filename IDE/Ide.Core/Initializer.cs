@@ -13,7 +13,7 @@ namespace Ide.Core
     public static class Initializer
     {
         private static MqttCommunicatorBroker mqttBroker;
-        private static MqttCommunicatorClient mqttClient;
+        public static MqttCommunicatorClient mqttClient;
         private static CodeChangeHandler codeChangeHandler;
 
         public static ObservableCollection<Client> Clients { get; set; } = new ObservableCollection<Client>();

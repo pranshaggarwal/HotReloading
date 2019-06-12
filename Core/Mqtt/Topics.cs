@@ -6,5 +6,6 @@ namespace Mqtt
         public const string PING = "ping/+";
         public const string Log = "Log/+";
         public const string PING_RESPONSE = "pingResponse/+";
+        public const string CODE_CHANGE = "codeChange";
     }
 }

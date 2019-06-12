@@ -18,22 +18,18 @@ namespace HotReloading
         public HotReloadingClient(string address, int port)
         {
             mqttClient = new MqttCommunicatorClient(address, port);
+            mqttClient.MessageReceived += MqttMessageHandler.HandleMessage;
+
+            mqttClient.Subscribe(Topics.CODE_CHANGE);
+
+            MqttMessageHandler.NewCodeChangeFound += MqttMessageHandler_NewCodeChangeFound;
         }
 
-
-        private static HotReloadingClient Instance { get; set; }
-
-        public static event Action<string> ParsingError;
-        public static event Action<string> CompileError;
-        public static event Action RequestHandled;
-
-        private void HandleDataReceived(object sender, string messageJson)
+        void MqttMessageHandler_NewCodeChangeFound(CodeChangeMessage message)
         {
             try
             {
-                var message = Serializer.DeserializeJson<CodeChangeMessage>(messageJson);
-
-                if(message.Error == null)
+                if (message.Error == null)
                 {
                     Runtime.HandleCodeChange(message.CodeChange);
                     RequestHandled?.Invoke();
@@ -53,6 +49,13 @@ namespace HotReloading
                 ParsingError?.Invoke(ex.Message);
             }
         }
+
+
+        private static HotReloadingClient Instance { get; set; }
+
+        public static event Action<string> ParsingError;
+        public static event Action<string> CompileError;
+        public static event Action RequestHandled;
 
         public static async Task<bool> Run(string ideIP = "127.0.0.1", int idePort = Constants.DEFAULT_PORT)
         {
