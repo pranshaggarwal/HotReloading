@@ -21,16 +21,24 @@ namespace Sample
         {
             button = new Button()
             {
-                Text = "Click Me1",
+                Text = "Click Me",
                 TextColor = Color.Red,
                 FontAttributes = FontAttributes.Italic,
                 FontSize = 24
             };
 
+            button.Clicked += Button_Clicked;
+
             Content = button;
 
             var type = Type.GetType("Acr.UserDialogs.IUserDialogs, Acr.UserDialogs");
         }
+
+        void Button_Clicked(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("button clicked1");
+        }
+
 
         protected override void OnAppearing()
         {

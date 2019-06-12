@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Log;
 using MonoDevelop.Ide;
 using MonoDevelop.Projects.MSBuild;
 using PubSub.Extension;
@@ -74,7 +75,7 @@ namespace VisualStudio.Mac.ProjectModels
             }
             catch (Exception ex)
             {
-                //TODO: Add some logs
+                Logger.Current.WriteError(ex);
             }
         }
     }

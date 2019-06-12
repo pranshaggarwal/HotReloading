@@ -40,6 +40,7 @@ namespace MqttClient.Forms
                 //    }
                 //}, CancellationToken.None);
             });
+
             client.UseApplicationMessageReceivedHandler((arg) =>
             {
                 Debug.WriteLine("Data Received: " + arg.ApplicationMessage.ConvertPayloadToString());
