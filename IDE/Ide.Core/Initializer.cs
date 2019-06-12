@@ -16,8 +16,6 @@ namespace Ide.Core
         private static MqttCommunicatorClient mqttClient;
         private static CodeChangeHandler codeChangeHandler;
 
-        private static List<LogEvent> queuedLogs = new List<LogEvent>();
-
         public static ObservableCollection<Client> Clients { get; set; } = new ObservableCollection<Client>();
 
         static Initializer()
@@ -26,25 +24,19 @@ namespace Ide.Core
             mqttClient = new MqttCommunicatorClient("127.0.0.1", Constants.DEFAULT_PORT);
 
             mqttClient.Subscribe(Topics.PING);
-            mqttClient.Subscribe(HotReloading.Core.Topics.Log);
+            mqttClient.Subscribe(Topics.Log);
 
             mqttClient.MessageReceived += MqttMessageHandler.HandleMessage;
 
-            MqttMessageHandler.ClientConnected += (client) => Clients.Add(client);
+            MqttMessageHandler.ClientConnected += Client_Connected;
             MqttMessageHandler.ReceivedLog += (clientId, log) => LogsViewModel.Logs.Add(new KeyValuePair<string, LogEvent>(clientId, log));
-            Logger.Current.Logged += Log;
-
-            //mqttClient.Subscribe("Log/+");
         }
 
-        static async void Log(LogEvent log)
+        private static async void Client_Connected(Client client)
         {
-            if (mqttClient.IsConnected)
-                await mqttClient.Publish(Serializer.SerializeJson(log), HotReloading.Core.Topics.Log);
-            else
-                queuedLogs.Add(log);
+            Clients.Add(client);
+            await mqttClient.Publish("", Topics.PING_RESPONSE.Replace("+", client.Id));
         }
-
 
         public static async Task Init(IIde ide, string ideName)
         {
@@ -53,10 +45,6 @@ namespace Ide.Core
                 await mqttBroker.StartAsync();
 
             await mqttClient.ConnectAsync(ideName);
-
-            foreach (var log in queuedLogs)
-                await mqttClient.Publish(Serializer.SerializeJson(log), HotReloading.Core.Topics.Log);
-            //await mqttClient.Publish("Log/1", "Test Data");
         }
     }
 }

@@ -40,7 +40,6 @@ namespace VisualStudio.Mac.DataBinding
 
         void Bindable_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("PropertyName; " + e.PropertyName + " BindableProperty " + BindablePropertyInfo.Name);
             if(e.PropertyName == BindablePropertyInfo.Name)
             {
                 var targetPropertyInfo = BindingPropertyInfo;

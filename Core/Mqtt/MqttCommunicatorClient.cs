@@ -22,10 +22,15 @@ namespace Mqtt
 
         private List<string> topicsToSubcribe;
         private List<string> subscribedTopics;
+        private DebugListener debugListener;
+        private bool pingSuccess;
+        private static List<LogEvent> queuedLogs = new List<LogEvent>();
 
         public event Action<MqttApplicationMessageReceivedEventArgs> MessageReceived;
 
         public bool IsConnected => client.IsConnected;
+
+        public string ClientId => client.Options.ClientId;
 
         public MqttCommunicatorClient(string server, int port)
         {
@@ -36,6 +41,13 @@ namespace Mqtt
             client = new MqttFactory().CreateMqttClient();
             client.UseApplicationMessageReceivedHandler(OnMessageReceived);
             client.UseDisconnectedHandler(OnDisconnected);
+
+            Subscribe(Topics.PING_RESPONSE);
+
+            Logger.Current.Logged += Log;
+
+            debugListener = new DebugListener(this);
+            System.Diagnostics.Trace.Listeners.Add(debugListener);
         }
 
         public async Task ConnectAsync(string clientName)
@@ -49,20 +61,41 @@ namespace Mqtt
                 if (result.ResultCode == MqttClientConnectResultCode.Success)
                 {
                     await SubscribePendingTopics();
-                    await Publish(clientName, Topics.PING.Replace("+", client.Options.ClientId));
+                    await Ping(clientName);
+                    await PublishQueuedLogs();
                     Logger.Current.WriteInfo("Connected to Mqtt Broker with client id: " + client.Options.ClientId);
                 }
-                else
-                {
-                    var message = "Cannot connect to MQTT server. Response: " + result;
-                    Logger.Current.WriteError(message);
-                }
+                //else
+                //{
+                //    var message = "Cannot connect to MQTT server. Response: " + result;
+                //    Logger.Current.WriteError(message);
+                //}
             }
             catch (Exception ex)
             {
-                Logger.Current.WriteError("Cannot connect to MQTT server. Exception: " + ex);
-                throw;
+                //Logger.Current.WriteError("Cannot connect to MQTT server. Exception: " + ex);
+                //throw;
             }
+        }
+
+        private async Task Ping(string clientName)
+        {
+            while (!pingSuccess)
+            {
+                debugListener.Pause();
+                System.Diagnostics.Debug.WriteLine("Ping...");
+                debugListener.Resume();
+                await Publish(clientName, Topics.PING.Replace("+", client.Options.ClientId));
+                await Task.Delay(10000);
+            }
+        }
+
+        private async Task PublishQueuedLogs()
+        {
+            foreach (var log in queuedLogs)
+                await Publish(Serializer.SerializeJson(log), Topics.Log.Replace("+", ClientId));
+
+            queuedLogs.Clear();
         }
 
         public async Task Publish(string message, string topic)
@@ -78,7 +111,9 @@ namespace Mqtt
             }
             catch (Exception ex)
             {
-                Logger.Current.WriteError(ex);
+                debugListener.Pause();
+                System.Diagnostics.Debug.WriteLine(ex);
+                debugListener.Resume();
             }
         }
 
@@ -139,6 +174,14 @@ namespace Mqtt
 
         private async Task OnMessageReceived(MqttApplicationMessageReceivedEventArgs arg)
         {
+            debugListener.Pause();
+            System.Diagnostics.Debug.WriteLine($"Received mqtt data for Topic: {arg.ApplicationMessage.Topic} and client: {arg.ClientId}");
+            debugListener.Resume();
+            if(arg.ApplicationMessage.Topic.StartsWith(Topics.PING_RESPONSE.Split('/')[0], StringComparison.Ordinal))
+            {
+                pingSuccess = true;
+                return;
+            }
             MessageReceived?.Invoke(arg);
         }
 
@@ -146,20 +189,35 @@ namespace Mqtt
         {
             try
             {
-                Logger.Current.WriteInfo("Client Disconnected");
+                debugListener.Pause();
+                System.Diagnostics.Debug.WriteLine("Client Disconnected");
                 if (arg.ClientWasConnected)
                 {
+                    System.Diagnostics.Debug.WriteLine("Trying to reconnect");
                     Subscribe(subscribedTopics.ToArray());
                     await client.ReconnectAsync();
                     System.Diagnostics.Debug.WriteLine("Reconnected");
-                    Logger.Current.WriteInfo("Client Reconnected");
                     await SubscribePendingTopics();
+                    await PublishQueuedLogs();
                 }
+                debugListener.Resume();
             }
             catch(Exception ex)
             {
                 Logger.Current.WriteError(ex);
             }
+        }
+
+        async void Log(LogEvent log)
+        {
+            debugListener.Pause();
+            log.PrintLog();
+            debugListener.Resume();
+
+            if (IsConnected)
+                await Publish(Serializer.SerializeJson(log), Topics.Log.Replace("+", ClientId));
+            else
+                queuedLogs.Add(log);
         }
     }
 }

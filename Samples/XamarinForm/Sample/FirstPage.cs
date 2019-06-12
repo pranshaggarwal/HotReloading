@@ -27,10 +27,18 @@ namespace Sample
                 FontSize = 24
             };
 
+            button.Clicked += Button_Clicked;
+
             Content = button;
 
             var type = Type.GetType("Acr.UserDialogs.IUserDialogs, Acr.UserDialogs");
         }
+
+        void Button_Clicked(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("button clicked");
+        }
+
 
         protected override void OnAppearing()
         {

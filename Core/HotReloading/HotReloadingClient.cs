@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using HotReloading.Core;
+using Log;
 using Mqtt;
-using Topics = HotReloading.Core.Topics;
+using Serializer = HotReloading.Core.Serializer;
 
 namespace HotReloading
 {
     public class HotReloadingClient
     {
-        private static MqttCommunicatorClient mqttClient;
+        private MqttCommunicatorClient mqttClient;
 
         private bool isRunning;
 
@@ -17,6 +19,7 @@ namespace HotReloading
         {
             mqttClient = new MqttCommunicatorClient(address, port);
         }
+
 
         private static HotReloadingClient Instance { get; set; }
 

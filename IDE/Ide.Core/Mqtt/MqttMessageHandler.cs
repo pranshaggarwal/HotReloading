@@ -1,8 +1,9 @@
 ﻿using System;
 using HotReloading.Core;
 using Log;
+using Mqtt;
 using MQTTnet;
-using MqttCore = Mqtt;
+using Serializer = HotReloading.Core.Serializer;
 
 namespace Ide.Core.Mqtt
 {
@@ -12,20 +13,20 @@ namespace Ide.Core.Mqtt
         public static event Action<string, LogEvent> ReceivedLog;
         public static void HandleMessage(MqttApplicationMessageReceivedEventArgs args)
         {
-            if(args.ApplicationMessage.Topic == MqttCore.Topics.PING)
+            if(args.ApplicationMessage.Topic.StartsWith(Topics.PING.Split('/')[0], StringComparison.Ordinal))
             {
                 var client = new Client
                 {
                     Name = args.ApplicationMessage.ConvertPayloadToString(),
-                    Id = args.ClientId
+                    Id = args.ApplicationMessage.Topic.Split('/')[1]
                 };
                 ClientConnected?.Invoke(client);
             }
-            else if (args.ApplicationMessage.Topic == Topics.Log)
+            else if (args.ApplicationMessage.Topic.StartsWith(Topics.Log.Split('/')[0], StringComparison.Ordinal))
             {
                 var json = args.ApplicationMessage.ConvertPayloadToString();
                 var logEvent = Serializer.DeserializeJson<LogEvent>(json);
-                ReceivedLog?.Invoke(args.ClientId, logEvent);
+                ReceivedLog?.Invoke(args.ApplicationMessage.Topic.Split('/')[1], logEvent);
             }
         }
     }

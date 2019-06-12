@@ -740,7 +740,6 @@ namespace VisualStudio.Mac
 
         protected void UnsafeAddText(TextMark mark, string text, TextTag indentTag, TextTag extraTag)
         {
-            System.Diagnostics.Debug.WriteLine("Unsafe called for: " + text);
             //don't allow the pad to hold more than MAX_BUFFER_LENGTH chars
             int overrun = (buffer.CharCount + text.Length) - MAX_BUFFER_LENGTH;
 

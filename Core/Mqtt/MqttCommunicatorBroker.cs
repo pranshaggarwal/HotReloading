@@ -56,12 +56,12 @@ namespace Mqtt
 
         private async Task ClientDisconnected(MqttServerClientDisconnectedEventArgs arg)
         {
-            System.Diagnostics.Debug.WriteLine($"Client {arg.ClientId} disconnected");
+            //System.Diagnostics.Debug.WriteLine($"Client {arg.ClientId} disconnected");
         }
 
         async Task OnClientConnected(MqttServerClientConnectedEventArgs eventArgs)
         {
-            System.Diagnostics.Debug.WriteLine("New Client connected with client id: " + eventArgs.ClientId);
+            //System.Diagnostics.Debug.WriteLine("New Client connected with client id: " + eventArgs.ClientId);
         }
     }
 }
