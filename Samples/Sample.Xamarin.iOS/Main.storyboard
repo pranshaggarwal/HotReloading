@@ -25,8 +25,18 @@
                                     <action selector="UIButton197_TouchUpInside:" destination="BYZ-38-t0r" id="198" eventType="touchUpInside"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="594" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="184" y="203" width="46" height="30"/>
+                                <state key="normal" title="SecondButton"/>
+                                <connections>
+                                    <action selector="UIButton594_TouchUpInside:" destination="BYZ-38-t0r" id="595" eventType="touchUpInside"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
+                    <connections>
+                        <outlet property="MyButton" destination="197" id="name-outlet-197"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
