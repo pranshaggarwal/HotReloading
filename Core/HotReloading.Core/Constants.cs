@@ -2,6 +2,6 @@
 {
     public class Constants
     {
-        public const int DEFAULT_PORT = 8555;
+        public const int DEFAULT_PORT = 8556;
     }
 }
