@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -14,6 +15,9 @@ namespace HotReloading.BuildTask
 {
     public class HotReloadingBuildTask : Task
     {
+        private string ctorParametersName = "hotReloading_Ctor_Parameters";
+        private FieldReference ctorParameters;
+
         public HotReloadingBuildTask()
         {
             Logger = new Logger(Log);
@@ -108,6 +112,10 @@ namespace HotReloading.BuildTask
                 if (type.Name.EndsWith("Delegate", StringComparison.InvariantCulture))
                     continue;
                 Logger.LogMessage("Weaving Type: " + type.Name);
+
+                var ctorParametersDefinition = type.CreateField(md, ctorParametersName, md.ImportReference(typeof(ArrayList)));
+                ctorParameters = ctorParametersDefinition.GetReference();
+
                 var methods = type.Methods.ToList();
 
                 MethodDefinition getInstanceMethod = null;
@@ -128,7 +136,7 @@ namespace HotReloading.BuildTask
                             .Any(x => x.AttributeType.Name == "GeneratedCodeAttribute"))
                         continue;
 
-                    if (method == instanceMethodGetters || method.IsConstructor || method == getInstanceMethod)
+                    if (method == instanceMethodGetters || method == getInstanceMethod)
                         continue;
 
                     //Ignore method with ref parameter
@@ -357,6 +365,7 @@ namespace HotReloading.BuildTask
             IEnumerable<MethodDefinition> sealedMethods = new List<MethodDefinition>();
             if (!baseTypeDefinition.Name.EndsWith("Delegate", StringComparison.InvariantCulture))
             {
+
                 //Ignore non virtual, finalized, special name, private and internal
                 var methods = baseTypeDefinition.Methods.Where(x => x.IsVirtual &&
                                                                     !x.IsSpecialName &&
@@ -527,8 +536,24 @@ namespace HotReloading.BuildTask
 
             var retInstruction = instructions.Last();
 
+            List<Instruction> constructorInitialCode = new List<Instruction>();
+            if(method.IsConstructor)
+            {
+                foreach(var i in method.Body.Instructions)
+                {
+                    if (i.OpCode != OpCodes.Call)
+                        constructorInitialCode.Add(i);
+                    else
+                    {
+                        constructorInitialCode.Add(i);
+                        break;
+                    }
+                }
+            }
+
             var oldInstruction = method.Body.Instructions.Where(x => x != retInstruction &&
-                                                                    x != loadInstructionForReturn).ToList();
+                                                                    x != loadInstructionForReturn &&
+                                                                    !constructorInitialCode.Contains(x)).ToList();
 
             var lastInstruction = retInstruction;
 
@@ -554,7 +579,7 @@ namespace HotReloading.BuildTask
             if(method.IsStatic)
                 ComposeStaticMethodInstructions(type, method, delegateVariable, boolVariable, methodKeyVariable, firstInstruction, parameters, composer);
             else
-                ComposeInstanceMethodInstructions(type, method, delegateVariable, boolVariable, methodKeyVariable, firstInstruction, parameters, composer, getInstanceMethod);
+                ComposeInstanceMethodInstructions(type, method, delegateVariable, boolVariable, methodKeyVariable, firstInstruction, parameters, composer, getInstanceMethod, md);
 
             if (method.ReturnType.FullName == "System.Void") composer.Pop();
             else if (method.ReturnType.IsValueType)
@@ -575,10 +600,38 @@ namespace HotReloading.BuildTask
             composer.MoveTo(lastInstruction);
 
             foreach (var instruction in composer.Instructions) ilprocessor.InsertBefore(firstInstruction, instruction);
+
+            foreach(var instruction in constructorInitialCode)
+            {
+                ilprocessor.InsertBefore(composer.Instructions[0], instruction);
+            }
         }
 
-        private static void ComposeInstanceMethodInstructions(TypeDefinition type, MethodDefinition method, VariableDefinition delegateVariable, VariableDefinition boolVariable, VariableDefinition methodKeyVariable, Instruction firstInstruction, ParameterDefinition[] parameters, InstructionComposer composer, MethodReference getInstanceMethod)
+        private void ComposeInstanceMethodInstructions(TypeDefinition type, MethodDefinition method, VariableDefinition delegateVariable, VariableDefinition boolVariable, VariableDefinition methodKeyVariable, Instruction firstInstruction, ParameterDefinition[] parameters, InstructionComposer composer, MethodReference getInstanceMethod, ModuleDefinition md)
         {
+            if(method.IsConstructor)
+            {
+                var arrayListConstructor = typeof(ArrayList).GetConstructor(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance, null, new Type[] { }, null);
+                var arrayListConstructorReference = md.ImportReference(arrayListConstructor);
+                composer
+                    .LoadArg_0()
+                    .NewObject(arrayListConstructorReference)
+                    .Store(ctorParameters);
+
+                foreach(var parameter in method.Parameters)
+                {
+                    composer.LoadArg_0()
+                        .Load(ctorParameters)
+                        .LoadArg(parameter)
+                        .InstanceCall(new Method
+                        {
+                            ParentType = typeof(ArrayList),
+                            MethodName = "Add",
+                            ParameterSignature = new Type[] { typeof(Object)}
+                        })
+                        .Pop();
+                }
+            }
             composer
             .Load(method.Name)
                 .LoadArray(parameters.Length, typeof(string), parameters.Select(x => x.ParameterType.FullName).ToArray())

@@ -334,5 +334,11 @@ namespace HotReloading.BuildTask
             Instructions.Add(Instruction.Create(OpCodes.Castclass, targetType));
             return this;
         }
+
+        public InstructionComposer NewObject(MethodReference ctorReference)
+        {
+            Instructions.Add(Instruction.Create(OpCodes.Newobj, ctorReference));
+            return this;
+        }
     }
 }
