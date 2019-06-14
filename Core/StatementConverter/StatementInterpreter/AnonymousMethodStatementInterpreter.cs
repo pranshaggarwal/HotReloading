@@ -25,9 +25,9 @@ namespace StatementConverter.StatementInterpreter
         {
             var lamdaStatement = new LamdaStatement();
 
-            var parameters = anonymousMethodExpressionSyntax.ParameterList.Parameters
+            var parameters = anonymousMethodExpressionSyntax.ParameterList?.Parameters
                 .Select(x => statementInterpreterHandler.GetStatement(x));
-            lamdaStatement.Parameters = parameters.Cast<Parameter>().ToArray();
+            lamdaStatement.Parameters = parameters?.Cast<Parameter>()?.ToArray() ?? new Parameter[0];
 
             lamdaStatement.Body = statementInterpreterHandler.GetStatement(anonymousMethodExpressionSyntax.Body);
 

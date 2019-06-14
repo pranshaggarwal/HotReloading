@@ -171,6 +171,12 @@ namespace StatementConverter.ExpressionInterpreter
                 case DelegateIdentifierStatement delegateIdentifierStatement:
                     expression = new DelegateIdentifierExpressionInterpreter(this, delegateIdentifierStatement).GetExpression();
                     return expression;
+                case InstanceEventMemberStatement instanceEventMemberStatement:
+                    expression = new InstanceEventExpressionInterpreter(this, instanceEventMemberStatement).GetExpression();
+                    return expression;
+                case StaticEventMemberStatement staticEventMemberStatement:
+                    expression = new StaticEventExpressionInterpreter(this, staticEventMemberStatement).GetExpression();
+                    return expression;
                 default:
                     throw new NotImplementedException(statement.GetType() + " is not supported yet.");
             }

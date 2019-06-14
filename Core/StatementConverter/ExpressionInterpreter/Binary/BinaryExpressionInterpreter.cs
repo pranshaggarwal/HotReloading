@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Reflection;
 using HotReloading.Core.Statements;
 
 namespace StatementConverter.ExpressionInterpreter
@@ -17,8 +18,50 @@ namespace StatementConverter.ExpressionInterpreter
 
         public Expression GetExpression()
         {
+            var left = binaryStatement.Left;
+            if (left is DelegateIdentifierStatement delegateIdentifier)
+                left = delegateIdentifier.Target;
+            if(left is StaticEventMemberStatement ||
+                left is InstanceEventMemberStatement)
+            {
+                return AssignEventExpression(left);
+            }
             return GetExpression(expressionInterpreterHandler.GetExpression(binaryStatement.Left),
                     expressionInterpreterHandler.GetExpression(binaryStatement.Right), binaryStatement.Operand);
+        }
+
+        private Expression AssignEventExpression(Statement left)
+        {
+            var bindingFlags = left is StaticEventMemberStatement ?
+                                BindingFlags.Static : BindingFlags.Instance;
+            bindingFlags |= ((MemberAccessStatement)left).AccessModifier == HotReloading.Core.AccessModifier.Public ?
+                BindingFlags.Public : BindingFlags.NonPublic;
+
+            EventInfo @event;
+
+            Expression eventHandlerTarget = Expression.Constant(null);
+
+            if (left is InstanceEventMemberStatement instanceEvent)
+            {
+                eventHandlerTarget = expressionInterpreterHandler.GetExpression(instanceEvent.Parent);
+                @event = eventHandlerTarget.Type.GetEvent(instanceEvent.Name, bindingFlags);
+            }
+            else
+            {
+                var staticEvent = (StaticEventMemberStatement)left;
+                var parentType = (Type)staticEvent.ParentType;
+                @event = parentType.GetEvent(staticEvent.Name, bindingFlags);
+            }
+
+            var right = expressionInterpreterHandler.GetExpression(binaryStatement.Right);
+
+            MethodInfo handlerMethod;
+            if (binaryStatement.Operand == BinaryOperand.AddAssign)
+                handlerMethod = @event.GetType().GetMethod("AddEventHandler");
+            else
+                handlerMethod = @event.GetType().GetMethod("RemoveEventHandler");
+
+            return Expression.Call(Expression.Constant(@event), handlerMethod, eventHandlerTarget, right);
         }
 
         private Expression GetExpression(Expression left, Expression right, BinaryOperand operand)

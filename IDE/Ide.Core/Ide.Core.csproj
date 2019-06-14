@@ -3,18 +3,26 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.10.0" />
+    <PackageReference Include="MQTTnet" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CSharpCodeAnalysis\CSharpCodeAnalysis.csproj" />
     <ProjectReference Include="..\..\Core\HotReloading\HotReloading.csproj" />
+    <ProjectReference Include="..\..\Core\Mqtt\Mqtt.csproj" />
+    <ProjectReference Include="..\..\Core\Log\Log.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Intrepreters\ArgumentInterpreter.cs" />
     <Compile Remove="Extensions\NamedTypeSymbol.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Visitors\" />
+    <Folder Include="Mqtt\" />
+    <Folder Include="Mvvm\" />
+    <Folder Include="ViewModel\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Mqtt\MqttMessageHandler.config" />
   </ItemGroup>
 </Project>

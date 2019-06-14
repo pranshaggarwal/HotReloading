@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Reflection;
 using HotReloading.Core.Statements;
 
 namespace StatementConverter.ExpressionInterpreter
@@ -15,7 +16,10 @@ namespace StatementConverter.ExpressionInterpreter
 
         public Expression GetExpression()
         {
-            var fieldInfo = ((Type) staticFieldMemberStatement.ParentType).GetField(staticFieldMemberStatement.Name);
+            var bindingFlags = BindingFlags.Static;
+            bindingFlags |= staticFieldMemberStatement.AccessModifier == HotReloading.Core.AccessModifier.Public ?
+                BindingFlags.Public : BindingFlags.NonPublic;
+            var fieldInfo = ((Type) staticFieldMemberStatement.ParentType).GetField(staticFieldMemberStatement.Name, bindingFlags);
             return Expression.Field(null, fieldInfo);
         }
     }

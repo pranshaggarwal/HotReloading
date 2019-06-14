@@ -3,7 +3,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="MQTTnet" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Statements\Identifier\" />
@@ -24,8 +25,11 @@
     <Folder Include="Statements\Inheritance\" />
     <Folder Include="Statements\TryCatch\" />
     <Folder Include="Statements\Delegate\" />
+    <Folder Include="Mqtt\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExpressionFuture\CSharpExpressions\CSharpExpressions.csproj" />
+    <ProjectReference Include="..\Mqtt\Mqtt.csproj" />
+    <ProjectReference Include="..\Log\Log.csproj" />
   </ItemGroup>
 </Project>
