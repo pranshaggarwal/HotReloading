@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Project>
-  <UsingTask TaskName="MethodInjector" AssemblyFile="$(MSBuildThisFileDirectory)HotReloading.BuildTask.dll" />
+  <UsingTask TaskName="HotReloadingBuildTask" AssemblyFile="$(MSBuildThisFileDirectory)HotReloading.BuildTask.dll" />
 
-  <Target Name="MethodInjector" AfterTargets="AfterCompile" Condition="Exists('@(IntermediateAssembly)') And $(DesignTimeBuild) != true And $(Configuration) == 'Debug'" Inputs="@(IntermediateAssembly);$(ProjectWeaverXml)" Outputs="$(TargetPath)">
-    <MethodInjector References="@(ReferencePath)" AssemblyFile="@(IntermediateAssembly)" ProjectDirectory="$(MSBuildProjectDirectory)" DebugSymbols="$(DebugSymbols)" DebugType="$(DebugType)" />
+  <Target Name="HotReloadingBuildTask" AfterTargets="AfterCompile" Condition="Exists('@(IntermediateAssembly)') And $(DesignTimeBuild) != true And $(Configuration) == 'Debug' AND $(EnableHotReloading) == 'true'" Inputs="@(IntermediateAssembly);$(ProjectWeaverXml)" Outputs="$(TargetPath)">
+    <HotReloadingBuildTask AllowOverride="$(AllowOverride)" References="@(ReferencePath)" AssemblyFile="@(IntermediateAssembly)" ProjectDirectory="$(MSBuildProjectDirectory)" DebugSymbols="$(DebugSymbols)" DebugType="$(DebugType)" />
   </Target>
 </Project>

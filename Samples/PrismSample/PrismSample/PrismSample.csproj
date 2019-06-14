@@ -13,9 +13,9 @@
     <ProjectReference Include="..\..\..\Forms\HotReloading.Forms\HotReloading.Forms.csproj" />
     <ProjectReference Include="..\..\..\Core\HotReloading.Core\HotReloading.Core.csproj" />
   </ItemGroup>
-  <UsingTask TaskName="MethodInjector" AssemblyFile="..\..\..\Build\HotReloading.BuildTask\bin\$(Configuration)\HotReloading.BuildTask.dll" />
+  <UsingTask TaskName="HotReloadingBuildTask" AssemblyFile="..\..\..\Build\HotReloading.BuildTask\bin\$(Configuration)\HotReloading.BuildTask.dll" />
 
-  <Target Name="MethodInjector" AfterTargets="AfterCompile" Condition="Exists('@(IntermediateAssembly)') And $(DesignTimeBuild) != true And $(Configuration) == 'Debug'" Inputs="@(IntermediateAssembly);$(ProjectWeaverXml)" Outputs="$(TargetPath)">
-    <MethodInjector References="@(ReferencePath)" AssemblyFile="@(IntermediateAssembly)" ProjectDirectory="$(MSBuildProjectDirectory)" DebugSymbols="$(DebugSymbols)" DebugType="$(DebugType)" />
+  <Target Name="HotReloadingBuildTask" AfterTargets="AfterCompile" Condition="Exists('@(IntermediateAssembly)') And $(DesignTimeBuild) != true And $(Configuration) == 'Debug' AND $(EnableHotReloading) == 'true'" Inputs="@(IntermediateAssembly);$(ProjectWeaverXml)" Outputs="$(TargetPath)">
+    <HotReloadingBuildTask AllowOverride="$(AllowOverride)" References="@(ReferencePath)" AssemblyFile="@(IntermediateAssembly)" ProjectDirectory="$(MSBuildProjectDirectory)" DebugSymbols="$(DebugSymbols)" DebugType="$(DebugType)" />
   </Target>
 </Project>

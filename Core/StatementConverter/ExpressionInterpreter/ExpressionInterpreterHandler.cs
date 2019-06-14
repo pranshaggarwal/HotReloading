@@ -12,7 +12,7 @@ namespace StatementConverter.ExpressionInterpreter
     public class ExpressionInterpreterHandler
     {
         private readonly Method method;
-        private readonly ParameterExpression[] parameterExpressions;
+        private readonly List<ParameterExpression> parameterExpressions;
         private readonly List<ParameterExpression> scopedLocalVariable = new List<ParameterExpression>();
         private readonly ParameterExpression thisExpression;
         private LabelTarget brk;
@@ -150,6 +150,33 @@ namespace StatementConverter.ExpressionInterpreter
                 case BaseStatement baseStatement:
                     expression = new ThisExpressionInterpreter(thisExpression).GetExpression();
                     return expression;
+                case TryStatement tryStatement:
+                    expression = new TryExpressionInterpreter(this, tryStatement, scopedLocalVariable).GetExpression();
+                    return expression;
+                case ThrowStatement throwStatement:
+                    expression = new ThrowExpressionInterpreter(this, throwStatement).GetExpression();
+                    return expression;
+                case DelegateObjectCreationStatement delegateObjectCreationStatement:
+                    expression = new DelegateObjectCreationExpressionInterpreter(this, delegateObjectCreationStatement).GetExpression();
+                    return expression;
+                case DelegateInvocationStatement delegateInvocationStatement:
+                    expression = new DelegateInvocationExpressionInterpreter(this, delegateInvocationStatement).GetExpression();
+                    return expression;
+                case MethodPointerStatement methodPointerStatement:
+                    expression = new MethodPointerExpressionInterpreter(this, methodPointerStatement).GetExpression();
+                    return expression;
+                case LamdaStatement lamdaStatement:
+                    expression = new LamdaExpressionInterpreter(this, lamdaStatement, parameterExpressions).GetExpression();
+                    return expression;
+                case DelegateIdentifierStatement delegateIdentifierStatement:
+                    expression = new DelegateIdentifierExpressionInterpreter(this, delegateIdentifierStatement).GetExpression();
+                    return expression;
+                case InstanceEventMemberStatement instanceEventMemberStatement:
+                    expression = new InstanceEventExpressionInterpreter(this, instanceEventMemberStatement).GetExpression();
+                    return expression;
+                case StaticEventMemberStatement staticEventMemberStatement:
+                    expression = new StaticEventExpressionInterpreter(this, staticEventMemberStatement).GetExpression();
+                    return expression;
                 default:
                     throw new NotImplementedException(statement.GetType() + " is not supported yet.");
             }
@@ -161,17 +188,17 @@ namespace StatementConverter.ExpressionInterpreter
 
             var expression = interpreter;
 
-            ParameterExpression[] parameters;
+            List<ParameterExpression> parameters;
 
             if (method.IsStatic)
             {
-                parameters = parameterExpressions;
+                parameters = parameterExpressions.ToList();
             }
             else
             {
                 var list = parameterExpressions.ToList();
                 list.Insert(0, thisExpression);
-                parameters = list.ToArray();
+                parameters = list;
             }
 
             if(method.IsAsync)
@@ -180,9 +207,9 @@ namespace StatementConverter.ExpressionInterpreter
             return new CSharpLamdaExpression(Expression.Lambda(expression, parameters));
         }
 
-        private ParameterExpression[] GetParameterExpressions(IEnumerable<Parameter> parameters)
+        private List<ParameterExpression> GetParameterExpressions(IEnumerable<Parameter> parameters)
         {
-            return parameters.Select(x => Expression.Parameter(x.Type, x.Name)).ToArray();
+            return parameters.Select(x => Expression.Parameter(x.Type, x.Name)).ToList();
         }
     }
 }

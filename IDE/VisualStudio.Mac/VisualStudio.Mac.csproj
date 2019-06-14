@@ -3,13 +3,30 @@
     <TargetFramework>net461</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MonoDevelop.Addins" Version="0.4.4" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.0.0" />
+    <PackageReference Include="MonoDevelop.Addins" Version="0.4.3" />
+    <PackageReference Include="PubSub" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ide.Core\Ide.Core.csproj" />
+    <ProjectReference Include="..\..\Core\Log\Log.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Commands\" />
+    <Folder Include="Events\" />
+    <Folder Include="ProjectModels\" />
+    <Folder Include="Controls\" />
+    <Folder Include="DataBinding\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Widgets\" />
+    <Folder Include="Templates\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="CoreUI\" />
+    <Folder Include="Pads\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="app.config" />
   </ItemGroup>
 </Project>

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Ide.Core;
+using MonoDevelop.Core;
 using MonoDevelop.Ide;
 using MonoDevelop.Ide.Gui;
 
@@ -14,9 +16,17 @@ namespace VisualStudio.Mac
         public VisualStudioIde()
         {
             IdeApp.Workbench.ActiveDocumentChanged += Handle_ActiveDocumentChanged;
+            IdeApp.Workspace.SolutionLoaded += Workspace_SolutionLoaded;
 
             ActiveDocumentChanged();
         }
+
+        void Workspace_SolutionLoaded(object sender, MonoDevelop.Projects.SolutionEventArgs e)
+        {
+            var pad = IdeApp.Workbench.GetPad<HotReloadingPad>();
+            pad.Visible = true;
+        }
+
 
         public event EventHandler<DocumentSavedEventArgs> DocumentSaved;
         public event EventHandler<DocumentChangedEventArgs> DocumentChanged;

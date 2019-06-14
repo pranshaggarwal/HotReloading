@@ -33,6 +33,14 @@
     <EmbeddedResource Include="TestCodes\ListDictionaryTestClass.cs" />
     <EmbeddedResource Include="TestCodes\OverrideMethodTestClass.cs" />
     <EmbeddedResource Include="TestCodes\GenericMethodTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\DelegateTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\ExpressionTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\EventTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\TryCatchTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\LockTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\RefOutTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\StringTestClass.cs" />
+    <EmbeddedResource Include="TestCodes\MethodOverloadingTestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="IntegrationTests\" />
@@ -50,6 +58,12 @@
     <Folder Include="IntegrationTests\Loop\" />
     <Folder Include="IntegrationTests\Using\" />
     <Folder Include="IntegrationTests\Inheritance\" />
+    <Folder Include="IntegrationTests\Delegate\" />
+    <Folder Include="IntegrationTests\TryCatch\" />
+    <Folder Include="IntegrationTests\Lock\" />
+    <Folder Include="IntegrationTests\RefOut\" />
+    <Folder Include="IntegrationTests\String\" />
+    <Folder Include="IntegrationTests\Overload\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="TestCodes\AssignmentTestClass.cs" />
@@ -70,6 +84,14 @@
     <Compile Remove="TestCodes\ListDictionaryTestClass.cs" />
     <Compile Remove="TestCodes\OverrideMethodTestClass.cs" />
     <Compile Remove="TestCodes\GenericMethodTestClass.cs" />
+    <Compile Remove="TestCodes\DelegateTestClass.cs" />
+    <Compile Remove="TestCodes\ExpressionTestClass.cs" />
+    <Compile Remove="TestCodes\EventTestClass.cs" />
+    <Compile Remove="TestCodes\TryCatchTestClass.cs" />
+    <Compile Remove="TestCodes\LockTestClass.cs" />
+    <Compile Remove="TestCodes\RefOutTestClass.cs" />
+    <Compile Remove="TestCodes\StringTestClass.cs" />
+    <Compile Remove="TestCodes\MethodOverloadingTestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StatementConverter\StatementConverter.csproj" />

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using HotReloading.Core;
 using HotReloading.Core.Statements;
@@ -8,35 +9,46 @@ using StatementConverter.Extensions;
 
 namespace StatementConverter.StatementInterpreter
 {
-    public class ParameterInterpreter
+    public class ParameterInterpreter : IStatementInterpreter
     {
         private readonly MethodDeclarationSyntax methodDeclarationSyntax;
+        private readonly ParameterSyntax parameterSyntax;
         private readonly SemanticModel semanticModel;
 
-        public ParameterInterpreter(MethodDeclarationSyntax methodDeclarationSyntax, SemanticModel semanticModel)
+        public ParameterInterpreter(ParameterSyntax parameterSyntax, SemanticModel semanticModel)
         {
-            this.methodDeclarationSyntax = methodDeclarationSyntax;
+            this.parameterSyntax = parameterSyntax;
             this.semanticModel = semanticModel;
         }
 
-        public List<Parameter> GetParameters()
+        public Statement GetStatement()
         {
-            var retVal = new List<Parameter>();
-            var syntaxes = methodDeclarationSyntax.ParameterList.ChildNodes().Cast<ParameterSyntax>();
-
-            foreach (var ps in syntaxes)
+            var parameterName = parameterSyntax.Identifier.Text;
+            ClassType classType = null;
+            if(parameterSyntax.Type != null)
             {
-                var node = ps.ChildNodes().ElementAt(0);
-                var typeInfo = semanticModel.GetTypeInfo(node);
-                var str = typeInfo.GetClassType();
-                retVal.Add(new Parameter
+                var typeInfo = semanticModel.GetTypeInfo(parameterSyntax.Type);
+                classType = typeInfo.GetClassType();
+            }
+            else
+            {
+                //For lamda expression
+                var lamdaExpressionSymbolInfo = semanticModel.GetSymbolInfo(parameterSyntax.Parent.Parent);
+                if(lamdaExpressionSymbolInfo.Symbol is IMethodSymbol ms)
                 {
-                    Name = ps.Identifier.Text,
-                    Type = str
-                });
+                    classType = ms.Parameters.First(x => x.Name == parameterName).Type.GetClassType();
+                }
+                else
+                {
+                    throw new Exception("Unable to find type for parameter: " + parameterName);
+                }
             }
 
-            return retVal;
+            return new Parameter
+            {
+                Name = parameterName,
+                Type =  classType
+            };
         }
     }
 }

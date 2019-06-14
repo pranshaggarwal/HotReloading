@@ -21,7 +21,7 @@ namespace IInstanceClassAleadyImplmentedTest
             }
         }
 
-        protected Delegate GetInstanceMethod(string methodName)
+        protected Delegate HotReloading_GetInstanceMethod(string methodName)
         {
             if (InstanceMethods.ContainsKey(methodName))
             {

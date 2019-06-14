@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace StatementConverter.Test.TestCodes
 {
     public class ConditionalTestClass
@@ -152,6 +154,35 @@ namespace StatementConverter.Test.TestCodes
                     Tracker.Call(str);
                     break;
             }
+        }
+
+        public static void ConditionalAccess1()
+        {
+            string str = "Hello";
+            Tracker.Call(str?.ToLower());
+        }
+
+        public static void ConditionalAccess2()
+        {
+            var list = new List<string>();
+            list?.Add("hello");
+            var result = list?[0];
+            Tracker.Call(result);
+        }
+
+        public static void ConditionalAccess3()
+        {
+            string str = "Hello";
+            Tracker.Call(str.ToUpper().ToLower()?.ToLower());
+        }
+
+        public static void ConditionalAccess4()
+        {
+            var list = new List<string>
+            {
+                "Hello"
+            };
+            Tracker.Call(list?[0]?.ToUpper().ToLower()?.ToLower());
         }
     }
 }

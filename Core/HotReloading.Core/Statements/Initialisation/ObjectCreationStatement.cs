@@ -8,6 +8,7 @@ namespace HotReloading.Core.Statements
 
         public List<Statement> ArgumentList { get; set; }
         public List<Statement> Initializer { get; set; }
+        public ClassType[] ParametersSignature { get; set; }
 
         public ObjectCreationStatement()
         {

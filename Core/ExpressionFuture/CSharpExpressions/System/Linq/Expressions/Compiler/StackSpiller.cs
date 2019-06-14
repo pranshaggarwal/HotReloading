@@ -1260,7 +1260,8 @@ namespace System.Linq.Expressions.Compiler
         {
             if (method != null)
             {
-                var parameters = method.GetParametersCached();
+                //var parameters = method.GetParametersCached();
+                var parameters = method.GetParameters();
                 for (int i = 0, j = firstIndex; i < parameters.Length; i++, j++)
                 {
                     var parameter = parameters[i];

@@ -15,15 +15,12 @@ namespace StatementConverter.StatementInterpreter
         private readonly MethodDeclarationSyntax declarationSyntax;
         public readonly List<LocalVariableDeclaration> scopedLocalVariableDeclarations;
         private readonly SemanticModel semanticModel;
-        private readonly ParameterInterpreter parameterInterpreter;
         private List<Parameter> parameters;
 
         public StatementInterpreterHandler(MethodDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
         {
             this.declarationSyntax = declarationSyntax;
             this.semanticModel = semanticModel;
-
-            parameterInterpreter = new ParameterInterpreter(declarationSyntax, semanticModel);
 
             scopedLocalVariableDeclarations = new List<LocalVariableDeclaration>();
         }
@@ -150,6 +147,47 @@ namespace StatementConverter.StatementInterpreter
                 case BaseExpressionSyntax baseExpressionSyntax:
                     statement = new BaseStatementInterpreter(baseExpressionSyntax).GetStatement();
                     return statement;
+                case ParenthesizedExpressionSyntax parenthesizedExpressionSyntax:
+                    statement = new ParenthesizedStatementInterpreter(this, parenthesizedExpressionSyntax).GetStatement();
+                    return statement;
+                case InterpolatedStringExpressionSyntax interpolatedStringExpressionSyntax:
+                    statement = new InterpolatedStringStatementInterpreter(this, interpolatedStringExpressionSyntax).GetStatement();
+                    return statement;
+                case TryStatementSyntax tryStatementSyntax:
+                    statement = new TryStatementInterpreter(this, tryStatementSyntax).GetStatement();
+                    return statement;
+                case CatchClauseSyntax catchClauseSyntax:
+                    statement = new CatchStatementInterpreter(this, catchClauseSyntax, semanticModel).GetStatement();
+                    return statement;
+                case ThrowStatementSyntax throwStatementSyntax:
+                    statement = new ThrowStatementInterpreter(this, throwStatementSyntax).GetStatement();
+                    return statement;
+                case FinallyClauseSyntax finallyClauseSyntax:
+                    statement = new FinallyStatementInterpreter(this, finallyClauseSyntax).GetStatement();
+                    return statement;
+                case ParenthesizedLambdaExpressionSyntax parenthesizedLambdaExpressionSyntax:
+                    statement = new LamdaStatementInterpreter(this, parenthesizedLambdaExpressionSyntax, semanticModel).GetStatement();
+                    return statement;
+                case ParameterSyntax parameterSyntax:
+                    statement = new ParameterInterpreter(parameterSyntax, semanticModel).GetStatement();
+                    return statement;
+                case AnonymousMethodExpressionSyntax anonymousMethodExpressionSyntax:
+                    statement = new AnonymousMethodStatementInterpreter(this, 
+                        anonymousMethodExpressionSyntax,
+                        semanticModel).GetStatement();
+                    return statement;
+                case ConditionalAccessExpressionSyntax conditionalAccessExpressionSyntax:
+                    statement = new ConditionalAccessStatementInterpreter(this, conditionalAccessExpressionSyntax)
+                        .GetStatement();
+                    return statement;
+                case MemberBindingExpressionSyntax memberBindingExpression:
+                    statement = new MemberBindingStatementInterpreter(this, memberBindingExpression)
+                        .GetStatement();
+                    return statement;
+                case ElementBindingExpressionSyntax elementBindingExpression:
+                    statement = new ElementbindingStatementInterpreter(this, elementBindingExpression, semanticModel)
+                        .GetStatement();
+                    return statement;
                 default:
                     throw new NotImplementedException(syntax.GetType() + " is not supported yet");
             }
@@ -180,7 +218,7 @@ namespace StatementConverter.StatementInterpreter
             newMethodData.ParentType = parentNamedType.GetClassType();
             newMethodData.IsStatic = declarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
 
-            parameters = parameterInterpreter.GetParameters();
+            parameters = declarationSyntax.ParameterList.Parameters.Select(x => GetStatement(x)).Cast<Parameter>().ToList();
             newMethodData.Parameters = parameters;
 
             newMethodData.Block = new Block();

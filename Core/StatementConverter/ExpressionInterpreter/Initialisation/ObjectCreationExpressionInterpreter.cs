@@ -30,9 +30,9 @@ namespace StatementConverter.ExpressionInterpreter
                 arguments.Add(expressionInterpreterHandler.GetExpression(argument));
             }
 
-            var argumentTypes = arguments.Select(x => x.Type).ToArray();
+            var parameterTypes = creationStatement.ParametersSignature.Select(x => (Type)x).ToArray();
 
-            var ctorInfo = instanceType.GetConstructor(argumentTypes);
+            var ctorInfo = instanceType.GetConstructor(parameterTypes);
 
             Expression[] convertedArguments = new Expression[arguments.Count];
 
@@ -126,7 +126,11 @@ namespace StatementConverter.ExpressionInterpreter
                     else
                         throw new NotSupportedException("This operation is not supported yet");
 
-                    var member = instanceType.GetMostSuitableMember(memberName);
+                    var bindingFlags = BindingFlags.Instance;
+                    bindingFlags |= ((MemberAccessStatement)statement.Left).AccessModifier == HotReloading.Core.AccessModifier.Public ?
+                        BindingFlags.Public : BindingFlags.NonPublic;
+
+                    var member = instanceType.GetMostSuitableMember(memberName, bindingFlags);
                     var rightExpression = expressionInterpreterHandler.GetExpression(statement.Right);
 
                     if(member is FieldInfo fi && fi.FieldType != rightExpression.Type)

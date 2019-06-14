@@ -1,5 +1,4 @@
-﻿using System;
-namespace StatementConverter.Test
+﻿namespace StatementConverter.Test
 {
     public partial class AssignmentTestClass
     {

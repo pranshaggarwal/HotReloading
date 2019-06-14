@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using CSharpExpressions.Microsoft.CSharp;
 using HotReloading.Core;
 using HotReloading.Core.Statements;
+using StatementConverter.Extensions;
 
 namespace StatementConverter.ExpressionInterpreter
 {
@@ -22,27 +24,21 @@ namespace StatementConverter.ExpressionInterpreter
 
         public Expression GetExpression()
         {
-            var suppliedArgs = invocationStatement.Arguments;
-            var arguments = invocationStatement.Arguments
-                .Select(x => expressionInterpreterHandler.GetExpression(x)).ToArray();
-
-            var parameterTypes = invocationStatement.ParametersSignature.Select(x => (Type)x).ToArray();
-
             var methodKey = GetMethodKey();
 
             var lamdaExpression = RuntimeMemory.GetMethod(invocationStatement.Method.ParentType, methodKey);
 
-            var instanceMember = invocationStatement.Method as InstanceMethodMemberStatement;
-
             if (lamdaExpression != null)
             {
-                var expression = lamdaExpression.GetExpression();
-                var arguments1 = new List<Expression>();
-                if (instanceMember != null)
-                    arguments1.Add(expressionInterpreterHandler.GetExpression(instanceMember.Parent));
-                arguments1.AddRange(arguments);
-                return Expression.Invoke(expression, arguments1);
+                return InvokeLamdaExpression(lamdaExpression);
             }
+
+            return InvokeMethod();
+        }
+
+        private Expression InvokeMethod()
+        {
+            var instanceMember = invocationStatement.Method as InstanceMethodMemberStatement;
 
             BindingFlags bindingFlags = instanceMember == null ? BindingFlags.Static : BindingFlags.Instance;
 
@@ -50,26 +46,16 @@ namespace StatementConverter.ExpressionInterpreter
                 BindingFlags.Public : BindingFlags.NonPublic;
 
             Type declareType = (Type)invocationStatement.Method.ParentType;
+            var parameterTypes = invocationStatement.ParametersSignature.Select(x => (Type)x).ToArray();
+
             var methodInfo =
                 declareType.GetMethod(invocationStatement.Method.Name,
                     bindingFlags, Type.DefaultBinder, parameterTypes, null);
-            Expression[] convertedArguments = new Expression[arguments.Length];
 
-            for(int i=0; i < convertedArguments.Length; i++)
-            {
-                var argument = arguments[i];
+            var arguments = invocationStatement.Arguments
+                           .Select(x => expressionInterpreterHandler.GetExpression(x)).ToArray();
 
-                var parameter = methodInfo.GetParameters()[i];
-
-                if(parameter.ParameterType != argument.Type)
-                {
-                    convertedArguments[i] = Expression.Convert(argument, parameter.ParameterType);
-                }
-                else
-                {
-                    convertedArguments[i] = argument;
-                }
-            }
+            Expression[] convertedArguments = methodInfo.ConvertArguments(arguments);
 
             if (instanceMember != null)
             {
@@ -77,17 +63,22 @@ namespace StatementConverter.ExpressionInterpreter
                 return Expression.Call(
                             caller,
                             methodInfo, convertedArguments);
-
             }
 
             return Expression.Call(methodInfo, convertedArguments);
         }
 
-        private Type GetDelegateType(MethodInfo methodInfo)
+        private Expression InvokeLamdaExpression(CSharpLamdaExpression lamdaExpression)
         {
-            var parameterTypes = methodInfo.GetParameters().Select(x => x.ParameterType).ToList();
-            parameterTypes.Add(methodInfo.ReturnType);
-            return Expression.GetDelegateType(parameterTypes.ToArray());
+            var instanceMember = invocationStatement.Method as InstanceMethodMemberStatement;
+
+            var expression = lamdaExpression.GetExpression();
+            var arguments = new List<Expression>();
+            if (instanceMember != null)
+                arguments.Add(expressionInterpreterHandler.GetExpression(instanceMember.Parent));
+            arguments.AddRange(invocationStatement.Arguments
+                .Select(x => expressionInterpreterHandler.GetExpression(x)).ToArray());
+            return Expression.Invoke(expression, arguments);
         }
 
         private string GetMethodKey()

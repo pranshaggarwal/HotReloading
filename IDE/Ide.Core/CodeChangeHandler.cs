@@ -5,6 +5,15 @@ using CSharpCodeAnalysis;
 using HotReloading.Core;
 using Microsoft.CodeAnalysis;
 using StatementConverter.StatementInterpreter;
+using MQTTnet;
+using MQTTnet.Server;
+using System.Threading.Tasks;
+using MQTTnet.Client;
+using MQTTnet.Client.Connecting;
+using MQTTnet.Client.Options;
+using System.Reflection;
+using Mqtt;
+using Serializer = HotReloading.Core.Serializer;
 
 namespace Ide.Core
 {
@@ -13,24 +22,16 @@ namespace Ide.Core
         private Document currentDocument;
 
         public IIde ide;
-        private readonly TcpCommunicatorServer server;
 
-        private CodeChangeHandler(IIde ide)
+        internal CodeChangeHandler(IIde ide)
         {
             this.ide = ide;
-            server = new TcpCommunicatorServer(Constants.DEFAULT_PORT);
 
             ide.DocumentSaved += Ide_DocumentSaved;
             ide.DocumentChanged += Ide_DocumentChanged;
         }
 
-        public static CodeChangeHandler Instance { get; private set; }
-
-        public static void Init(IIde ide)
-        {
-            Instance = new CodeChangeHandler(ide);
-            Instance.server.StartListening();
-        }
+        public static CodeChangeHandler Instance { get; internal set; }
 
         private void Ide_DocumentChanged(object sender, DocumentChangedEventArgs e)
         {
@@ -86,7 +87,7 @@ namespace Ide.Core
                 };
             }
 
-            await server.Send(request);
+            await Send(request);
         }
 
         public CodeChange CompareTree(SyntaxTree newSyntaxTree, SyntaxTree oldSyntaxTree,
@@ -112,6 +113,11 @@ namespace Ide.Core
             {
                 Methods = updatedMethods
             };
+        }
+
+        private Task Send(CodeChangeMessage message)
+        {
+            return Initializer.mqttClient.Publish(Serializer.SerializeJson(message), Topics.CODE_CHANGE);
         }
     }
 }

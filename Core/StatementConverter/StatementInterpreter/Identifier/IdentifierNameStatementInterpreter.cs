@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HotReloading.Core;
 using HotReloading.Core.Statements;
 using Microsoft.CodeAnalysis;
@@ -38,7 +39,7 @@ namespace StatementConverter.StatementInterpreter
                 var callerMethod = GetCallingMethod(identifierNameSyntax);
                 var callerSymbol = semanticModel.GetDeclaredSymbol(callerMethod);
                 var methodSymbol = semanticModel.GetSymbolInfo(identifierNameSyntax).Symbol as IMethodSymbol;
-                return new InstanceMethodMemberStatement
+                return new  InstanceMethodMemberStatement
                 {
                     Name = "HotReloadingBase_" + methodSymbol.Name,
                     ParentType = callerSymbol.ContainingType.GetClassType(),
@@ -48,8 +49,44 @@ namespace StatementConverter.StatementInterpreter
             }
 
             var symbolInfo = semanticModel.GetSymbolInfo(identifierNameSyntax);
-            return GetStatement(symbolInfo, varName);
+
+            var symbol = symbolInfo.Symbol;
+
+            if(symbol == null)
+            {
+                if (symbolInfo.CandidateReason == CandidateReason.OverloadResolutionFailure)
+                {
+                    //Resolve overload
+                    symbol = semanticModel.ResolveOverload(symbolInfo, identifierNameSyntax);
+                }
+                else
+                    throw new Exception($"Identifier {varName}: not able to find symbol for {symbolInfo.GetType()}. Candidate Reason: {symbolInfo.CandidateReason}");
+            }
+            var statement = GetStatement(symbol, varName);
+            var typeInfo = semanticModel.GetTypeInfo(identifierNameSyntax);
+
+            if(typeInfo.Type?.TypeKind == TypeKind.Delegate )
+            {
+                return new DelegateIdentifierStatement
+                {
+                    Target = statement,
+                    Type = typeInfo.GetClassType()
+                };
+            }
+
+            if(typeInfo.ConvertedType?.TypeKind == TypeKind.Delegate)
+            {
+                return new MethodPointerStatement
+                {
+                    Method = statement,
+                    Type = typeInfo.ConvertedType.GetClassType()
+                };
+            }
+
+            return statement;
         }
+
+
 
         private MethodDeclarationSyntax GetCallingMethod(SyntaxNode syntaxNode)
         {
@@ -62,10 +99,10 @@ namespace StatementConverter.StatementInterpreter
             return GetCallingMethod(syntaxNode.Parent);
         }
 
-        private Statement GetStatement(SymbolInfo symbolInfo, string varName)
+        private Statement GetStatement(ISymbol symbol, string varName)
         {
             Statement statement;
-            switch (symbolInfo.Symbol)
+            switch (symbol)
             {
                 case IFieldSymbol fs:
                     statement = GetStatement(fs, varName);
@@ -88,8 +125,11 @@ namespace StatementConverter.StatementInterpreter
                 case INamespaceSymbol nts:
                     statement = GetStatement(nts, varName);
                     break;
+                case IEventSymbol es:
+                    statement = GetStatement(es, varName);
+                    break;
                 default:
-                    throw new NotSupportedException($"{symbolInfo.Symbol.GetType()} is not supported yet.");
+                    throw new NotSupportedException($"Identifier: {varName} - {symbol.GetType()} is not supported identifier yet.");
             }
 
             return statement;
@@ -101,12 +141,14 @@ namespace StatementConverter.StatementInterpreter
                 return new StaticFieldMemberStatement
                 {
                     Name = varName,
-                    ParentType = fs.ContainingType.GetClassType()
+                    ParentType = fs.ContainingType.GetClassType(),
+                    AccessModifier = GetAccessModifier(fs)
                 };
             return new InstanceFieldMemberStatement
             {
                 Name = varName,
-                Parent = parent ?? new ThisStatement()
+                Parent = parent ?? new ThisStatement(),
+                AccessModifier = GetAccessModifier(fs)
             };
         }
 
@@ -116,12 +158,14 @@ namespace StatementConverter.StatementInterpreter
                 return new StaticPropertyMemberStatement
                 {
                     Name = varName,
-                    ParentType = ps.ContainingType.GetClassType()
+                    ParentType = ps.ContainingType.GetClassType(),
+                    AccessModifier = GetAccessModifier(ps)
                 };
             return new InstancePropertyMemberStatement
             {
                 Name = varName,
-                Parent = parent ?? new ThisStatement()
+                Parent = parent ?? new ThisStatement(),
+                AccessModifier = GetAccessModifier(ps)
             };
         }
 
@@ -143,7 +187,25 @@ namespace StatementConverter.StatementInterpreter
             };
         }
 
-        private AccessModifier GetAccessModifier(IMethodSymbol ms)
+        private Statement GetStatement(IEventSymbol es, string varName)
+        {
+            if (es.IsStatic)
+                return new StaticEventMemberStatement
+                {
+                    Name = varName,
+                    ParentType = es.ContainingType.GetClassType(),
+                    AccessModifier = GetAccessModifier(es)
+                };
+            return new InstanceEventMemberStatement
+            {
+                Name = es.Name,
+                ParentType = es.ContainingType.GetClassType(),
+                Parent = parent ?? new ThisStatement(),
+                AccessModifier = GetAccessModifier(es)
+            };
+        }
+
+        private AccessModifier GetAccessModifier(ISymbol ms)
         {
             switch(ms.DeclaredAccessibility)
             {

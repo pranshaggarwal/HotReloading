@@ -17,11 +17,15 @@ namespace StatementConverter.Test
         public static SemanticModel GetSemanticModel(SyntaxTree syntaxTree)
         {
             var assembly = Assembly.GetExecutingAssembly();
+            var expressionAssembly = typeof(System.Linq.Expressions.Expression).Assembly;
+            var runtimeAssembly = Assembly.Load("System.Runtime");
             var compilation = CSharpCompilation.Create("StatementConverter.Test")
                             .AddReferences(MetadataReference.CreateFromFile(
                             assembly.Location))
                             .AddReferences(MetadataReference.CreateFromFile(
-                            typeof(object).Assembly.Location))
+                            typeof(object).Assembly.Location),
+                            MetadataReference.CreateFromFile(expressionAssembly.Location),
+                            MetadataReference.CreateFromFile(runtimeAssembly.Location))
                             .AddSyntaxTrees(syntaxTree);
 
             return compilation.GetSemanticModel(syntaxTree);
