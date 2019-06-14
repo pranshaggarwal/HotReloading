@@ -78,6 +78,7 @@
     <Compile Include="WrapOverrideMethodTest.cs" />
     <Compile Include="RandomGenericTest.cs" />
     <Compile Include="BaseMethodCallTest.cs" />
+    <Compile Include="CaptureConstructorParameterTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -154,6 +155,10 @@
     <ProjectReference Include="..\BuildSamples\BaseMethodCallTest2\BaseMethodCallTest2.csproj">
       <Project>{D53C14F3-35D9-4527-A8B8-BC4FF3E486D4}</Project>
       <Name>BaseMethodCallTest2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuildSamples\CaptureConstructorParameter\CaptureConstructorParameter.csproj">
+      <Project>{B75D6E57-BAFC-45A6-9B3A-AD9E1C07E340}</Project>
+      <Name>CaptureConstructorParameter</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
