@@ -126,7 +126,11 @@ namespace StatementConverter.ExpressionInterpreter
                     else
                         throw new NotSupportedException("This operation is not supported yet");
 
-                    var member = instanceType.GetMostSuitableMember(memberName);
+                    var bindingFlags = BindingFlags.Instance;
+                    bindingFlags |= ((MemberAccessStatement)statement.Left).AccessModifier == HotReloading.Core.AccessModifier.Public ?
+                        BindingFlags.Public : BindingFlags.NonPublic;
+
+                    var member = instanceType.GetMostSuitableMember(memberName, bindingFlags);
                     var rightExpression = expressionInterpreterHandler.GetExpression(statement.Right);
 
                     if(member is FieldInfo fi && fi.FieldType != rightExpression.Type)

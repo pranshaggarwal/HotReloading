@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Reflection;
 using HotReloading.Core.Statements;
 
 namespace StatementConverter.ExpressionInterpreter
@@ -17,8 +18,13 @@ namespace StatementConverter.ExpressionInterpreter
 
         public Expression GetExpression()
         {
-            return Expression.Field(interpreterHandler.GetExpression(statement.Parent),
-                statement.Name);
+            var parent = interpreterHandler.GetExpression(statement.Parent);
+            var bindingFlags = BindingFlags.Instance;
+            bindingFlags |= statement.AccessModifier == HotReloading.Core.AccessModifier.Public ?
+                BindingFlags.Public : BindingFlags.NonPublic;
+
+            var field = parent.Type.GetField(statement.Name, bindingFlags);
+            return Expression.Field(parent, field);
         }
     }
 }

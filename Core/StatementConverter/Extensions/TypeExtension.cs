@@ -16,9 +16,9 @@ namespace StatementConverter.Extensions
             return typeSymbol.GetClassType();
         }
 
-        public static PropertyInfo GetMostSuitableProperty(this Type type, string propertyName)
+        public static PropertyInfo GetMostSuitableProperty(this Type type, string propertyName, BindingFlags bindingFlags)
         {
-            var properties = type.GetProperties().Where(x => x.Name == propertyName);
+            var properties = type.GetProperties(bindingFlags).Where(x => x.Name == propertyName);
 
             var derivedType = properties.FirstOrDefault().DeclaringType;
 
@@ -33,9 +33,9 @@ namespace StatementConverter.Extensions
             return properties.Single(x => x.DeclaringType == derivedType);
         }
 
-        public static MemberInfo GetMostSuitableMember(this Type type, string memberName)
+        public static MemberInfo GetMostSuitableMember(this Type type, string memberName, BindingFlags bindingFlags)
         {
-            var members = type.GetMembers().Where(x => x.Name == memberName);
+            var members = type.GetMembers(bindingFlags).Where(x => x.Name == memberName);
 
             var derivedType = members.FirstOrDefault().DeclaringType;
 

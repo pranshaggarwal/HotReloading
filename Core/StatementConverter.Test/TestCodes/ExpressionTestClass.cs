@@ -15,7 +15,8 @@ namespace StatementConverter.Test
 
         public void PassExpressionInMethod()
         {
-            TestFunction(() => Tracker.Call("hello"));
+            Expression<Action> expression = () => Tracker.Call("hello");
+            TestFunction(expression);
         }
 
         private void TestFunction(Expression<Action> expression)

@@ -176,6 +176,18 @@ namespace StatementConverter.StatementInterpreter
                         anonymousMethodExpressionSyntax,
                         semanticModel).GetStatement();
                     return statement;
+                case ConditionalAccessExpressionSyntax conditionalAccessExpressionSyntax:
+                    statement = new ConditionalAccessStatementInterpreter(this, conditionalAccessExpressionSyntax)
+                        .GetStatement();
+                    return statement;
+                case MemberBindingExpressionSyntax memberBindingExpression:
+                    statement = new MemberBindingStatementInterpreter(this, memberBindingExpression)
+                        .GetStatement();
+                    return statement;
+                case ElementBindingExpressionSyntax elementBindingExpression:
+                    statement = new ElementbindingStatementInterpreter(this, elementBindingExpression, semanticModel)
+                        .GetStatement();
+                    return statement;
                 default:
                     throw new NotImplementedException(syntax.GetType() + " is not supported yet");
             }

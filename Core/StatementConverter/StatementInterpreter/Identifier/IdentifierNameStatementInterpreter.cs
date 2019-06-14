@@ -60,7 +60,7 @@ namespace StatementConverter.StatementInterpreter
                     symbol = semanticModel.ResolveOverload(symbolInfo, identifierNameSyntax);
                 }
                 else
-                    throw new Exception($"Identifier: not able to find symbol for {symbolInfo.GetType()}. Candidate Reason: {symbolInfo.CandidateReason}");
+                    throw new Exception($"Identifier {varName}: not able to find symbol for {symbolInfo.GetType()}. Candidate Reason: {symbolInfo.CandidateReason}");
             }
             var statement = GetStatement(symbol, varName);
             var typeInfo = semanticModel.GetTypeInfo(identifierNameSyntax);
@@ -125,6 +125,9 @@ namespace StatementConverter.StatementInterpreter
                 case INamespaceSymbol nts:
                     statement = GetStatement(nts, varName);
                     break;
+                case IEventSymbol es:
+                    statement = GetStatement(es, varName);
+                    break;
                 default:
                     throw new NotSupportedException($"Identifier: {varName} - {symbol.GetType()} is not supported identifier yet.");
             }
@@ -138,12 +141,14 @@ namespace StatementConverter.StatementInterpreter
                 return new StaticFieldMemberStatement
                 {
                     Name = varName,
-                    ParentType = fs.ContainingType.GetClassType()
+                    ParentType = fs.ContainingType.GetClassType(),
+                    AccessModifier = GetAccessModifier(fs)
                 };
             return new InstanceFieldMemberStatement
             {
                 Name = varName,
-                Parent = parent ?? new ThisStatement()
+                Parent = parent ?? new ThisStatement(),
+                AccessModifier = GetAccessModifier(fs)
             };
         }
 
@@ -153,12 +158,14 @@ namespace StatementConverter.StatementInterpreter
                 return new StaticPropertyMemberStatement
                 {
                     Name = varName,
-                    ParentType = ps.ContainingType.GetClassType()
+                    ParentType = ps.ContainingType.GetClassType(),
+                    AccessModifier = GetAccessModifier(ps)
                 };
             return new InstancePropertyMemberStatement
             {
                 Name = varName,
-                Parent = parent ?? new ThisStatement()
+                Parent = parent ?? new ThisStatement(),
+                AccessModifier = GetAccessModifier(ps)
             };
         }
 
@@ -180,7 +187,25 @@ namespace StatementConverter.StatementInterpreter
             };
         }
 
-        private AccessModifier GetAccessModifier(IMethodSymbol ms)
+        private Statement GetStatement(IEventSymbol es, string varName)
+        {
+            if (es.IsStatic)
+                return new StaticEventMemberStatement
+                {
+                    Name = varName,
+                    ParentType = es.ContainingType.GetClassType(),
+                    AccessModifier = GetAccessModifier(es)
+                };
+            return new InstanceEventMemberStatement
+            {
+                Name = es.Name,
+                ParentType = es.ContainingType.GetClassType(),
+                Parent = parent ?? new ThisStatement(),
+                AccessModifier = GetAccessModifier(es)
+            };
+        }
+
+        private AccessModifier GetAccessModifier(ISymbol ms)
         {
             switch(ms.DeclaredAccessibility)
             {
