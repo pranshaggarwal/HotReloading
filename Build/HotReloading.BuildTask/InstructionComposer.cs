@@ -293,6 +293,12 @@ namespace HotReloading.BuildTask
             return this;
         }
 
+        public InstructionComposer Box(TypeReference type)
+        {
+            Instructions.Add(Instruction.Create(OpCodes.Box, type));
+            return this;
+        }
+
         public InstructionComposer Cast(TypeReference type)
         {
             Instructions.Add(Instruction.Create(OpCodes.Castclass, type));

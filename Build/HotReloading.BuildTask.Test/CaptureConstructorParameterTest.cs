@@ -44,13 +44,33 @@ namespace HotReloading.BuildTask.Test
 
             var type = assembly.GetType(Helper.GetFullClassname(assemblyToTest));
 
-            var defaultConstructor = type.GetConstructor(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[] { typeof(string) }, null);
+            var defaultConstructor = type.GetConstructor(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[] { typeof(int) }, null);
 
-            var obj = defaultConstructor.Invoke(new object[] { "test" });
+            var obj = defaultConstructor.Invoke(new object[] { 1 });
 
             var parametersFields = type.GetField("hotReloading_Ctor_Parameters", BindingFlags.Instance | BindingFlags.NonPublic);
             var parameters = parametersFields.GetValue(obj) as ArrayList;
-            parameters[0].Should().Be("test");
+            parameters[0].Should().Be(1);
+        }
+
+        [Test]
+        public void Test_Constructor_WithIntptrParameter()
+        {
+            var assemblyToTest = "CaptureConstructorParameter";
+            string newAssemblyPath = Helper.GetInjectedAssembly(assemblyToTest);
+
+            var assembly = Assembly.LoadFrom(newAssemblyPath);
+
+            var type = assembly.GetType(Helper.GetFullClassname(assemblyToTest));
+
+            var defaultConstructor = type.GetConstructor(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[] { typeof(IntPtr) }, null);
+
+            var intPtr = (IntPtr)1;
+            var obj = defaultConstructor.Invoke(new object[] { intPtr });
+
+            var parametersFields = type.GetField("hotReloading_Ctor_Parameters", BindingFlags.Instance | BindingFlags.NonPublic);
+            var parameters = parametersFields.GetValue(obj) as ArrayList;
+            parameters[0].Should().Be(intPtr);
         }
 
         [Test]

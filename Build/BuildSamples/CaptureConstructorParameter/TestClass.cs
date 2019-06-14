@@ -11,8 +11,13 @@ namespace CaptureConstructorParameter
 
         }
 
-        public TestClass(string param)
+        public TestClass(int param)
         {
+        }
+
+        public TestClass(IntPtr intPtr)
+        {
+
         }
 
         public TestClass(string param1, string param2)

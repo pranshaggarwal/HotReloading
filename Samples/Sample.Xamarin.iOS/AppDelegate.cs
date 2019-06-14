@@ -1,4 +1,5 @@
 ﻿using Foundation;
+using Reloading.iOS;
 using UIKit;
 
 namespace Sample.Xamarin.iOS

@@ -119,7 +119,6 @@
     <Compile Include="ViewController.designer.cs">
       <DependentUpon>ViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Initialiser.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\HotReloading.Core\HotReloading.Core.csproj">
@@ -129,6 +128,10 @@
     <ProjectReference Include="..\..\Core\HotReloading\HotReloading.csproj">
       <Project>{F22483C4-C6C7-4D46-A64A-C7D3E1003333}</Project>
       <Name>HotReloading</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\Reloading.iOS\Reloading.iOS.csproj">
+      <Project>{234DDE52-C187-40E4-B27F-DC0E825B2ADD}</Project>
+      <Name>Reloading.iOS</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

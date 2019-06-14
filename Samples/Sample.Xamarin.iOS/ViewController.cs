@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Reflection;
+using HotReloading.Core;
 using UIKit;
 
 namespace Sample.Xamarin.iOS
@@ -13,12 +15,12 @@ namespace Sample.Xamarin.iOS
 
         public void DoSomething()
         {
-            System.Diagnostics.Debug.WriteLine("Button Clicked");
+            System.Diagnostics.Debug.WriteLine("Button Clicked1");
         }
 
-        protected ViewController(IntPtr handle) : base(handle)
+        protected ViewController(IntPtr handle)
+            : base(handle)
         {
-            // Note: this .ctor should not contain any initialization logic.
         }
 
         public override void ViewDidLoad()

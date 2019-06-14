@@ -622,7 +622,10 @@ namespace HotReloading.BuildTask
                 {
                     composer.LoadArg_0()
                         .Load(ctorParameters)
-                        .LoadArg(parameter)
+                        .LoadArg(parameter);
+                    if (parameter.ParameterType.IsValueType)
+                        composer.Box(md.ImportReference(parameter.ParameterType));
+                    composer
                         .InstanceCall(new Method
                         {
                             ParentType = typeof(ArrayList),
