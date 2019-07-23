@@ -16,10 +16,28 @@ namespace VisualStudio.Mac
         public VisualStudioIde()
         {
             IdeApp.Workbench.ActiveDocumentChanged += Handle_ActiveDocumentChanged;
+            IdeApp.Workspace.FileAddedToProject += Workspace_FileAddedToProject;
+            IdeApp.Workspace.FileChangedInProject += Workspace_FileChangedInProject;
+            IdeApp.Workspace.ReferenceAddedToProject += Workspace_ReferenceAddedToProject;
             IdeApp.Workspace.SolutionLoaded += Workspace_SolutionLoaded;
 
             ActiveDocumentChanged();
         }
+
+        void Workspace_ReferenceAddedToProject(object sender, MonoDevelop.Projects.ProjectReferenceEventArgs e)
+        {
+        }
+
+
+        void Workspace_FileChangedInProject(object sender, MonoDevelop.Projects.ProjectFileEventArgs e)
+        {
+        }
+
+
+        void Workspace_FileAddedToProject(object sender, MonoDevelop.Projects.ProjectFileEventArgs e)
+        {
+        }
+
 
         void Workspace_SolutionLoaded(object sender, MonoDevelop.Projects.SolutionEventArgs e)
         {
@@ -46,7 +64,9 @@ namespace VisualStudio.Mac
                 activeDocument.Saved -= HandleDocumentSaved;
                 activeDocument = null;
             }
-
+            var test = doc?.IsCompileableInProject;
+            var file = doc?.IsFile;
+            var x = doc?.GetContent<string>();
             var ext = doc?.FileName.Extension;
             if (ext == ".cs")
             {
