@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using HotReloading.Core.Statements;
+﻿using HotReloading.Core.Statements;
+using System.Collections.Generic;
 
 namespace HotReloading.Core
 {

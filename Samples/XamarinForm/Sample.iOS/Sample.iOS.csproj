@@ -162,6 +162,8 @@
     <ProjectReference Include="..\..\..\Forms\HotReloading.iOS\HotReloading.iOS.csproj">
       <Project>{34E1CACA-7979-4F13-A7DA-CCC7225E2B9E}</Project>
       <Name>HotReloading.iOS</Name>
+      <IsAppExtension>false</IsAppExtension>
+      <IsWatchApp>false</IsWatchApp>
     </ProjectReference>
     <ProjectReference Include="..\Sample\Sample.csproj">
       <Project>{E625B690-0A9A-404F-BD8C-14BCBF89EEBF}</Project>
@@ -177,9 +179,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
-
-   <UsingTask TaskName="HotReloadingBuildTask" AssemblyFile="..\..\..\Build\HotReloading.BuildTask\bin\$(Configuration)\HotReloading.BuildTask.dll" />
-
+  <UsingTask TaskName="HotReloadingBuildTask" AssemblyFile="..\..\..\Build\HotReloading.BuildTask\bin\$(Configuration)\HotReloading.BuildTask.dll" />
   <Target Name="HotReloadingBuildTask" AfterTargets="AfterCompile" Condition="Exists('@(IntermediateAssembly)') And $(DesignTimeBuild) != true And $(Configuration) == 'Debug' AND $(EnableHotReloading) == 'true'" Inputs="@(IntermediateAssembly);$(ProjectWeaverXml)" Outputs="$(TargetPath)">
     <HotReloadingBuildTask AllowOverride="$(AllowOverride)" References="@(ReferencePath)" AssemblyFile="@(IntermediateAssembly)" ProjectDirectory="$(MSBuildProjectDirectory)" DebugSymbols="$(DebugSymbols)" DebugType="$(DebugType)" />
   </Target>
