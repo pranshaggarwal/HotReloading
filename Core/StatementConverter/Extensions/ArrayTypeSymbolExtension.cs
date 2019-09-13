@@ -5,9 +5,9 @@ namespace StatementConverter.Extensions
 {
     public static class ArrayTypeSymbolExtension
     {
-        public static ClassType GetClassType(this IArrayTypeSymbol type)
+        public static Type GetClassType(this IArrayTypeSymbol type)
         {
-            ClassType classType;
+            Type classType;
 
             if (type.ElementType is IArrayTypeSymbol)
             {
@@ -23,7 +23,7 @@ namespace StatementConverter.Extensions
 
             arrowBraket += "]";
 
-            return new ClassType
+            return new Type
             {
                 Name = classType.Name + arrowBraket,
                 AssemblyName = classType.AssemblyName

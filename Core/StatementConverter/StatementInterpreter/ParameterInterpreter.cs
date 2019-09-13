@@ -24,7 +24,7 @@ namespace StatementConverter.StatementInterpreter
         public Statement GetStatement()
         {
             var parameterName = parameterSyntax.Identifier.Text;
-            ClassType classType = null;
+            HotReloading.Core.Type classType = null;
             if(parameterSyntax.Type != null)
             {
                 var typeInfo = semanticModel.GetTypeInfo(parameterSyntax.Type);

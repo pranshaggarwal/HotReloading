@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using StatementConverter.ExpressionInterpreter;
 using StatementConverter.Extensions;
 using StatementConverter.StatementInterpreter;
+using Type = System.Type;
 
 namespace HotReloading.Test
 {

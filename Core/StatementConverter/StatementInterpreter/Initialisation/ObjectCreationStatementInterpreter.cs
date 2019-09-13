@@ -35,7 +35,7 @@ namespace StatementConverter.StatementInterpreter
             return CreateObjectCreationStatement(typeInfo.GetClassType());
         }
 
-        private Statement CreateObjectCreationStatement(ClassType classType)
+        private Statement CreateObjectCreationStatement(HotReloading.Core.Type classType)
         {
             var objectCreationStatement = new ObjectCreationStatement
             {
@@ -86,7 +86,7 @@ namespace StatementConverter.StatementInterpreter
             }
             else
             {
-                throw new Exception("Cannot find constructor for type: " + classType.TypeString);
+                throw new Exception("Cannot find constructor for type: " + classType);
             }
 
             objectCreationStatement.ArgumentList.AddRange(arguments);
@@ -94,10 +94,10 @@ namespace StatementConverter.StatementInterpreter
             return objectCreationStatement;
         }
 
-        private Statement CreateDelegateStatement(ClassType classType)
+        private Statement CreateDelegateStatement(HotReloading.Core.Type classType)
         {
             if (objectCreationExpressionSyntax.ArgumentList.Arguments.Count != 1)
-                throw new Exception("Cannot create instance of delegate type: " + classType.TypeString);
+                throw new Exception("Cannot create instance of delegate type: " + classType);
 
             var objectCreationStatement = new DelegateObjectCreationStatement();
 

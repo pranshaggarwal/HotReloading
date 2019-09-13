@@ -7,6 +7,7 @@ using CSharpExpressions.Microsoft.CSharp;
 using HotReloading.Core;
 using HotReloading.Core.Statements;
 using StatementConverter.Extensions;
+using Type = System.Type;
 
 namespace StatementConverter.ExpressionInterpreter
 {

@@ -66,7 +66,7 @@ namespace HotReloading
             }
         }
 
-        public static Delegate GetMethodDelegate(Type parentType, string key)
+        public static Delegate GetMethodDelegate(System.Type parentType, string key)
         {
             if(RuntimeMemory.Methods.ContainsKey(parentType))
                 return RuntimeMemory.Methods[parentType].SingleOrDefault(x => Helper.GetMethodKey(x.Method) == key)?.GetDelegate();

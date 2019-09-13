@@ -4,11 +4,11 @@ namespace HotReloading.Core.Statements
 {
     public class ObjectCreationStatement : Statement
     {
-        public ClassType Type { get; set; }
+        public Type Type { get; set; }
 
         public List<Statement> ArgumentList { get; set; }
         public List<Statement> Initializer { get; set; }
-        public ClassType[] ParametersSignature { get; set; }
+        public Type[] ParametersSignature { get; set; }
 
         public ObjectCreationStatement()
         {

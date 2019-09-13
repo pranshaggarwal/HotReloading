@@ -10,8 +10,8 @@ namespace HotReloading.Core
         public Block Block { get; set; }
         public bool IsStatic { get; set; }
         public bool IsAsync { get; set; }
-        public ClassType ReturnType { get; set; }
-        public ClassType ParentType { get; set; }
+        public Type ReturnType { get; set; }
+        public Type ParentType { get; set; }
         public AccessModifier AccessModifier { get; set; }
     }
 }

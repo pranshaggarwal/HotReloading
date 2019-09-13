@@ -10,6 +10,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Type = System.Type;
 
 namespace HotReloading.BuildTask
 {
@@ -81,13 +82,13 @@ namespace HotReloading.BuildTask
 
             var typesWithCorrectOrder = new List<TypeDefinition>();
 
-            foreach(var type in types)
+            foreach (var type in types)
             {
                 if (type.BaseType is TypeDefinition baseTypeDeginition)
                 {
                     var baseTypes = GetBaseTypesWithCorrectOrder(baseTypeDeginition);
 
-                    foreach(var baseType in baseTypes)
+                    foreach (var baseType in baseTypes)
                     {
                         if (!typesWithCorrectOrder.Contains(baseType))
                         {
@@ -98,7 +99,7 @@ namespace HotReloading.BuildTask
                 }
                 else
                 {
-                    if(!typesWithCorrectOrder.Contains(type))
+                    if (!typesWithCorrectOrder.Contains(type))
                     {
                         typesWithCorrectOrder.Add(type);
                     }
@@ -188,7 +189,7 @@ namespace HotReloading.BuildTask
                 return null;
             var baseTypeDefinition = type.BaseType.Resolve();
 
-            foreach(var baseMethod in baseTypeDefinition.Methods)
+            foreach (var baseMethod in baseTypeDefinition.Methods)
             {
                 if (baseMethod.IsEqual(method))
                     return baseMethod.GetBaseReference(type, type.BaseType, md);
@@ -201,11 +202,11 @@ namespace HotReloading.BuildTask
         {
             var retVal = new List<TypeDefinition>();
 
-            if(type.BaseType is TypeDefinition baseTypeDefinition)
+            if (type.BaseType is TypeDefinition baseTypeDefinition)
             {
                 var baseTypes = GetBaseTypesWithCorrectOrder(baseTypeDefinition);
 
-                foreach(var baseType in baseTypes)
+                foreach (var baseType in baseTypes)
                 {
                     if (!retVal.Contains(baseType))
                     {
@@ -219,9 +220,9 @@ namespace HotReloading.BuildTask
             return retVal;
         }
 
-        private void AddOverrideMethod(TypeDefinition type, 
-            ModuleDefinition md, 
-            MethodReference getInstanceMethod, 
+        private void AddOverrideMethod(TypeDefinition type,
+            ModuleDefinition md,
+            MethodReference getInstanceMethod,
             List<MethodDefinition> existingMethods)
         {
             if (type.BaseType == null)
@@ -231,7 +232,7 @@ namespace HotReloading.BuildTask
 
             var baseMethodCalls = new List<MethodReference>();
 
-            foreach(var overridableMethod in overridableMethods)
+            foreach (var overridableMethod in overridableMethods)
             {
                 if (existingMethods.Any(x => x.FullName == overridableMethod.Method.FullName))
                     continue;
@@ -251,7 +252,7 @@ namespace HotReloading.BuildTask
 
                     composer.LoadArg_0();
 
-                    foreach(var parameter in method.Parameters)
+                    foreach (var parameter in method.Parameters)
                     {
                         composer.LoadArg(parameter);
                     }
@@ -270,7 +271,7 @@ namespace HotReloading.BuildTask
 
                     composer.Return();
 
-                    foreach(var instruction in composer.Instructions)
+                    foreach (var instruction in composer.Instructions)
                     {
                         method.Body.GetILProcessor().Append(instruction);
                     }
@@ -399,7 +400,7 @@ namespace HotReloading.BuildTask
             if (baseOverriableMethods == null)
                 return retVal;
 
-            foreach(var method in baseOverriableMethods)
+            foreach (var method in baseOverriableMethods)
             {
                 if (retVal.Any(x => x.Method.IsEqual(method.Method)))
                     continue;
@@ -439,8 +440,8 @@ namespace HotReloading.BuildTask
                     IsOut = parameter.IsOut
                 });
             }
-            var baseMethodReference = overridableMethod.GetBaseReference(targetType, sourceType, md);  
-             
+            var baseMethodReference = overridableMethod.GetBaseReference(targetType, sourceType, md);
+
             return new OverridableMethod
             {
                 Method = method,
@@ -454,7 +455,7 @@ namespace HotReloading.BuildTask
             {
                 type.Interfaces.Add(new InterfaceImplementation(md.ImportReference(typeof(IInstanceClass))));
                 PropertyDefinition instanceMethods = CreateInstanceMethodsProperty(md, type, out instanceMethodGetters);
-                getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods.GetMethod.GetReference(type, md),type,hasImplementedIInstanceClass);
+                getInstanceMethod = CreateGetInstanceMethod(md, instanceMethods.GetMethod.GetReference(type, md), type, hasImplementedIInstanceClass);
             }
         }
 
@@ -528,7 +529,7 @@ namespace HotReloading.BuildTask
             Instruction loadInstructionForReturn = null;
             if (method.ReturnType.FullName != "System.Void" && instructions.Count > 1)
             {
-                var secondLastInstruction =  instructions.ElementAt(instructions.Count - 2);
+                var secondLastInstruction = instructions.ElementAt(instructions.Count - 2);
 
                 if (secondLastInstruction.IsLoadInstruction())
                     loadInstructionForReturn = secondLastInstruction;
@@ -537,9 +538,9 @@ namespace HotReloading.BuildTask
             var retInstruction = instructions.Last();
 
             List<Instruction> constructorInitialCode = new List<Instruction>();
-            if(method.IsConstructor)
+            if (method.IsConstructor)
             {
-                foreach(var i in method.Body.Instructions)
+                foreach (var i in method.Body.Instructions)
                 {
                     if (i.OpCode != OpCodes.Call)
                         constructorInitialCode.Add(i);
@@ -576,7 +577,7 @@ namespace HotReloading.BuildTask
 
             var composer = new InstructionComposer(md);
 
-            if(method.IsStatic)
+            if (method.IsStatic)
                 ComposeStaticMethodInstructions(type, method, delegateVariable, boolVariable, methodKeyVariable, firstInstruction, parameters, composer);
             else
                 ComposeInstanceMethodInstructions(type, method, delegateVariable, boolVariable, methodKeyVariable, firstInstruction, parameters, composer, getInstanceMethod, md);
@@ -601,7 +602,7 @@ namespace HotReloading.BuildTask
 
             foreach (var instruction in composer.Instructions) ilprocessor.InsertBefore(firstInstruction, instruction);
 
-            foreach(var instruction in constructorInitialCode)
+            foreach (var instruction in constructorInitialCode)
             {
                 ilprocessor.InsertBefore(composer.Instructions[0], instruction);
             }
@@ -609,16 +610,16 @@ namespace HotReloading.BuildTask
 
         private void ComposeInstanceMethodInstructions(TypeDefinition type, MethodDefinition method, VariableDefinition delegateVariable, VariableDefinition boolVariable, VariableDefinition methodKeyVariable, Instruction firstInstruction, ParameterDefinition[] parameters, InstructionComposer composer, MethodReference getInstanceMethod, ModuleDefinition md)
         {
-            if(method.IsConstructor)
+            if (method.IsConstructor)
             {
-                var arrayListConstructor = typeof(ArrayList).GetConstructor(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance, null, new Type[] { }, null);
+                var arrayListConstructor = typeof(ArrayList).GetConstructor(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance, null, new System.Type[] { }, null);
                 var arrayListConstructorReference = md.ImportReference(arrayListConstructor);
                 composer
                     .LoadArg_0()
                     .NewObject(arrayListConstructorReference)
                     .Store(ctorParameters);
 
-                foreach(var parameter in method.Parameters)
+                foreach (var parameter in method.Parameters)
                 {
                     composer.LoadArg_0()
                         .Load(ctorParameters)
@@ -630,7 +631,7 @@ namespace HotReloading.BuildTask
                         {
                             ParentType = typeof(ArrayList),
                             MethodName = "Add",
-                            ParameterSignature = new Type[] { typeof(Object)}
+                            ParameterSignature = new System.Type[] { typeof(Object) }
                         })
                         .Pop();
                 }
@@ -674,7 +675,7 @@ namespace HotReloading.BuildTask
                 {
                     ParentType = typeof(Core.Helper),
                     MethodName = nameof(Core.Helper.GetMethodKey),
-                    ParameterSignature = new[] { typeof(string), typeof(string[])}
+                    ParameterSignature = new[] { typeof(string), typeof(string[]) }
                 }).
                 Store(methodKeyVariable)
                 .Load(type)
@@ -739,7 +740,7 @@ namespace HotReloading.BuildTask
                 {
                     ParentType = typeof(Dictionary<string, Delegate>),
                     MethodName = "ContainsKey",
-                    ParameterSignature = new[] {typeof(Dictionary<string, Delegate>).GetGenericArguments()[0]}
+                    ParameterSignature = new[] { typeof(Dictionary<string, Delegate>).GetGenericArguments()[0] }
                 })
                 .Store(boolVariable)
                 .Load(boolVariable)
@@ -751,7 +752,7 @@ namespace HotReloading.BuildTask
                 {
                     ParentType = typeof(Dictionary<string, Delegate>),
                     MethodName = "get_Item",
-                    ParameterSignature = new[] {typeof(Dictionary<string, Delegate>).GetGenericArguments()[0]}
+                    ParameterSignature = new[] { typeof(Dictionary<string, Delegate>).GetGenericArguments()[0] }
                 })
                 .Store(delegateVariable)
                 .MoveTo(composer1.Instructions.First())

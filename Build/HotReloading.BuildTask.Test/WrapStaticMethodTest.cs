@@ -78,7 +78,7 @@ namespace HotReloading.BuildTask.Test
             {
                 new Core.Parameter
                 {
-                    Type = new Core.ClassType
+                    Type = new Core.Type
                     {
                         Name = typeof(string).FullName,
                         AssemblyName = typeof(string).Assembly.GetName().Name
@@ -94,7 +94,7 @@ namespace HotReloading.BuildTask.Test
         }
 
 
-        private static void SetupCodeChangeDelegate(Type type, Delegate @delegate, string methodName, List<Core.Parameter> parameters)
+        private static void SetupCodeChangeDelegate(System.Type type, Delegate @delegate, string methodName, List<Core.Parameter> parameters)
         {
             var methodContainer = new Mock<IMethodContainer>();
 

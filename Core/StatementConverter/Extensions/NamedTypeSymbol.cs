@@ -6,7 +6,7 @@ namespace StatementConverter.Extensions
 {
     public static class NamedTypeSymbol
     {
-        public static ClassType GetClassType(this INamedTypeSymbol namedTypeSymbol)
+        public static Type GetClassType(this INamedTypeSymbol namedTypeSymbol)
         {
             string fullyQualifiedName = namedTypeSymbol.GetFullyQualifiedName();
             if(namedTypeSymbol.IsGenericType)
@@ -16,7 +16,7 @@ namespace StatementConverter.Extensions
 
                 foreach (var argument in namedTypeSymbol.TypeArguments)
                 {
-                    fullyQualifiedName += "[" + argument.GetClassType().TypeString + "], ";
+                    fullyQualifiedName += "[" + argument.GetClassType() + "], ";
                 }
 
                 fullyQualifiedName = fullyQualifiedName.Remove(fullyQualifiedName.Length - 2) + "]";
@@ -24,7 +24,7 @@ namespace StatementConverter.Extensions
 
             var typeString = $"{fullyQualifiedName}, {namedTypeSymbol.ContainingAssembly.Identity.Name}";
 
-            return new ClassType
+            return new Type
             {
                 Name = fullyQualifiedName,
                 AssemblyName = namedTypeSymbol.ContainingAssembly.Identity.Name

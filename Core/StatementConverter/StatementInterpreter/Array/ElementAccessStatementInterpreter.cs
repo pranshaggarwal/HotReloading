@@ -5,6 +5,7 @@ using HotReloading.Core.Statements;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using StatementConverter.Extensions;
+using Type = HotReloading.Core.Type;
 
 namespace StatementConverter.StatementInterpreter
 {
@@ -33,7 +34,7 @@ namespace StatementConverter.StatementInterpreter
             return statement;
         }
 
-        private ClassType GetClassType()
+        private Type GetClassType()
         {
             var symbolInfo = semanticModel.GetSymbolInfo(elementAccessExpressionSyntax.Expression);
 

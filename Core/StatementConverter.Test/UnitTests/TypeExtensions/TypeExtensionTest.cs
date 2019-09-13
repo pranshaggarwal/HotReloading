@@ -15,7 +15,7 @@ namespace StatementConverter.Test.UnitTests.TypeExtensions
 
             var classType2 = typeSymbol.GetClassType();
 
-            classType2.TypeString.Should().Be("StatementConverter.Test.InstanceTestClass, StatementConverter.Test");
+            classType2.ToString().Should().Be("StatementConverter.Test.InstanceTestClass, StatementConverter.Test");
         }
 
         [Test]
@@ -25,7 +25,7 @@ namespace StatementConverter.Test.UnitTests.TypeExtensions
 
             var classType2 = typeSymbol.GetClassType();
 
-            classType2.TypeString.Should().Be("StatementConverter.Test.GenericClass`1[[System.Int32, System.Private.CoreLib]], StatementConverter.Test");
+            classType2.ToString().Should().Be("StatementConverter.Test.GenericClass`1[[System.Int32, System.Private.CoreLib]], StatementConverter.Test");
         }
 
         [Test]
@@ -35,7 +35,7 @@ namespace StatementConverter.Test.UnitTests.TypeExtensions
 
             var classType2 = typeSymbol.GetClassType();
 
-            classType2.TypeString.Should().Be("StatementConverter.Test.GenericClass`2[[System.Int32, System.Private.CoreLib], [System.Int32, System.Private.CoreLib]], StatementConverter.Test");
+            classType2.ToString().Should().Be("StatementConverter.Test.GenericClass`2[[System.Int32, System.Private.CoreLib], [System.Int32, System.Private.CoreLib]], StatementConverter.Test");
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace StatementConverter.Test.UnitTests.TypeExtensions
 
             var classType1 = typeSymbol.GetClassType();
 
-            classType1.TypeString.Should().Be("System.Int32[], System.Private.CoreLib");
+            classType1.ToString().Should().Be("System.Int32[], System.Private.CoreLib");
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace StatementConverter.Test.UnitTests.TypeExtensions
 
             var classType1 = typeSymbol.GetClassType();
 
-            classType1.TypeString.Should().Be("System.Int32[][], System.Private.CoreLib");
+            classType1.ToString().Should().Be("System.Int32[][], System.Private.CoreLib");
         }
     }
 }

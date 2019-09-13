@@ -4,19 +4,20 @@ using System.Reflection;
 using HotReloading.Core;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Type = HotReloading.Core.Type;
 
 namespace StatementConverter.Extensions
 {
     public static class TypeExtension
     {
-        public static ClassType GetClassType(this TypeSyntax typeSyntax, SemanticModel semanticModel)
+        public static Type GetClassType(this TypeSyntax typeSyntax, SemanticModel semanticModel)
         {
             var typeSymbolInfo = semanticModel.GetSymbolInfo(typeSyntax);
             var typeSymbol = (INamedTypeSymbol)typeSymbolInfo.Symbol;
             return typeSymbol.GetClassType();
         }
 
-        public static PropertyInfo GetMostSuitableProperty(this Type type, string propertyName, BindingFlags bindingFlags)
+        public static PropertyInfo GetMostSuitableProperty(this System.Type type, string propertyName, BindingFlags bindingFlags)
         {
             var properties = type.GetProperties(bindingFlags).Where(x => x.Name == propertyName);
 
@@ -33,7 +34,7 @@ namespace StatementConverter.Extensions
             return properties.Single(x => x.DeclaringType == derivedType);
         }
 
-        public static MemberInfo GetMostSuitableMember(this Type type, string memberName, BindingFlags bindingFlags)
+        public static MemberInfo GetMostSuitableMember(this System.Type type, string memberName, BindingFlags bindingFlags)
         {
             var members = type.GetMembers(bindingFlags).Where(x => x.Name == memberName);
 

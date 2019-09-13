@@ -3,6 +3,6 @@
     public class DelegateIdentifierStatement : Statement
     {
         public Statement Target { get; set; }
-        public ClassType Type { get; set; }
+        public Type Type { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using StatementConverter.Extensions;
+using Type = HotReloading.Core.Type;
 
 namespace StatementConverter.StatementInterpreter
 {
@@ -172,7 +173,7 @@ namespace StatementConverter.StatementInterpreter
                     statement = new ParameterInterpreter(parameterSyntax, semanticModel).GetStatement();
                     return statement;
                 case AnonymousMethodExpressionSyntax anonymousMethodExpressionSyntax:
-                    statement = new AnonymousMethodStatementInterpreter(this, 
+                    statement = new AnonymousMethodStatementInterpreter(this,
                         anonymousMethodExpressionSyntax,
                         semanticModel).GetStatement();
                     return statement;
@@ -214,7 +215,7 @@ namespace StatementConverter.StatementInterpreter
             newMethodData.AccessModifier = GetModifier();
             newMethodData.IsAsync = declarationSyntax.Modifiers.Any(SyntaxKind.AsyncKeyword);
             newMethodData.ReturnType = GetReturnType();
-            var parentNamedType = (INamedTypeSymbol) semanticModel.GetDeclaredSymbol(declarationSyntax.Parent);
+            var parentNamedType = (INamedTypeSymbol)semanticModel.GetDeclaredSymbol(declarationSyntax.Parent);
             newMethodData.ParentType = parentNamedType.GetClassType();
             newMethodData.IsStatic = declarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
 
@@ -250,7 +251,7 @@ namespace StatementConverter.StatementInterpreter
             return newMethodData;
         }
 
-        private ClassType GetReturnType()
+        private Type GetReturnType()
         {
             var returnType = semanticModel.GetTypeInfo(declarationSyntax.ReturnType);
 

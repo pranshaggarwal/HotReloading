@@ -2,6 +2,6 @@
 {
     public class ParameterIdentifierStatement : IdentifierStatement
     {
-        public ClassType Type { get; set; }
+        public Type Type { get; set; }
     }
 }

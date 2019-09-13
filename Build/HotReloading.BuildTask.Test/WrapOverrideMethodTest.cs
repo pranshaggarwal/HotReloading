@@ -66,7 +66,7 @@ namespace HotReloading.BuildTask.Test
             {
                 new Core.Parameter
                 {
-                    Type = new Core.ClassType
+                    Type = new Core.Type
                     {
                         Name = typeof(string).FullName,
                         AssemblyName = typeof(string).Assembly.GetName().Name
@@ -119,7 +119,7 @@ namespace HotReloading.BuildTask.Test
             {
                 new Core.Parameter
                 {
-                    Type = new Core.ClassType
+                    Type = new Core.Type
                     {
                         IsGeneric = true,
                         Name = "T"
@@ -166,7 +166,7 @@ namespace HotReloading.BuildTask.Test
             {
                 new Core.Parameter
                 {
-                    Type = new Core.ClassType
+                    Type = new Core.Type
                     {
                         IsGeneric = true,
                         Name = "T"
@@ -211,7 +211,7 @@ namespace HotReloading.BuildTask.Test
             {
                 new Core.Parameter
                 {
-                    Type = new Core.ClassType
+                    Type = new Core.Type
                     {
                         Name = typeof(string).FullName,
                         AssemblyName = typeof(string).Assembly.GetName().Name
@@ -260,7 +260,7 @@ namespace HotReloading.BuildTask.Test
             {
                 new Core.Parameter
                 {
-                    Type = new Core.ClassType
+                    Type = new Core.Type
                     {
                         IsGeneric = true,
                         Name = "System.Func`1<T>"
@@ -276,7 +276,7 @@ namespace HotReloading.BuildTask.Test
             result.Should().Be("default1");
         }
 
-        private static void SetupCodeChangeDelegate(Type type, Delegate @delegate, string methodName, List<Core.Parameter> parameters)
+        private static void SetupCodeChangeDelegate(System.Type type, Delegate @delegate, string methodName, List<Core.Parameter> parameters)
         {
             var methodContainer = new Mock<IMethodContainer>();
 

@@ -8,9 +8,9 @@ namespace HotReloading.Core
     public class RuntimeMemory
     {
         public static List<IInstanceClass> MemoryInstances = new List<IInstanceClass>();
-        public static Dictionary<Type, List<IMethodContainer>> Methods { get; private set; } = new Dictionary<Type, List<IMethodContainer>>();
+        public static Dictionary<System.Type, List<IMethodContainer>> Methods { get; private set; } = new Dictionary<System.Type, List<IMethodContainer>>();
 
-        public static CSharpLamdaExpression GetMethod(Type @class, string key)
+        public static CSharpLamdaExpression GetMethod(System.Type @class, string key)
         {
             if (RuntimeMemory.Methods.ContainsKey(@class))
             {
