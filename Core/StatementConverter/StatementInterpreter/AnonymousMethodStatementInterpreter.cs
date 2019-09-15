@@ -33,7 +33,7 @@ namespace StatementConverter.StatementInterpreter
 
             var typeInfo = semanticModel.GetTypeInfo(anonymousMethodExpressionSyntax);
 
-            lamdaStatement.Type = typeInfo.ConvertedType.GetClassType();
+            lamdaStatement.Type = typeInfo.ConvertedType.GetHrType();
 
             return lamdaStatement;
         }

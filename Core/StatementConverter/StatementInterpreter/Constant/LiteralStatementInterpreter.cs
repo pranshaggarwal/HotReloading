@@ -23,7 +23,7 @@ namespace StatementConverter.StatementInterpreter
 
             if(literalExpressionSyntax.Token.Value != null)
             {
-                constantStatement.Type = typeInfo.GetClassType();
+                constantStatement.Type = typeInfo.GetHrType();
             }
             return constantStatement;
         }

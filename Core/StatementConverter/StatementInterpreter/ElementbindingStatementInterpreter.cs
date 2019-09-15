@@ -32,7 +32,7 @@ namespace StatementConverter.StatementInterpreter
 
             var statement = new ElementAccessStatement();
 
-            statement.Type = GetClassType();
+            statement.Type = GetHrType();
             statement.Array = statementInterpreterHandler.GetStatement(elementAccessExpression);
 
             statement.Indexes = elementBindingExpression.ArgumentList.Arguments.Select(x => statementInterpreterHandler.GetStatement(x)).ToList();
@@ -54,20 +54,20 @@ namespace StatementConverter.StatementInterpreter
             return GetConditionalAccessExpressionSyntax(parent.Parent);
         }
 
-        private Type GetClassType()
+        private BaseType GetHrType()
         {
             var symbolInfo = semanticModel.GetSymbolInfo(elementAccessExpression);
 
             switch (symbolInfo.Symbol)
             {
                 case IFieldSymbol fs:
-                    return fs.Type.GetClassType();
+                    return fs.Type.GetHrType();
                 case IPropertySymbol ps:
-                    return ps.Type.GetClassType();
+                    return ps.Type.GetHrType();
                 case ILocalSymbol ls:
-                    return ls.Type.GetClassType();
+                    return ls.Type.GetHrType();
                 case IParameterSymbol paraS:
-                    return paraS.Type.GetClassType();
+                    return paraS.Type.GetHrType();
                 case INamedTypeSymbol nts:
                     return nts.GetClassType();
                 default:

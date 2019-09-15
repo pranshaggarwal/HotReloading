@@ -68,7 +68,7 @@ namespace StatementConverter.StatementInterpreter
             }
         }
 
-        private Type GetTypeSyntax(SyntaxNode syntaxNode)
+        private BaseType GetTypeSyntax(SyntaxNode syntaxNode)
         {
             if (syntaxNode.Parent == null)
                 return null;
@@ -88,7 +88,7 @@ namespace StatementConverter.StatementInterpreter
 
             var typeSymbolInfo = semanticModel.GetSymbolInfo(typeSyntax);
             var arrayTypeSymbol = (IArrayTypeSymbol)typeSymbolInfo.Symbol;
-            return arrayTypeSymbol.ElementType.GetClassType();
+            return arrayTypeSymbol.ElementType.GetHrType();
         }
     }
 }

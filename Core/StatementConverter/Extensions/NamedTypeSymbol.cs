@@ -16,7 +16,7 @@ namespace StatementConverter.Extensions
 
                 foreach (var argument in namedTypeSymbol.TypeArguments)
                 {
-                    fullyQualifiedName += "[" + argument.GetClassType() + "], ";
+                    fullyQualifiedName += "[" + argument.GetHrType() + "], ";
                 }
 
                 fullyQualifiedName = fullyQualifiedName.Remove(fullyQualifiedName.Length - 2) + "]";

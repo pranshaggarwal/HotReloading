@@ -33,13 +33,13 @@ namespace StatementConverter.StatementInterpreter
             if (varName == "nameof")
                 return new NameOfStatement();
 
-            if(parent is BaseStatement)
+            if (parent is BaseStatement)
             {
                 //Find HotReloadingBaseCall method
                 var callerMethod = GetCallingMethod(identifierNameSyntax);
                 var callerSymbol = semanticModel.GetDeclaredSymbol(callerMethod);
                 var methodSymbol = semanticModel.GetSymbolInfo(identifierNameSyntax).Symbol as IMethodSymbol;
-                return new  InstanceMethodMemberStatement
+                return new InstanceMethodMemberStatement
                 {
                     Name = "HotReloadingBase_" + methodSymbol.Name,
                     ParentType = callerSymbol.ContainingType.GetClassType(),
@@ -52,7 +52,7 @@ namespace StatementConverter.StatementInterpreter
 
             var symbol = symbolInfo.Symbol;
 
-            if(symbol == null)
+            if (symbol == null)
             {
                 if (symbolInfo.CandidateReason == CandidateReason.OverloadResolutionFailure)
                 {
@@ -65,21 +65,21 @@ namespace StatementConverter.StatementInterpreter
             var statement = GetStatement(symbol, varName);
             var typeInfo = semanticModel.GetTypeInfo(identifierNameSyntax);
 
-            if(typeInfo.Type?.TypeKind == TypeKind.Delegate )
+            if (typeInfo.Type?.TypeKind == TypeKind.Delegate)
             {
                 return new DelegateIdentifierStatement
                 {
                     Target = statement,
-                    Type = typeInfo.GetClassType()
+                    Type = typeInfo.GetHrType()
                 };
             }
 
-            if(typeInfo.ConvertedType?.TypeKind == TypeKind.Delegate)
+            if (typeInfo.ConvertedType?.TypeKind == TypeKind.Delegate)
             {
                 return new MethodPointerStatement
                 {
                     Method = statement,
-                    Type = typeInfo.ConvertedType.GetClassType()
+                    Type = typeInfo.ConvertedType.GetHrType()
                 };
             }
 
@@ -207,7 +207,7 @@ namespace StatementConverter.StatementInterpreter
 
         private AccessModifier GetAccessModifier(ISymbol ms)
         {
-            switch(ms.DeclaredAccessibility)
+            switch (ms.DeclaredAccessibility)
             {
                 case Accessibility.Public:
                     return AccessModifier.Public;
@@ -229,7 +229,7 @@ namespace StatementConverter.StatementInterpreter
             return new LocalIdentifierStatement
             {
                 Name = varName,
-                Type = ls.Type.GetClassType()
+                Type = ls.Type.GetHrType()
             };
         }
 
@@ -238,7 +238,7 @@ namespace StatementConverter.StatementInterpreter
             return new ParameterIdentifierStatement
             {
                 Name = varName,
-                Type = paraS.Type.GetClassType()
+                Type = paraS.Type.GetHrType()
             };
         }
 

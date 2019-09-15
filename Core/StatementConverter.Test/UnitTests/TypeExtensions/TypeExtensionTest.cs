@@ -13,7 +13,7 @@ namespace StatementConverter.Test.UnitTests.TypeExtensions
         {
             var typeSymbol = Helper.GetTypeSymbol("TypeTestClass", "SimpleType");
 
-            var classType2 = typeSymbol.GetClassType();
+            var classType2 = typeSymbol.GetHrType();
 
             classType2.ToString().Should().Be("StatementConverter.Test.InstanceTestClass, StatementConverter.Test");
         }
@@ -23,7 +23,7 @@ namespace StatementConverter.Test.UnitTests.TypeExtensions
         {
             var typeSymbol = Helper.GetTypeSymbol("TypeTestClass", "GenericTypeWithOneArgument");
 
-            var classType2 = typeSymbol.GetClassType();
+            var classType2 = typeSymbol.GetHrType();
 
             classType2.ToString().Should().Be("StatementConverter.Test.GenericClass`1[[System.Int32, System.Private.CoreLib]], StatementConverter.Test");
         }
@@ -33,7 +33,7 @@ namespace StatementConverter.Test.UnitTests.TypeExtensions
         {
             var typeSymbol = Helper.GetTypeSymbol("TypeTestClass", "GenericTypeWithTwoArgument");
 
-            var classType2 = typeSymbol.GetClassType();
+            var classType2 = typeSymbol.GetHrType();
 
             classType2.ToString().Should().Be("StatementConverter.Test.GenericClass`2[[System.Int32, System.Private.CoreLib], [System.Int32, System.Private.CoreLib]], StatementConverter.Test");
         }
@@ -43,7 +43,7 @@ namespace StatementConverter.Test.UnitTests.TypeExtensions
         {
             var typeSymbol = Helper.GetTypeSymbol("TypeTestClass", "OneDArray");
 
-            var classType1 = typeSymbol.GetClassType();
+            var classType1 = typeSymbol.GetHrType();
 
             classType1.ToString().Should().Be("System.Int32[], System.Private.CoreLib");
         }
@@ -53,7 +53,7 @@ namespace StatementConverter.Test.UnitTests.TypeExtensions
         {
             var typeSymbol = Helper.GetTypeSymbol("TypeTestClass", "TwoDArray");
 
-            var classType1 = typeSymbol.GetClassType();
+            var classType1 = typeSymbol.GetHrType();
 
             classType1.ToString().Should().Be("System.Int32[][], System.Private.CoreLib");
         }

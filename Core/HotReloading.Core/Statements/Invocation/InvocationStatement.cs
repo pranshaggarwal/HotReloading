@@ -11,6 +11,6 @@ namespace HotReloading.Core.Statements
 
         public MethodMemberStatement Method { get; set; }
         public List<Statement> Arguments { get; set; }
-        public Type[] ParametersSignature { get; set; }
+        public BaseType[] ParametersSignature { get; set; }
     }
 }

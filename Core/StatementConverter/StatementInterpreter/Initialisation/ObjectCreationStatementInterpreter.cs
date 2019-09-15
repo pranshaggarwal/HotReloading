@@ -29,13 +29,13 @@ namespace StatementConverter.StatementInterpreter
             var typeInfo = semanticModel.GetTypeInfo(objectCreationExpressionSyntax);
             if (typeInfo.Type.TypeKind == TypeKind.Delegate)
             {
-                return CreateDelegateStatement(typeInfo.GetClassType());
+                return CreateDelegateStatement(typeInfo.GetHrType());
             }
 
-            return CreateObjectCreationStatement(typeInfo.GetClassType());
+            return CreateObjectCreationStatement(typeInfo.GetHrType());
         }
 
-        private Statement CreateObjectCreationStatement(HotReloading.Core.Type classType)
+        private Statement CreateObjectCreationStatement(BaseType classType)
         {
             var objectCreationStatement = new ObjectCreationStatement
             {
@@ -82,7 +82,7 @@ namespace StatementConverter.StatementInterpreter
                             arguments.Add(statementInterpreterHandler.GetStatement(argumentSyntax));
                     }
                 }
-                objectCreationStatement.ParametersSignature = methodSymbol.Parameters.Select(x => x.Type.GetClassType()).ToArray();
+                objectCreationStatement.ParametersSignature = methodSymbol.Parameters.Select(x => x.Type.GetHrType()).ToArray();
             }
             else
             {
@@ -94,7 +94,7 @@ namespace StatementConverter.StatementInterpreter
             return objectCreationStatement;
         }
 
-        private Statement CreateDelegateStatement(HotReloading.Core.Type classType)
+        private Statement CreateDelegateStatement(BaseType classType)
         {
             if (objectCreationExpressionSyntax.ArgumentList.Arguments.Count != 1)
                 throw new Exception("Cannot create instance of delegate type: " + classType);

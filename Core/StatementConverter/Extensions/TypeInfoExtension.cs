@@ -6,20 +6,20 @@ namespace StatementConverter.Extensions
 {
     public static class TypeInfoExtension
     {
-        public static Type GetClassType(this TypeInfo typeInfo)
+        public static BaseType GetHrType(this TypeInfo typeInfo)
         {
             var type = typeInfo.Type;
-            return GetClassType(type);
+            return GetHrType(type);
         }
 
-        public static Type GetClassType(this ITypeSymbol type)
+        public static BaseType GetHrType(this ITypeSymbol type)
         {
             if (type is INamedTypeSymbol namedTypeSymbol)
                 return namedTypeSymbol.GetClassType();
             else if (type is IArrayTypeSymbol arrayTypeSymbol)
-                return arrayTypeSymbol.GetClassType();
+                return arrayTypeSymbol.GetHrType();
             else if (type is ITypeParameterSymbol typeParameterSymbol)
-                return new Type { IsGeneric = true, Name = typeParameterSymbol.Name };
+                return new GenericType { Name = typeParameterSymbol.Name };
             var typeString = type.Name;
             var containingNamespace = type.ContainingNamespace;
             while (!containingNamespace.IsGlobalNamespace)

@@ -251,11 +251,11 @@ namespace StatementConverter.StatementInterpreter
             return newMethodData;
         }
 
-        private Type GetReturnType()
+        private BaseType GetReturnType()
         {
             var returnType = semanticModel.GetTypeInfo(declarationSyntax.ReturnType);
 
-            return returnType.GetClassType();
+            return returnType.GetHrType();
         }
 
         private AccessModifier GetModifier()

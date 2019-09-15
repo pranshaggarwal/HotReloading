@@ -119,9 +119,8 @@ namespace HotReloading.BuildTask.Test
             {
                 new Core.Parameter
                 {
-                    Type = new Core.Type
+                    Type = new GenericType
                     {
-                        IsGeneric = true,
                         Name = "T"
                     }
                 }
@@ -166,9 +165,8 @@ namespace HotReloading.BuildTask.Test
             {
                 new Core.Parameter
                 {
-                    Type = new Core.Type
+                    Type = new GenericType
                     {
-                        IsGeneric = true,
                         Name = "T"
                     }
                 }
@@ -260,9 +258,8 @@ namespace HotReloading.BuildTask.Test
             {
                 new Core.Parameter
                 {
-                    Type = new Core.Type
+                    Type = new GenericType
                     {
-                        IsGeneric = true,
                         Name = "System.Func`1<T>"
                     }
                 }

@@ -21,14 +21,9 @@ namespace HotReloading.Core
             return GetMethodKey(method.Name, method.Parameters.Select(x => GenerateUniqueKey(x.Type)).ToArray());
         }
 
-        private static string GenerateUniqueKey(Type type)
+        private static string GenerateUniqueKey(BaseType type)
         {
-            if (type.IsGeneric)
-                return type.Name;
-
-            var dotNetType = ((System.Type)type);
-            string key = dotNetType.ToString();
-            return key;
+            return type is GenericType ? type.ToString() : ((System.Type)type).ToString();
         }
     }
 }

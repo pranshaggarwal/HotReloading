@@ -5,16 +5,16 @@ namespace StatementConverter.Extensions
 {
     public static class ArrayTypeSymbolExtension
     {
-        public static Type GetClassType(this IArrayTypeSymbol type)
+        public static Type GetHrType(this IArrayTypeSymbol type)
         {
-            Type classType;
+            BaseType hrType;
 
             if (type.ElementType is IArrayTypeSymbol)
             {
-                classType = GetClassType((IArrayTypeSymbol)type.ElementType);
+                hrType = GetHrType((IArrayTypeSymbol)type.ElementType);
             }
             else
-                classType = type.ElementType.GetClassType();
+                hrType = type.ElementType.GetHrType();
 
             var arrowBraket = "[";
 
@@ -23,10 +23,15 @@ namespace StatementConverter.Extensions
 
             arrowBraket += "]";
 
+            string assemblyName = null;
+
+            if (hrType is Type hrType1)
+                assemblyName = hrType1.AssemblyName;
+
             return new Type
             {
-                Name = classType.Name + arrowBraket,
-                AssemblyName = classType.AssemblyName
+                Name = hrType.Name + arrowBraket,
+                AssemblyName = assemblyName
             };
         }
     }

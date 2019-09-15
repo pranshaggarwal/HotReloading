@@ -31,7 +31,7 @@ namespace StatementConverter.StatementInterpreter
 
             if (catchClauseSyntax.Declaration != null)
             {
-                catchStatement.Type = semanticModel.GetTypeInfo(catchClauseSyntax.Declaration.Type).GetClassType();
+                catchStatement.Type = semanticModel.GetTypeInfo(catchClauseSyntax.Declaration.Type).GetHrType();
 
                 if(!catchClauseSyntax.Declaration.Identifier.IsKind( Microsoft.CodeAnalysis.CSharp.SyntaxKind.None))
                 {

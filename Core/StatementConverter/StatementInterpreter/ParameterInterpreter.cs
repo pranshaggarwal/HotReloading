@@ -24,11 +24,11 @@ namespace StatementConverter.StatementInterpreter
         public Statement GetStatement()
         {
             var parameterName = parameterSyntax.Identifier.Text;
-            HotReloading.Core.Type classType = null;
+            BaseType classType = null;
             if(parameterSyntax.Type != null)
             {
                 var typeInfo = semanticModel.GetTypeInfo(parameterSyntax.Type);
-                classType = typeInfo.GetClassType();
+                classType = typeInfo.GetHrType();
             }
             else
             {
@@ -36,7 +36,7 @@ namespace StatementConverter.StatementInterpreter
                 var lamdaExpressionSymbolInfo = semanticModel.GetSymbolInfo(parameterSyntax.Parent.Parent);
                 if(lamdaExpressionSymbolInfo.Symbol is IMethodSymbol ms)
                 {
-                    classType = ms.Parameters.First(x => x.Name == parameterName).Type.GetClassType();
+                    classType = ms.Parameters.First(x => x.Name == parameterName).Type.GetHrType();
                 }
                 else
                 {

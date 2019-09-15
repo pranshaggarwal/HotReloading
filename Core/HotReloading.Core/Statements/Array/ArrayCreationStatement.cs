@@ -4,7 +4,7 @@ namespace HotReloading.Core.Statements
 {
     public class ArrayCreationStatement : Statement
     {
-        public Type Type { get; set; }
+        public BaseType Type { get; set; }
         public List<Statement> Bounds { get; set; }
         public List<Statement> Initializers { get; set; }
     }

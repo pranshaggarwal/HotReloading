@@ -26,7 +26,7 @@ namespace StatementConverter.StatementInterpreter
         {
             var method = statementInterpreterHandler.GetStatement(ies.Expression);
 
-            if(method is DelegateIdentifierStatement delegateMethodMemberStatement)
+            if (method is DelegateIdentifierStatement delegateMethodMemberStatement)
             {
                 return new DelegateInvocationStatement
                 {
@@ -50,7 +50,7 @@ namespace StatementConverter.StatementInterpreter
 
             var symbol = methodSymbolInfo.Symbol;
 
-            if(methodSymbolInfo.CandidateReason == CandidateReason.OverloadResolutionFailure)
+            if (methodSymbolInfo.CandidateReason == CandidateReason.OverloadResolutionFailure)
             {
                 symbol = semanticModel.ResolveOverload(methodSymbolInfo, ies.Expression);
             }
@@ -85,7 +85,7 @@ namespace StatementConverter.StatementInterpreter
                             arguments.Add(statementInterpreterHandler.GetStatement(argumentSyntax));
                     }
                 }
-                invocationStatement.ParametersSignature = methodSymbol.Parameters.Select(x => x.Type.GetClassType()).ToArray();
+                invocationStatement.ParametersSignature = methodSymbol.Parameters.Select(x => x.Type.GetHrType()).ToArray();
             }
             else
             {

@@ -27,7 +27,7 @@ namespace StatementConverter.StatementInterpreter
         {
             var retVal = new List<Statement>();
             var variableTypeInfo = semanticModel.GetTypeInfo(variableDeclarationSyntax.Type);
-            var type = variableTypeInfo.GetClassType();
+            var type = variableTypeInfo.GetHrType();
             foreach (var variable in variableDeclarationSyntax.Variables)
             {
                 if (variable.IsMissing)

@@ -21,7 +21,7 @@ namespace StatementConverter.StatementInterpreter
 
         public Statement GetStatement()
         {
-            var parameterType = semanticModel.GetTypeInfo(forEachStatementSyntax.Type).GetClassType();
+            var parameterType = semanticModel.GetTypeInfo(forEachStatementSyntax.Type).GetHrType();
 
             var parameter = new LocalVariableDeclaration
             {

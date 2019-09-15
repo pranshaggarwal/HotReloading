@@ -33,7 +33,7 @@ namespace StatementConverter.StatementInterpreter
 
             var typeInfo = semanticModel.GetTypeInfo(parenthesizedLambdaExpressionSyntax);
 
-            lamdaStatement.Type = typeInfo.ConvertedType.GetClassType();
+            lamdaStatement.Type = typeInfo.ConvertedType.GetHrType();
 
             lamdaStatement.IsAsync = parenthesizedLambdaExpressionSyntax.AsyncKeyword.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.AsyncKeyword);
 

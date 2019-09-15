@@ -2,6 +2,6 @@
 {
     public class ThisStatement : Statement
     {
-        public Type Type { get; set; }
+        public BaseType Type { get; set; }
     }
 }
