@@ -2,7 +2,7 @@
 {
     public class LocalVariableDeclaration : Statement
     {
-        public BaseType Type { get; set; }
+        public BaseHrType Type { get; set; }
         public string Name { get; set; }
     }
 }

@@ -6,7 +6,7 @@ using HotReloading.Core.Statements;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using StatementConverter.Extensions;
-using Type = HotReloading.Core.Type;
+using Type = HotReloading.Core.HrType;
 
 namespace StatementConverter.StatementInterpreter
 {
@@ -68,7 +68,7 @@ namespace StatementConverter.StatementInterpreter
             }
         }
 
-        private BaseType GetTypeSyntax(SyntaxNode syntaxNode)
+        private BaseHrType GetTypeSyntax(SyntaxNode syntaxNode)
         {
             if (syntaxNode.Parent == null)
                 return null;

@@ -20,7 +20,7 @@ namespace StatementConverter.StatementInterpreter
         public Statement GetStatement()
         {
             var typeSymbol = (INamedTypeSymbol)semanticModel.GetSymbolInfo(typeOfExpressionSyntax.Type).Symbol;
-            return new ConstantStatement((Type)(typeSymbol.GetClassType()));
+            return new ConstantStatement((Type)(typeSymbol.GetHrType()));
         }
     }
 }

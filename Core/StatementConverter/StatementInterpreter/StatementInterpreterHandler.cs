@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using StatementConverter.Extensions;
-using Type = HotReloading.Core.Type;
+using Type = HotReloading.Core.HrType;
 
 namespace StatementConverter.StatementInterpreter
 {
@@ -216,7 +216,7 @@ namespace StatementConverter.StatementInterpreter
             newMethodData.IsAsync = declarationSyntax.Modifiers.Any(SyntaxKind.AsyncKeyword);
             newMethodData.ReturnType = GetReturnType();
             var parentNamedType = (INamedTypeSymbol)semanticModel.GetDeclaredSymbol(declarationSyntax.Parent);
-            newMethodData.ParentType = parentNamedType.GetClassType();
+            newMethodData.ParentType = parentNamedType.GetHrType();
             newMethodData.IsStatic = declarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
 
             parameters = declarationSyntax.ParameterList.Parameters.Select(x => GetStatement(x)).Cast<Parameter>().ToList();
@@ -251,7 +251,7 @@ namespace StatementConverter.StatementInterpreter
             return newMethodData;
         }
 
-        private BaseType GetReturnType()
+        private BaseHrType GetReturnType()
         {
             var returnType = semanticModel.GetTypeInfo(declarationSyntax.ReturnType);
 

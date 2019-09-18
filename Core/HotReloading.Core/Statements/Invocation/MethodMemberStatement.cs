@@ -2,7 +2,7 @@
 {
     public class MethodMemberStatement : MemberAccessStatement
     {
-        public Type ParentType { get; set; }
+        public HrType ParentType { get; set; }
         public string Name { get; set; }
     }
 }

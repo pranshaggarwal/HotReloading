@@ -29,7 +29,7 @@ namespace StatementConverter.StatementInterpreter
                 return new IsTypeStatement
                 {
                     Statement = statement,
-                    Type = typeSymbol.GetClassType()
+                    Type = typeSymbol.GetHrType()
                 };
             }
             else if (binaryExpressionSyntax.Kind() == SyntaxKind.AsExpression)
@@ -39,7 +39,7 @@ namespace StatementConverter.StatementInterpreter
                 return new AsStatement
                 {
                     Statement = statement,
-                    Type = typeSymbol.GetClassType()
+                    Type = typeSymbol.GetHrType()
                 };
             }
 

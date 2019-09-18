@@ -35,7 +35,7 @@ namespace StatementConverter.StatementInterpreter
             return CreateObjectCreationStatement(typeInfo.GetHrType());
         }
 
-        private Statement CreateObjectCreationStatement(BaseType classType)
+        private Statement CreateObjectCreationStatement(BaseHrType classType)
         {
             var objectCreationStatement = new ObjectCreationStatement
             {
@@ -94,7 +94,7 @@ namespace StatementConverter.StatementInterpreter
             return objectCreationStatement;
         }
 
-        private Statement CreateDelegateStatement(BaseType classType)
+        private Statement CreateDelegateStatement(BaseHrType classType)
         {
             if (objectCreationExpressionSyntax.ArgumentList.Arguments.Count != 1)
                 throw new Exception("Cannot create instance of delegate type: " + classType);

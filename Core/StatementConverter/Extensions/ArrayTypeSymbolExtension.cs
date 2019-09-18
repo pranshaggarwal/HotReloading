@@ -5,9 +5,9 @@ namespace StatementConverter.Extensions
 {
     public static class ArrayTypeSymbolExtension
     {
-        public static Type GetHrType(this IArrayTypeSymbol type)
+        public static HrType GetHrType(this IArrayTypeSymbol type)
         {
-            BaseType hrType;
+            BaseHrType hrType;
 
             if (type.ElementType is IArrayTypeSymbol)
             {
@@ -25,10 +25,10 @@ namespace StatementConverter.Extensions
 
             string assemblyName = null;
 
-            if (hrType is Type hrType1)
+            if (hrType is HrType hrType1)
                 assemblyName = hrType1.AssemblyName;
 
-            return new Type
+            return new HrType
             {
                 Name = hrType.Name + arrowBraket,
                 AssemblyName = assemblyName

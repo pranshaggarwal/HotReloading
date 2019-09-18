@@ -4,17 +4,17 @@ using System.Reflection;
 using HotReloading.Core;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Type = HotReloading.Core.Type;
+using HrType = HotReloading.Core.HrType;
 
 namespace StatementConverter.Extensions
 {
     public static class TypeExtension
     {
-        public static Type GetClassType(this TypeSyntax typeSyntax, SemanticModel semanticModel)
+        public static HrType GetClassType(this TypeSyntax typeSyntax, SemanticModel semanticModel)
         {
             var typeSymbolInfo = semanticModel.GetSymbolInfo(typeSyntax);
             var typeSymbol = (INamedTypeSymbol)typeSymbolInfo.Symbol;
-            return typeSymbol.GetClassType();
+            return typeSymbol.GetHrType();
         }
 
         public static PropertyInfo GetMostSuitableProperty(this System.Type type, string propertyName, BindingFlags bindingFlags)

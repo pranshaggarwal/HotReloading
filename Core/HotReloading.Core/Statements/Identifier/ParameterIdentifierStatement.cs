@@ -2,6 +2,6 @@
 {
     public class ParameterIdentifierStatement : IdentifierStatement
     {
-        public BaseType Type { get; set; }
+        public BaseHrType Type { get; set; }
     }
 }

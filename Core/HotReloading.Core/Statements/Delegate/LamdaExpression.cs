@@ -4,7 +4,7 @@
     {
         public Parameter[] Parameters { get; set; }
         public Statement Body { get; set; }
-        public BaseType Type { get; set; }
+        public BaseHrType Type { get; set; }
         public bool IsAsync { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using HotReloading.Core.Statements;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using StatementConverter.Extensions;
-using Type = HotReloading.Core.Type;
+using Type = HotReloading.Core.HrType;
 
 namespace StatementConverter.StatementInterpreter
 {
@@ -54,7 +54,7 @@ namespace StatementConverter.StatementInterpreter
             return GetConditionalAccessExpressionSyntax(parent.Parent);
         }
 
-        private BaseType GetHrType()
+        private BaseHrType GetHrType()
         {
             var symbolInfo = semanticModel.GetSymbolInfo(elementAccessExpression);
 
@@ -69,7 +69,7 @@ namespace StatementConverter.StatementInterpreter
                 case IParameterSymbol paraS:
                     return paraS.Type.GetHrType();
                 case INamedTypeSymbol nts:
-                    return nts.GetClassType();
+                    return nts.GetHrType();
                 default:
                     throw new NotSupportedException($"{symbolInfo.Symbol.GetType()} is not supported yet.");
             }

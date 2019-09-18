@@ -15,8 +15,8 @@ namespace HotReloading.Core
         //public Block Block { get; set; }
         public bool IsStatic { get; set; }
         public bool IsAsync { get; set; }
-        public Type ReturnType { get; set; }
-        public Type ParentType { get; set; }
+        public HrType ReturnType { get; set; }
+        public HrType ParentType { get; set; }
         public AccessModifier AccessModifier { get; set; }
 
         public override string ToString()
@@ -42,7 +42,7 @@ namespace HotReloading.Core
     public class Parameter1
     {
         public string Name { get; set; }
-        public Type Type { get; set; }
+        public HrType Type { get; set; }
     }
 
     //public class ClassType1

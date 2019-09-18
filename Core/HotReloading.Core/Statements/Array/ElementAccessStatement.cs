@@ -6,6 +6,6 @@ namespace HotReloading.Core.Statements
     {
         public Statement Array { get; set; }
         public List<Statement> Indexes { get; set; }
-        public BaseType Type { get; set; }
+        public BaseHrType Type { get; set; }
     }
 }

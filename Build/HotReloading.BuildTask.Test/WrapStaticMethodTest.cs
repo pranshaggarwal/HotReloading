@@ -78,7 +78,7 @@ namespace HotReloading.BuildTask.Test
             {
                 new Core.Parameter
                 {
-                    Type = new Core.Type
+                    Type = new Core.HrType
                     {
                         Name = typeof(string).FullName,
                         AssemblyName = typeof(string).Assembly.GetName().Name

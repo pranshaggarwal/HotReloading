@@ -21,9 +21,21 @@ namespace HotReloading.Core
             return GetMethodKey(method.Name, method.Parameters.Select(x => GenerateUniqueKey(x.Type)).ToArray());
         }
 
-        private static string GenerateUniqueKey(BaseType type)
+        private static string GenerateUniqueKey(BaseHrType type)
         {
-            return type is GenericType ? type.ToString() : ((System.Type)type).ToString();
+            if (type is HrType hrType)
+                return GenerateUniqueKey(hrType);
+            return GenerateUniqueKey((GenericHrType)type);
+        }
+
+        private static string GenerateUniqueKey(HrType hrType)
+        {
+            return ((System.Type)hrType).ToString();
+        }
+
+        private static string GenerateUniqueKey(GenericHrType hrType)
+        {
+            return hrType.Name;
         }
     }
 }

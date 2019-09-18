@@ -21,7 +21,7 @@ namespace Tests
                 IsAsync = true,
                 IsStatic = true,
                 Name = "TestMethod",
-                ReturnType = new Type
+                ReturnType = new HrType
                 {
                     Name = typeof(void).FullName,
                     AssemblyName = typeof(void).Assembly.FullName

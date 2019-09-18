@@ -2,6 +2,6 @@
 {
     public class NamedTypeStatement : IdentifierStatement
     {
-        public Type Type { get; set; }
+        public HrType Type { get; set; }
     }
 }

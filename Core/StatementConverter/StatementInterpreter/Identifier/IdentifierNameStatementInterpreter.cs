@@ -42,7 +42,7 @@ namespace StatementConverter.StatementInterpreter
                 return new InstanceMethodMemberStatement
                 {
                     Name = "HotReloadingBase_" + methodSymbol.Name,
-                    ParentType = callerSymbol.ContainingType.GetClassType(),
+                    ParentType = callerSymbol.ContainingType.GetHrType(),
                     Parent = parent ?? new ThisStatement(),
                     AccessModifier = AccessModifier.Private
                 };
@@ -141,7 +141,7 @@ namespace StatementConverter.StatementInterpreter
                 return new StaticFieldMemberStatement
                 {
                     Name = varName,
-                    ParentType = fs.ContainingType.GetClassType(),
+                    ParentType = fs.ContainingType.GetHrType(),
                     AccessModifier = GetAccessModifier(fs)
                 };
             return new InstanceFieldMemberStatement
@@ -158,7 +158,7 @@ namespace StatementConverter.StatementInterpreter
                 return new StaticPropertyMemberStatement
                 {
                     Name = varName,
-                    ParentType = ps.ContainingType.GetClassType(),
+                    ParentType = ps.ContainingType.GetHrType(),
                     AccessModifier = GetAccessModifier(ps)
                 };
             return new InstancePropertyMemberStatement
@@ -175,13 +175,13 @@ namespace StatementConverter.StatementInterpreter
                 return new StaticMethodMemberStatement
                 {
                     Name = ms.Name,
-                    ParentType = ms.ContainingType.GetClassType(),
+                    ParentType = ms.ContainingType.GetHrType(),
                     AccessModifier = GetAccessModifier(ms)
                 };
             return new InstanceMethodMemberStatement
             {
                 Name = ms.Name,
-                ParentType = ms.ContainingType.GetClassType(),
+                ParentType = ms.ContainingType.GetHrType(),
                 Parent = parent ?? new ThisStatement(),
                 AccessModifier = GetAccessModifier(ms)
             };
@@ -193,13 +193,13 @@ namespace StatementConverter.StatementInterpreter
                 return new StaticEventMemberStatement
                 {
                     Name = varName,
-                    ParentType = es.ContainingType.GetClassType(),
+                    ParentType = es.ContainingType.GetHrType(),
                     AccessModifier = GetAccessModifier(es)
                 };
             return new InstanceEventMemberStatement
             {
                 Name = es.Name,
-                ParentType = es.ContainingType.GetClassType(),
+                ParentType = es.ContainingType.GetHrType(),
                 Parent = parent ?? new ThisStatement(),
                 AccessModifier = GetAccessModifier(es)
             };
@@ -247,7 +247,7 @@ namespace StatementConverter.StatementInterpreter
             return new NamedTypeStatement
             {
                 Name = varName,
-                Type = ns.GetClassType()
+                Type = ns.GetHrType()
             };
         }
 
