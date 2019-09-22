@@ -1,6 +1,6 @@
 ﻿namespace HotReloading.Core.Statements
 {
-    public abstract class Statement
+    public interface Statement
     {
     }
 }
