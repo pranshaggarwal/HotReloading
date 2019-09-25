@@ -26,9 +26,9 @@ namespace StatementConverter.StatementInterpreter
             scopedLocalVariableDeclarations = new List<LocalVariableDeclaration>();
         }
 
-        public Statement GetStatement(CSharpSyntaxNode syntax)
+        public IStatementCSharpSyntax GetStatement(CSharpSyntaxNode syntax)
         {
-            Statement statement = null;
+            IStatementCSharpSyntax statement = null;
             switch (syntax)
             {
                 case LocalDeclarationStatementSyntax localDeclarationStatementSyntax:
@@ -194,7 +194,7 @@ namespace StatementConverter.StatementInterpreter
             }
         }
 
-        public Statement GetStatementInterpreter(SimpleNameSyntax simpleNameSyntax, Statement parent)
+        public IStatementCSharpSyntax GetStatementInterpreter(SimpleNameSyntax simpleNameSyntax, IStatementCSharpSyntax parent)
         {
             switch (simpleNameSyntax)
             {

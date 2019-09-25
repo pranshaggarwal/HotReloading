@@ -14,7 +14,7 @@ namespace StatementConverter.StatementInterpreter
             this.patternExpressionSyntax = patternExpressionSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var statement = statementInterpreterHandler.GetStatement(patternExpressionSyntax.Expression);
 

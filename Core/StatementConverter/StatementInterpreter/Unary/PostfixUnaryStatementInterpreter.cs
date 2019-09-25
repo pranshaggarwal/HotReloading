@@ -15,7 +15,7 @@ namespace StatementConverter.StatementInterpreter
             this.postfixUnaryExpressionSyntax = postfixUnaryExpressionSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var statement = new UnaryStatement
             {

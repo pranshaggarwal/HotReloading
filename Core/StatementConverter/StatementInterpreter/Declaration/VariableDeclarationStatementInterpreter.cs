@@ -23,9 +23,9 @@ namespace StatementConverter.StatementInterpreter
             this.variableDeclarationSyntax = variableDeclarationSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
-            var retVal = new List<Statement>();
+            var retVal = new List<IStatementCSharpSyntax>();
             var variableTypeInfo = semanticModel.GetTypeInfo(variableDeclarationSyntax.Type);
             var type = variableTypeInfo.GetHrType();
             foreach (var variable in variableDeclarationSyntax.Variables)

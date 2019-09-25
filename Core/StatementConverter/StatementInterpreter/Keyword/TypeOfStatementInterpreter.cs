@@ -17,7 +17,7 @@ namespace StatementConverter.StatementInterpreter
             this.typeOfExpressionSyntax = typeOfExpressionSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var typeSymbol = (INamedTypeSymbol)semanticModel.GetSymbolInfo(typeOfExpressionSyntax.Type).Symbol;
             return new ConstantStatement((Type)(typeSymbol.GetHrType()));

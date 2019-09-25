@@ -18,7 +18,7 @@ namespace StatementConverter.StatementInterpreter
             this.assignmentExpressionSyntax = assignmentExpressionSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var assignmentStatement = new BinaryStatement();
 

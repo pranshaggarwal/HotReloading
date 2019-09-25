@@ -1,10 +1,10 @@
 ﻿using System;
 namespace HotReloading.Core.Statements
 {
-    public class IfStatement : Statement
+    public class IfStatement : IStatementCSharpSyntax
     {
-        public Statement Condition { get; set; }
-        public Statement IfTrue { get; set; }
-        public Statement IfFalse { get; set; }
+        public IStatementCSharpSyntax Condition { get; set; }
+        public IStatementCSharpSyntax IfTrue { get; set; }
+        public IStatementCSharpSyntax IfFalse { get; set; }
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace HotReloading.Core.Statements
 {
-    public class DoWhileStatement : Statement
+    public class DoWhileStatement : IStatementCSharpSyntax
     {
-        public Statement Conditional { get; set; }
-        public Statement Statement { get; set; }
+        public IStatementCSharpSyntax Conditional { get; set; }
+        public IStatementCSharpSyntax Statement { get; set; }
     }
 }

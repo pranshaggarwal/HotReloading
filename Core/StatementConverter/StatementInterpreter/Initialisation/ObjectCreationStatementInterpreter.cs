@@ -24,7 +24,7 @@ namespace StatementConverter.StatementInterpreter
             this.objectCreationExpressionSyntax = objectCreationExpressionSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var typeInfo = semanticModel.GetTypeInfo(objectCreationExpressionSyntax);
             if (typeInfo.Type.TypeKind == TypeKind.Delegate)
@@ -35,7 +35,7 @@ namespace StatementConverter.StatementInterpreter
             return CreateObjectCreationStatement(typeInfo.GetHrType());
         }
 
-        private Statement CreateObjectCreationStatement(BaseHrType classType)
+        private IStatementCSharpSyntax CreateObjectCreationStatement(BaseHrType classType)
         {
             var objectCreationStatement = new ObjectCreationStatement
             {
@@ -44,7 +44,7 @@ namespace StatementConverter.StatementInterpreter
 
             if (objectCreationExpressionSyntax.Initializer != null)
             {
-                objectCreationStatement.Initializer = new List<Statement>();
+                objectCreationStatement.Initializer = new List<IStatementCSharpSyntax>();
 
                 foreach (var expression in objectCreationExpressionSyntax.Initializer.Expressions)
                 {
@@ -56,7 +56,7 @@ namespace StatementConverter.StatementInterpreter
 
             var methodSymbolInfo = semanticModel.GetSymbolInfo(objectCreationExpressionSyntax);
 
-            var arguments = new List<Statement>();
+            var arguments = new List<IStatementCSharpSyntax>();
 
             if (methodSymbolInfo.Symbol is IMethodSymbol methodSymbol)
             {
@@ -94,7 +94,7 @@ namespace StatementConverter.StatementInterpreter
             return objectCreationStatement;
         }
 
-        private Statement CreateDelegateStatement(BaseHrType classType)
+        private IStatementCSharpSyntax CreateDelegateStatement(BaseHrType classType)
         {
             if (objectCreationExpressionSyntax.ArgumentList.Arguments.Count != 1)
                 throw new Exception("Cannot create instance of delegate type: " + classType);

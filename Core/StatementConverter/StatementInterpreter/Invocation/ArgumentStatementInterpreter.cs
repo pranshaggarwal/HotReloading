@@ -15,7 +15,7 @@ namespace StatementConverter.StatementInterpreter
             this.argumentSyntax = argumentSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             return statementInterpreterHandler.GetStatement(argumentSyntax.Expression);
         }

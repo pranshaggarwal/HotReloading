@@ -16,10 +16,10 @@ namespace StatementConverter.StatementInterpreter
             this.usingStatementSyntax = usingStatementSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
-            Statement variable = null;
-            Statement resource = null;
+            IStatementCSharpSyntax variable = null;
+            IStatementCSharpSyntax resource = null;
             if (usingStatementSyntax.Declaration != null)
             {
                 var declaration = statementInterpreterHandler.GetStatement(usingStatementSyntax.Declaration) as MultiStatement;

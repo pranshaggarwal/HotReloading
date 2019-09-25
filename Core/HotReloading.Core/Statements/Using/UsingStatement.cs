@@ -1,9 +1,9 @@
 ﻿namespace HotReloading.Core.Statements
 {
-    public class UsingStatement : Statement
+    public class UsingStatement : IStatementCSharpSyntax
     {
-        public Statement Variable { get; set; }
-        public Statement Resource { get; set; }
-        public Statement Body { get; set; }
+        public IStatementCSharpSyntax Variable { get; set; }
+        public IStatementCSharpSyntax Resource { get; set; }
+        public IStatementCSharpSyntax Body { get; set; }
     }
 }

@@ -17,10 +17,10 @@ namespace StatementConverter.StatementInterpreter
             this.forStatementSyntax = forStatementSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var block = new Block();
-            var initializers = new List<Statement>();
+            var initializers = new List<IStatementCSharpSyntax>();
             if (forStatementSyntax.Declaration != null)
             {
                 var declaration = statementInterpreterHandler.GetStatement(forStatementSyntax.Declaration) as MultiStatement;

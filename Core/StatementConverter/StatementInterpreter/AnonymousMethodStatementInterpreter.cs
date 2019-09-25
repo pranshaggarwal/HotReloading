@@ -21,7 +21,7 @@ namespace StatementConverter.StatementInterpreter
             this.anonymousMethodExpressionSyntax = anonymousMethodExpressionSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var lamdaStatement = new LamdaStatement();
 

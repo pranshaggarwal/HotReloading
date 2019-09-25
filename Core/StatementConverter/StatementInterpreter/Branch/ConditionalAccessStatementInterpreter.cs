@@ -16,7 +16,7 @@ namespace StatementConverter.StatementInterpreter
             this.conditionalAccessExpressionSyntax = conditionalAccessExpressionSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var whenNotNull = statementInterpreterHandler.GetStatement(conditionalAccessExpressionSyntax.WhenNotNull);
 

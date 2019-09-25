@@ -22,7 +22,7 @@ namespace StatementConverter.StatementInterpreter
             this.ies = ies;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var method = statementInterpreterHandler.GetStatement(ies.Expression);
 
@@ -46,7 +46,7 @@ namespace StatementConverter.StatementInterpreter
 
             var methodSymbolInfo = semanticModel.GetSymbolInfo(ies.Expression);
 
-            var arguments = new List<Statement>();
+            var arguments = new List<IStatementCSharpSyntax>();
 
             var symbol = methodSymbolInfo.Symbol;
 

@@ -13,7 +13,7 @@ namespace StatementConverter.StatementInterpreter
             this.baseExpressionSyntax = baseExpressionSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             return new BaseStatement();
         }

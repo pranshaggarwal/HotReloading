@@ -1,10 +1,10 @@
 ﻿using System;
 namespace HotReloading.Core.Statements
 {
-    public class BinaryStatement : Statement
+    public class BinaryStatement : IStatementCSharpSyntax
     {
-        public Statement Left { get; set; }
-        public Statement Right { get; set; }
+        public IStatementCSharpSyntax Left { get; set; }
+        public IStatementCSharpSyntax Right { get; set; }
         public BinaryOperand Operand { get; set; }
     }
 }

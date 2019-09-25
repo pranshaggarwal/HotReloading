@@ -1,8 +1,8 @@
 ﻿namespace HotReloading.Core.Statements
 {
-    public class AsStatement : Statement
+    public class AsStatement : IStatementCSharpSyntax
     {
-        public Statement Statement { get; set; }
+        public IStatementCSharpSyntax Statement { get; set; }
         public HrType Type { get; set; }
     }
 }

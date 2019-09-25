@@ -4,6 +4,6 @@ namespace StatementConverter.StatementInterpreter
 {
     public interface IStatementInterpreter
     {
-        Statement GetStatement();
+        IStatementCSharpSyntax GetStatement();
     }
 }

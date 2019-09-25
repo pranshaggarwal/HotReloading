@@ -1,6 +1,6 @@
 ﻿namespace HotReloading.Core.Statements
 {
-    public abstract class IdentifierStatement : Statement
+    public abstract class IdentifierStatement : IStatementCSharpSyntax
     {
         public string Name { get; set; }
     }

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace HotReloading.Core.Statements
 {
-    public class SwitchStatement : Statement
+    public class SwitchStatement : IStatementCSharpSyntax
     {
-        public Statement SwitchValue { get; set; }
-        public Statement Default { get; set; }
+        public IStatementCSharpSyntax SwitchValue { get; set; }
+        public IStatementCSharpSyntax Default { get; set; }
         public SwitchCase[] Cases { get; set; }
     }
 }

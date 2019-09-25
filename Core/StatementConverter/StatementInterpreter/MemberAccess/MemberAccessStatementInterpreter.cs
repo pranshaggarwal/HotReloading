@@ -15,7 +15,7 @@ namespace StatementConverter.StatementInterpreter
             this.memberAccessExpressionSyntax = memberAccessExpressionSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var parent = statementInterpreterHandler.GetStatement(memberAccessExpressionSyntax.Expression);
 

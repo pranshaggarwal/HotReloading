@@ -2,7 +2,7 @@ using HotReloading.Core.Statements;
 
 namespace HotReloading.Core
 {
-    public class Parameter : Statement
+    public class Parameter : IStatementCSharpSyntax
     {
         public string Name { get; set; }
         public BaseHrType Type { get; set; }

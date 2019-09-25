@@ -20,9 +20,9 @@ namespace StatementConverter.StatementInterpreter
             this.binaryExpressionSyntax = binaryExpressionSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
-            if(binaryExpressionSyntax.Kind() == SyntaxKind.IsExpression)
+            if (binaryExpressionSyntax.Kind() == SyntaxKind.IsExpression)
             {
                 var statement = statementInterpreterHandler.GetStatement(binaryExpressionSyntax.Left);
                 var typeSymbol = (INamedTypeSymbol)semanticModel.GetSymbolInfo(binaryExpressionSyntax.Right).Symbol;
@@ -53,7 +53,7 @@ namespace StatementConverter.StatementInterpreter
 
         private BinaryOperand GetOperand(SyntaxKind syntaxKind)
         {
-            switch(syntaxKind)
+            switch (syntaxKind)
             {
                 case SyntaxKind.AddExpression:
                     return BinaryOperand.Add;

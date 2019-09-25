@@ -13,12 +13,12 @@ namespace StatementConverter.StatementInterpreter
     {
         private readonly IdentifierNameSyntax identifierNameSyntax;
         private readonly List<Parameter> parameters;
-        private readonly Statement parent;
+        private readonly IStatementCSharpSyntax parent;
         private readonly SemanticModel semanticModel;
 
         public IdentifierNameStatementInterpreter(IdentifierNameSyntax identifierNameSyntax,
             SemanticModel semanticModel,
-            List<Parameter> parameters, Statement parent = null)
+            List<Parameter> parameters, IStatementCSharpSyntax parent = null)
         {
             this.identifierNameSyntax = identifierNameSyntax;
             this.semanticModel = semanticModel;
@@ -26,7 +26,7 @@ namespace StatementConverter.StatementInterpreter
             this.parent = parent;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var varName = identifierNameSyntax.Identifier.Text;
 
@@ -99,9 +99,9 @@ namespace StatementConverter.StatementInterpreter
             return GetCallingMethod(syntaxNode.Parent);
         }
 
-        private Statement GetStatement(ISymbol symbol, string varName)
+        private IStatementCSharpSyntax GetStatement(ISymbol symbol, string varName)
         {
-            Statement statement;
+            IStatementCSharpSyntax statement;
             switch (symbol)
             {
                 case IFieldSymbol fs:
@@ -135,7 +135,7 @@ namespace StatementConverter.StatementInterpreter
             return statement;
         }
 
-        private Statement GetStatement(IFieldSymbol fs, string varName)
+        private IStatementCSharpSyntax GetStatement(IFieldSymbol fs, string varName)
         {
             if (fs.IsStatic)
                 return new StaticFieldMemberStatement
@@ -152,7 +152,7 @@ namespace StatementConverter.StatementInterpreter
             };
         }
 
-        private Statement GetStatement(IPropertySymbol ps, string varName)
+        private IStatementCSharpSyntax GetStatement(IPropertySymbol ps, string varName)
         {
             if (ps.IsStatic)
                 return new StaticPropertyMemberStatement
@@ -169,7 +169,7 @@ namespace StatementConverter.StatementInterpreter
             };
         }
 
-        private Statement GetStatement(IMethodSymbol ms, string varName)
+        private IStatementCSharpSyntax GetStatement(IMethodSymbol ms, string varName)
         {
             if (ms.IsStatic)
                 return new StaticMethodMemberStatement
@@ -187,7 +187,7 @@ namespace StatementConverter.StatementInterpreter
             };
         }
 
-        private Statement GetStatement(IEventSymbol es, string varName)
+        private IStatementCSharpSyntax GetStatement(IEventSymbol es, string varName)
         {
             if (es.IsStatic)
                 return new StaticEventMemberStatement
@@ -224,7 +224,7 @@ namespace StatementConverter.StatementInterpreter
             }
         }
 
-        private static Statement GetStatement(ILocalSymbol ls, string varName)
+        private static IStatementCSharpSyntax GetStatement(ILocalSymbol ls, string varName)
         {
             return new LocalIdentifierStatement
             {
@@ -233,7 +233,7 @@ namespace StatementConverter.StatementInterpreter
             };
         }
 
-        private static Statement GetStatement(IParameterSymbol paraS, string varName)
+        private static IStatementCSharpSyntax GetStatement(IParameterSymbol paraS, string varName)
         {
             return new ParameterIdentifierStatement
             {
@@ -242,7 +242,7 @@ namespace StatementConverter.StatementInterpreter
             };
         }
 
-        private static Statement GetStatement(INamedTypeSymbol ns, string varName)
+        private static IStatementCSharpSyntax GetStatement(INamedTypeSymbol ns, string varName)
         {
             return new NamedTypeStatement
             {
@@ -251,7 +251,7 @@ namespace StatementConverter.StatementInterpreter
             };
         }
 
-        private static Statement GetStatement(INamespaceSymbol ns, string varName)
+        private static IStatementCSharpSyntax GetStatement(INamespaceSymbol ns, string varName)
         {
             return new NamedTypeStatement
             {

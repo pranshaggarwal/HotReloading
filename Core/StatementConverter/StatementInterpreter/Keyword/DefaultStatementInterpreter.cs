@@ -16,7 +16,7 @@ namespace StatementConverter.StatementInterpreter
             this.defaultExpressionSyntax = defaultExpressionSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             return new DefaultStatement
             {

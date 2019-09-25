@@ -2,10 +2,10 @@
 
 namespace HotReloading.Core.Statements
 {
-    public class ArrayCreationStatement : Statement
+    public class ArrayCreationStatement : IStatementCSharpSyntax
     {
         public BaseHrType Type { get; set; }
-        public List<Statement> Bounds { get; set; }
-        public List<Statement> Initializers { get; set; }
+        public List<IStatementCSharpSyntax> Bounds { get; set; }
+        public List<IStatementCSharpSyntax> Initializers { get; set; }
     }
 }

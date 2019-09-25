@@ -14,7 +14,7 @@ namespace StatementConverter.StatementInterpreter
             this.awaitExpressionSyntax = awaitExpressionSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var awaitStatement = new AwaitStatement();
             awaitStatement.Statement = statementInterpreterHandler.GetStatement(awaitExpressionSyntax.Expression);

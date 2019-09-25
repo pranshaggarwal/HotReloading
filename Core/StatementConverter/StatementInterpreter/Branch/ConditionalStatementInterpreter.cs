@@ -14,7 +14,7 @@ namespace StatementConverter.StatementInterpreter
             this.conditionalExpressionSyntax = conditionalExpressionSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             return new ConditionalStatement
             {

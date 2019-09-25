@@ -15,7 +15,7 @@ namespace StatementConverter.StatementInterpreter
             this.whileStatementSyntax = whileStatementSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var condition = statementInterpreterHandler.GetStatement(whileStatementSyntax.Condition);
             var statement = statementInterpreterHandler.GetStatement(whileStatementSyntax.Statement);

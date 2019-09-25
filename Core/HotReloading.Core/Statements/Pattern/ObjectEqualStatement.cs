@@ -1,8 +1,8 @@
 ﻿namespace HotReloading.Core.Statements
 {
-    public class ObjectEqualStatement : Statement
+    public class ObjectEqualStatement : IStatementCSharpSyntax
     {
-        public Statement Left { get; set; }
-        public Statement Right { get; set; }
+        public IStatementCSharpSyntax Left { get; set; }
+        public IStatementCSharpSyntax Right { get; set; }
     }
 }

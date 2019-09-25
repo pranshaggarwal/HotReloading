@@ -18,7 +18,7 @@ namespace StatementConverter.StatementInterpreter
             this.localDeclarationStatementSyntax = localDeclarationStatementSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             return statementInterpreterHandler.GetStatement(localDeclarationStatementSyntax.Declaration);
         }

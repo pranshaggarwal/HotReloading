@@ -1,6 +1,6 @@
 ﻿namespace HotReloading.Core.Statements
 {
-    public class ConstantStatement : Statement
+    public class ConstantStatement : IStatementCSharpSyntax
     {
         public ConstantStatement(object value)
         {

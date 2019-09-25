@@ -17,13 +17,13 @@ namespace StatementConverter.StatementInterpreter
             this.semanticModel = semanticModel;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             if(arrayCreationExpressionSyntax.Initializer == null)
             {
                 var statement = new ArrayCreationStatement();
                 statement.Type = arrayCreationExpressionSyntax.Type.ElementType.GetClassType(semanticModel);
-                statement.Bounds = new System.Collections.Generic.List<Statement>();
+                statement.Bounds = new System.Collections.Generic.List<IStatementCSharpSyntax>();
                 foreach(var rank in arrayCreationExpressionSyntax.Type.RankSpecifiers)
                 {
                     foreach(var size in rank.Sizes)

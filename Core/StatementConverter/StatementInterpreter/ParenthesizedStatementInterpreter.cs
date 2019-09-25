@@ -15,7 +15,7 @@ namespace StatementConverter.StatementInterpreter
             this.parenthesizedExpressionSyntax = parenthesizedExpressionSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             return statementInterpreterHandler.GetStatement(parenthesizedExpressionSyntax.Expression);
         }

@@ -22,7 +22,7 @@ namespace StatementConverter.StatementInterpreter
             this.semanticModel = semanticModel;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var statement = new ElementAccessStatement();
 

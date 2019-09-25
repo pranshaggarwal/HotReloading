@@ -2,18 +2,18 @@
 
 namespace HotReloading.Core.Statements
 {
-    public class ObjectCreationStatement : Statement
+    public class ObjectCreationStatement : IStatementCSharpSyntax
     {
         public BaseHrType Type { get; set; }
 
-        public List<Statement> ArgumentList { get; set; }
-        public List<Statement> Initializer { get; set; }
+        public List<IStatementCSharpSyntax> ArgumentList { get; set; }
+        public List<IStatementCSharpSyntax> Initializer { get; set; }
         public BaseHrType[] ParametersSignature { get; set; }
 
         public ObjectCreationStatement()
         {
-            Initializer = new List<Statement>();
-            ArgumentList = new List<Statement>();
+            Initializer = new List<IStatementCSharpSyntax>();
+            ArgumentList = new List<IStatementCSharpSyntax>();
         }
     }
 }

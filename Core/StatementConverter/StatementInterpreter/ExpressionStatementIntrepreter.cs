@@ -15,7 +15,7 @@ namespace StatementConverter.StatementInterpreter
             this.expressionStatementSyntax = expressionStatementSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var interpreter = interpreterHandler.GetStatement(expressionStatementSyntax.Expression);
 

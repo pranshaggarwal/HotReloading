@@ -1,8 +1,8 @@
 ﻿namespace HotReloading.Core.Statements
 {
-    public class AssignmentStatement : Statement
+    public class AssignmentStatement : IStatementCSharpSyntax
     {
-        public Statement LeftStatement { get; set; }
-        public Statement RightStatement { get; set; }
+        public IStatementCSharpSyntax LeftStatement { get; set; }
+        public IStatementCSharpSyntax RightStatement { get; set; }
     }
 }

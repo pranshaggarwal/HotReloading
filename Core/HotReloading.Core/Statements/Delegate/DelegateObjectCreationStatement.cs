@@ -1,7 +1,7 @@
 ﻿namespace HotReloading.Core.Statements
 {
-    public class DelegateObjectCreationStatement : Statement
+    public class DelegateObjectCreationStatement : IStatementCSharpSyntax
     {
-        public Statement Method { get; set; }
+        public IStatementCSharpSyntax Method { get; set; }
     }
 }

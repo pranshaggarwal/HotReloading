@@ -12,7 +12,7 @@ namespace StatementConverter.StatementInterpreter
             this.breakStatementSyntax = breakStatementSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             return new BreakStatement();
         }

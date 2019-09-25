@@ -2,13 +2,13 @@
 
 namespace HotReloading.Core.Statements
 {
-    public class Block : Statement
+    public class Block : IStatementCSharpSyntax
     {
         public Block()
         {
-            Statements = new List<Statement>();
+            Statements = new List<IStatementCSharpSyntax>();
         }
 
-        public List<Statement> Statements { get; set; }
+        public List<IStatementCSharpSyntax> Statements { get; set; }
     }
 }

@@ -23,7 +23,7 @@ namespace StatementConverter.StatementInterpreter
             this.semanticModel = semanticModel;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var kind = initializerExpressionSyntax.Kind();
 
@@ -32,9 +32,9 @@ namespace StatementConverter.StatementInterpreter
                 var statement = new ArrayCreationStatement();
                 statement.Type = GetTypeSyntax(initializerExpressionSyntax);
 
-                statement.Bounds = new List<Statement>();
+                statement.Bounds = new List<IStatementCSharpSyntax>();
                 statement.Bounds.Add(new ConstantStatement(initializerExpressionSyntax.Expressions.Count));
-                statement.Initializers = new List<Statement>();
+                statement.Initializers = new List<IStatementCSharpSyntax>();
                 bool getInnerArrayLength = false;
                 foreach (var expression in initializerExpressionSyntax.Expressions)
                 {

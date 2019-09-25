@@ -2,8 +2,8 @@
 
 namespace HotReloading.Core.Statements
 {
-    public class InitializerStatement : Statement
+    public class InitializerStatement : IStatementCSharpSyntax
     {
-        public List<Statement> Statements { get; set; }
+        public List<IStatementCSharpSyntax> Statements { get; set; }
     }
 }

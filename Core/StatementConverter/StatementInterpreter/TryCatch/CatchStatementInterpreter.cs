@@ -21,7 +21,7 @@ namespace StatementConverter.StatementInterpreter
             this.semanticModel = semanticModel;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var catchStatement = new CatchStatement();
 

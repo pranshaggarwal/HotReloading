@@ -15,7 +15,7 @@ namespace StatementConverter.StatementInterpreter
             this.throwStatementSyntax = throwStatementSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             return new ThrowStatement
             {

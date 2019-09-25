@@ -14,7 +14,7 @@ namespace StatementConverter.StatementInterpreter
             this.elseClauseSyntax = elseClauseSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             return statementInterpreterHandler.GetStatement(elseClauseSyntax.Statement);
         }

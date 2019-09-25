@@ -26,7 +26,7 @@ namespace StatementConverter.ExpressionInterpreter
             if (!method.IsStatic) thisExpression = Expression.Parameter(method.ParentType, "obj");
         }
 
-        public Expression GetExpression(Statement statement)
+        public Expression GetExpression(IStatementCSharpSyntax statement)
         {
             Expression expression = null;
             switch (statement)
@@ -201,7 +201,7 @@ namespace StatementConverter.ExpressionInterpreter
                 parameters = list;
             }
 
-            if(method.IsAsync)
+            if (method.IsAsync)
                 return new CSharpLamdaExpression(CSharpExpression.AsyncLambda(expression, parameters));
 
             return new CSharpLamdaExpression(Expression.Lambda(expression, parameters));

@@ -2,7 +2,7 @@
 {
     public class SwitchCase
     {
-        public Statement Body { get; set; }
-        public Statement[] Tests { get; set; }
+        public IStatementCSharpSyntax Body { get; set; }
+        public IStatementCSharpSyntax[] Tests { get; set; }
     }
 }

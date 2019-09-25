@@ -15,7 +15,7 @@ namespace StatementConverter.StatementInterpreter
             this.doStatementSyntax = doStatementSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var condition = statementInterpreterHandler.GetStatement(doStatementSyntax.Condition);
             var statement = statementInterpreterHandler.GetStatement(doStatementSyntax.Statement);

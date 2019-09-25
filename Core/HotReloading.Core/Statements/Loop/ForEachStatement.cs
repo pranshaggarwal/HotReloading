@@ -1,9 +1,9 @@
 ﻿namespace HotReloading.Core.Statements
 {
-    public class ForEachStatement : Statement
+    public class ForEachStatement : IStatementCSharpSyntax
     {
-        public Statement Variable { get; set; }
-        public Statement Collection { get; set; }
-        public Statement Body { get; set; }
+        public IStatementCSharpSyntax Variable { get; set; }
+        public IStatementCSharpSyntax Collection { get; set; }
+        public IStatementCSharpSyntax Body { get; set; }
     }
 }

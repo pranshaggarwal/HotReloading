@@ -16,7 +16,7 @@ namespace StatementConverter.StatementInterpreter
             this.statementInterpreterHandler = statementInterpreterHandler;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var assignmentStatement = new BinaryStatement();
 

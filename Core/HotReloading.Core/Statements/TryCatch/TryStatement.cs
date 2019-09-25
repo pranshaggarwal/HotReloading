@@ -2,11 +2,11 @@
 
 namespace HotReloading.Core.Statements
 {
-    public class TryStatement : Statement
+    public class TryStatement : IStatementCSharpSyntax
     {
-        public Statement TryBlock { get; set; }
+        public IStatementCSharpSyntax TryBlock { get; set; }
         public List<CatchStatement> Catches { get; set; }
-        public Statement Finally { get; set; }
+        public IStatementCSharpSyntax Finally { get; set; }
 
         public TryStatement()
         {

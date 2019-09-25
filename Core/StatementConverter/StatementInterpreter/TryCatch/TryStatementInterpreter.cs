@@ -16,7 +16,7 @@ namespace StatementConverter.StatementInterpreter
             this.tryStatementSyntax = tryStatementSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var tryStatement = new TryStatement();
             tryStatement.TryBlock = statementInterpreterHandler.GetStatement(tryStatementSyntax.Block);

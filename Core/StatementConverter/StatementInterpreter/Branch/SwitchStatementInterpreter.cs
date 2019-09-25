@@ -16,7 +16,7 @@ namespace StatementConverter.StatementInterpreter
             this.switchStatementSyntax = switchStatementSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var switchStatement = new SwitchStatement();
 

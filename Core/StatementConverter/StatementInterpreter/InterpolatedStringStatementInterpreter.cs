@@ -17,12 +17,12 @@ namespace StatementConverter.StatementInterpreter
             this.interpolatedStringExpressionSyntax = interpolatedStringExpressionSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             return GetStatement(interpolatedStringExpressionSyntax.Contents.ToList());
         }
 
-        private Statement GetStatement(List<InterpolatedStringContentSyntax> contents)
+        private IStatementCSharpSyntax GetStatement(List<InterpolatedStringContentSyntax> contents)
         {
             if (contents.Count == 0)
                 return new ConstantStatement("");
@@ -40,7 +40,7 @@ namespace StatementConverter.StatementInterpreter
             return binaryStatement;
         }
 
-        private Statement GetStatement(InterpolatedStringContentSyntax interpolatedStringContentSyntax)
+        private IStatementCSharpSyntax GetStatement(InterpolatedStringContentSyntax interpolatedStringContentSyntax)
         {
             if (interpolatedStringContentSyntax is InterpolationSyntax interpolationSyntax)
                 return statementInterpreterHandler.GetStatement(interpolationSyntax.Expression);

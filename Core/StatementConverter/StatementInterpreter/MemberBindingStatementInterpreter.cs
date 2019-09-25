@@ -15,7 +15,7 @@ namespace StatementConverter.StatementInterpreter
             this.memberBindingExpression = memberBindingExpression;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var conditionalAccess = GetConditionalAccessExpressionSyntax(memberBindingExpression);
             var parent = statementInterpreterHandler.GetStatement(conditionalAccess.Expression);

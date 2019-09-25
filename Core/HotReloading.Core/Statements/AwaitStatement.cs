@@ -2,8 +2,8 @@
 
 namespace HotReloading.Core.Statements
 {
-    public class AwaitStatement : Statement
+    public class AwaitStatement : IStatementCSharpSyntax
     {
-        public Statement Statement { get; set; }
+        public IStatementCSharpSyntax Statement { get; set; }
     }
 }

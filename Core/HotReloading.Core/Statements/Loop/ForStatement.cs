@@ -2,11 +2,11 @@
 
 namespace HotReloading.Core.Statements
 {
-    public class ForStatement : Statement
+    public class ForStatement : IStatementCSharpSyntax
     {
-        public List<Statement> Initializers { get; set; }
-        public Statement Condition { get; set; }
-        public List<Statement> Iterators { get; set; }
-        public Statement Statement { get; set; }
+        public List<IStatementCSharpSyntax> Initializers { get; set; }
+        public IStatementCSharpSyntax Condition { get; set; }
+        public List<IStatementCSharpSyntax> Iterators { get; set; }
+        public IStatementCSharpSyntax Statement { get; set; }
     }
 }

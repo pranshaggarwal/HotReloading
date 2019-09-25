@@ -5,7 +5,7 @@ namespace StatementConverter.StatementInterpreter
 {
     internal class ContinueStatementInterpreter : IStatementInterpreter
     {
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             return new ContinueStatement();
         }

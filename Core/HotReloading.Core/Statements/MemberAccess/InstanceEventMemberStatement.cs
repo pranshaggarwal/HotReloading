@@ -4,6 +4,6 @@
     {
         public HrType ParentType { get; set; }
         public string Name { get; set; }
-        public Statement Parent { get; set; }
+        public IStatementCSharpSyntax Parent { get; set; }
     }
 }

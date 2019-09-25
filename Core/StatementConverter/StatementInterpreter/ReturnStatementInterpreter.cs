@@ -14,7 +14,7 @@ namespace StatementConverter.StatementInterpreter
             this.returnStatementSyntax = returnStatementSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             return new ReturnStatement
             {

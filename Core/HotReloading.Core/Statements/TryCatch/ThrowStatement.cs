@@ -1,7 +1,7 @@
 ﻿namespace HotReloading.Core.Statements
 {
-    public class ThrowStatement : Statement
+    public class ThrowStatement : IStatementCSharpSyntax
     {
-        public Statement Statement { get; set; }
+        public IStatementCSharpSyntax Statement { get; set; }
     }
 }

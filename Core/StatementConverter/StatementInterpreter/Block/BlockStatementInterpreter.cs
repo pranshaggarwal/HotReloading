@@ -14,7 +14,7 @@ namespace StatementConverter.StatementInterpreter
             this.blockSyntax = blockSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var block = new Block();
             foreach(var statementSyntax in blockSyntax.Statements)

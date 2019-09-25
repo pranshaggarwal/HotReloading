@@ -14,7 +14,7 @@ namespace StatementConverter.StatementInterpreter
             this.arrowExpression = arrowExpression;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             return statementInterpreterHandler.GetStatement(arrowExpression.Expression);
         }

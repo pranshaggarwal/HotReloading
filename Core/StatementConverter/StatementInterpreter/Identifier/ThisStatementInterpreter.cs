@@ -16,7 +16,7 @@ namespace StatementConverter.StatementInterpreter
             this.semanticModel = semanticModel;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var type = semanticModel.GetTypeInfo(thisExpressionSyntax).GetHrType();
             return new ThisStatement

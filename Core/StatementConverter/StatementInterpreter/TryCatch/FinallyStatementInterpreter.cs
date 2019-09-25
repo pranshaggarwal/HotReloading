@@ -15,7 +15,7 @@ namespace StatementConverter.StatementInterpreter
             this.finallyClauseSyntax = finallyClauseSyntax;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             return statementInterpreterHandler.GetStatement(finallyClauseSyntax.Block);
         }

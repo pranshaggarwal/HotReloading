@@ -2,8 +2,8 @@
 
 namespace HotReloading.Core.Statements
 {
-    public class MultiStatement : Statement
+    public class MultiStatement : IStatementCSharpSyntax
     {
-        public IEnumerable<Statement> Statements;
+        public IEnumerable<IStatementCSharpSyntax> Statements;
     }
 }

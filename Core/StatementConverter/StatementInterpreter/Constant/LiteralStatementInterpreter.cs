@@ -16,7 +16,7 @@ namespace StatementConverter.StatementInterpreter
             this.semanticModel = semanticModel;
         }
 
-        public Statement GetStatement()
+        public IStatementCSharpSyntax GetStatement()
         {
             var typeInfo = semanticModel.GetTypeInfo(literalExpressionSyntax);
             var constantStatement = new ConstantStatement(literalExpressionSyntax.Token.Value);

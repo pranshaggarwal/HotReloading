@@ -2,6 +2,6 @@
 {
     public class InstanceMethodMemberStatement : MethodMemberStatement
     {
-        public Statement Parent { get; set; }
+        public IStatementCSharpSyntax Parent { get; set; }
     }
 }

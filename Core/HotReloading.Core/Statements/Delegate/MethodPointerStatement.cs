@@ -1,8 +1,8 @@
 ﻿namespace HotReloading.Core.Statements
 {
-    public class MethodPointerStatement : Statement
+    public class MethodPointerStatement : IStatementCSharpSyntax
     {
-        public Statement Method { get; set; }
+        public IStatementCSharpSyntax Method { get; set; }
         public BaseHrType Type { get; set; }
     }
 }

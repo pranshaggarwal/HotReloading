@@ -21,7 +21,7 @@ namespace StatementConverter.ExpressionInterpreter
             var left = binaryStatement.Left;
             if (left is DelegateIdentifierStatement delegateIdentifier)
                 left = delegateIdentifier.Target;
-            if(left is StaticEventMemberStatement ||
+            if (left is StaticEventMemberStatement ||
                 left is InstanceEventMemberStatement)
             {
                 return AssignEventExpression(left);
@@ -30,7 +30,7 @@ namespace StatementConverter.ExpressionInterpreter
                     expressionInterpreterHandler.GetExpression(binaryStatement.Right), binaryStatement.Operand);
         }
 
-        private Expression AssignEventExpression(Statement left)
+        private Expression AssignEventExpression(IStatementCSharpSyntax left)
         {
             var bindingFlags = left is StaticEventMemberStatement ?
                                 BindingFlags.Static : BindingFlags.Instance;
@@ -71,15 +71,15 @@ namespace StatementConverter.ExpressionInterpreter
             var convertedRight = right;
             if (left.Type != right.Type)
             {
-                if(left.Type == strType || right.Type == strType)
+                if (left.Type == strType || right.Type == strType)
                 {
-                    var toStringMethod = typeof(Convert).GetMethod("ToString", new Type[] { typeof(object)});
+                    var toStringMethod = typeof(Convert).GetMethod("ToString", new Type[] { typeof(object) });
 
                     if (left.Type == strType)
-                        convertedRight = Expression.Call(null, toStringMethod, 
+                        convertedRight = Expression.Call(null, toStringMethod,
                             Expression.Convert(right, typeof(object)));
                     else
-                        convertedLeft = Expression.Call(null, toStringMethod, 
+                        convertedLeft = Expression.Call(null, toStringMethod,
                             Expression.Convert(left, typeof(object)));
                 }
                 else
@@ -88,11 +88,11 @@ namespace StatementConverter.ExpressionInterpreter
                     {
                         convertedRight = Expression.Convert(right, typeof(int));
                     }
-                    else if(IsAssignOperator(operand))
+                    else if (IsAssignOperator(operand))
                     {
                         convertedRight = Expression.Convert(right, left.Type);
                     }
-                    else if(operand != BinaryOperand.Coalesce)
+                    else if (operand != BinaryOperand.Coalesce)
                     {
                         convertedLeft = ConvertType(left, left.Type, right.Type);
                         convertedRight = ConvertType(right, right.Type, left.Type);
@@ -108,12 +108,12 @@ namespace StatementConverter.ExpressionInterpreter
             switch (operand)
             {
                 case BinaryOperand.Add:
-                    if(left.Type == strType || right.Type == strType)
+                    if (left.Type == strType || right.Type == strType)
                     {
                         var concatMethod = strType.GetMethod("Concat", new[] { typeof(object[]) });
 
-                        var array = Expression.NewArrayInit(typeof(object), 
-                            Expression.Convert(left, typeof(object)), 
+                        var array = Expression.NewArrayInit(typeof(object),
+                            Expression.Convert(left, typeof(object)),
                             Expression.Convert(right, typeof(object)));
                         return Expression.Call(null, concatMethod, array);
                     }
@@ -152,7 +152,7 @@ namespace StatementConverter.ExpressionInterpreter
                     }
                     return Expression.And(convertedLeft, convertedRight);
                 case BinaryOperand.BitwiseOr:
-                    if(left.Type.IsEnum)
+                    if (left.Type.IsEnum)
                     {
                         var left1 = Expression.Convert(left, Enum.GetUnderlyingType(left.Type));
                         var right1 = Expression.Convert(right, Enum.GetUnderlyingType(right.Type));
@@ -192,18 +192,18 @@ namespace StatementConverter.ExpressionInterpreter
                         var addExpression = Expression.Call(null, concatMethod, array);
                         return Expression.Assign(left, addExpression);
                     }
-                    else if(IsByteType(left.Type))
+                    else if (IsByteType(left.Type))
                     {
                         var addExpression = GetExpression(convertedLeft, convertedRight, BinaryOperand.Add);
                         return Expression.Assign(left, Expression.Convert(addExpression, left.Type));
                     }
-                    if(left.Type.IsSubclassOf(typeof(MulticastDelegate)))
+                    if (left.Type.IsSubclassOf(typeof(MulticastDelegate)))
                     {
                         //Delegate.Combine
                         var delegateCombine = typeof(Delegate).GetMethod("Combine", new Type[] { typeof(Delegate), typeof(Delegate) });
-                        return Expression.Assign(left, 
-                            Expression.Convert(Expression.Call(null, 
-                                delegateCombine, left, convertedRight), 
+                        return Expression.Assign(left,
+                            Expression.Convert(Expression.Call(null,
+                                delegateCombine, left, convertedRight),
                                 left.Type));
                     }
                     return Expression.AddAssign(left, convertedRight);
@@ -338,7 +338,7 @@ namespace StatementConverter.ExpressionInterpreter
 
         private int GetTypePrecendence(Type type)
         {
-            if(type == typeof(Byte))
+            if (type == typeof(Byte))
                 return 1;
             if (type == typeof(Char))
                 return 2;
