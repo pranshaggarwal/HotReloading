@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+    <Folder Include="Generators\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HotReloading.Syntax\HotReloading.Syntax.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,6 +1,4 @@
-﻿using HotReloading.Syntax;
-
-namespace HotReloading.Core.Statements
+namespace HotReloading.Syntax.Statements
 {
     public interface IStatementCSharpSyntax : ICSharpSyntax
     {

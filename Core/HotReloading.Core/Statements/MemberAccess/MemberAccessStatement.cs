@@ -1,4 +1,5 @@
 ﻿using HotReloading.Syntax;
+using HotReloading.Syntax.Statements;
 
 namespace HotReloading.Core.Statements
 {

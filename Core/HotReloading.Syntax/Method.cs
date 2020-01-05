@@ -1,12 +1,7 @@
-﻿using HotReloading.Core.Statements;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using HotReloading.Syntax;
+using HotReloading.Syntax.Statements;
 
-namespace HotReloading.Core
+namespace HotReloading.Syntax
 {
     public class Method : ICSharpSyntax
     {
@@ -29,23 +24,5 @@ namespace HotReloading.Core
             Parameters = new List<Parameter>();
             InnerMethods = new List<Method>();
         }
-    }
-
-    public class Class : ICSharpSyntax
-    {
-        public List<Field> Fields { get; set; }
-        public List<Property> Properties { get; set; }
-        public List<Method> Methods { get; set; }
-    }
-
-    public class Field : ICSharpSyntax
-    {
-        public AccessModifier AccessModifier { get; set; }
-        public BaseHrType Type { get; set; }
-    }
-
-    public class Property : ICSharpSyntax
-    {
-
     }
 }

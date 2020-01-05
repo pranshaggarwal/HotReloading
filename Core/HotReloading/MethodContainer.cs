@@ -1,6 +1,7 @@
 ﻿using System;
 using CSharpExpressions.Microsoft.CSharp;
 using HotReloading.Core;
+using HotReloading.Syntax;
 using StatementConverter.ExpressionInterpreter;
 
 namespace HotReloading

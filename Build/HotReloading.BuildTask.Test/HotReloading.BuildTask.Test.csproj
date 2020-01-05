@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\..\packages\NUnit3TestAdapter.3.13.0\build\net35\NUnit3TestAdapter.props" Condition="Exists('..\..\packages\NUnit3TestAdapter.3.13.0\build\net35\NUnit3TestAdapter.props')" />
   <Import Project="..\..\packages\NUnit.3.11.0\build\NUnit.props" Condition="Exists('..\..\packages\NUnit.3.11.0\build\NUnit.props')" />
@@ -84,6 +84,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\HotReloading.Syntax\HotReloading.Syntax.csproj">
+      <Project>{45c6950c-16a1-45b1-9ac1-931d0f887e8c}</Project>
+      <Name>HotReloading.Syntax</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HotReloading.BuildTask\HotReloading.BuildTask.csproj">
       <Project>{7556F489-417B-4D29-8FF7-4041B6DCA0D3}</Project>
       <Name>HotReloading.BuildTask</Name>

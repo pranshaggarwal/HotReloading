@@ -1,9 +1,7 @@
-using System.Diagnostics;
-using HotReloading.Core;
-using HotReloading.Syntax;
+﻿using HotReloading.Syntax;
 using NUnit.Framework;
 
-namespace Tests
+namespace HotReloading.CodeGenerator.Test
 {
     public class MethodGeneratorTest
     {
@@ -25,7 +23,7 @@ namespace Tests
 
 
             var actualOutput = generator.Generate(method);
-                var expectedOutput = @"private void Test()
+            var expectedOutput = @"private void Test()
 {
 }";
 

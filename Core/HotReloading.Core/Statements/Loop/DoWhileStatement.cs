@@ -1,4 +1,6 @@
-﻿namespace HotReloading.Core.Statements
+﻿using HotReloading.Syntax.Statements;
+
+namespace HotReloading.Core.Statements
 {
     public class DoWhileStatement : IStatementCSharpSyntax
     {

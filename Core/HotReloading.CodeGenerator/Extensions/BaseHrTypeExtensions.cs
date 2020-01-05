@@ -1,4 +1,6 @@
-﻿namespace HotReloading.Core
+﻿using HotReloading.Syntax;
+
+namespace HotReloading.CodeGenerator.Extensions
 {
     public static class BaseHrTypeExtensions
     {

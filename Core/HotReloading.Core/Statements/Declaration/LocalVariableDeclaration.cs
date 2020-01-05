@@ -1,4 +1,7 @@
-﻿namespace HotReloading.Core.Statements
+﻿using HotReloading.Syntax;
+using HotReloading.Syntax.Statements;
+
+namespace HotReloading.Core.Statements
 {
     public class LocalVariableDeclaration : IStatementCSharpSyntax
     {

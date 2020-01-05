@@ -1,5 +1,6 @@
 ﻿using System;
 using HotReloading.Core.Statements;
+using HotReloading.Syntax.Statements;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 

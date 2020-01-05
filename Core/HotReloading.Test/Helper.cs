@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using CSharpExpressions.Microsoft.CSharp;
 using HotReloading.Core;
+using HotReloading.Syntax;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

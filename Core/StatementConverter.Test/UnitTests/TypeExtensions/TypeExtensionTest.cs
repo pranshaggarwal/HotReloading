@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using HotReloading.Core;
+using HotReloading.Syntax;
 using NUnit.Framework;
 using StatementConverter.Extensions;
 

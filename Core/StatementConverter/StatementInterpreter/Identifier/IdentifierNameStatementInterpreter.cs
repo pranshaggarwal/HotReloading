@@ -4,6 +4,7 @@ using System.Linq;
 using HotReloading.Core;
 using HotReloading.Core.Statements;
 using HotReloading.Syntax;
+using HotReloading.Syntax.Statements;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using StatementConverter.Extensions;

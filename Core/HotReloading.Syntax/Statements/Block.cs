@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace HotReloading.Core.Statements
+namespace HotReloading.Syntax.Statements
 {
     public class Block : IStatementCSharpSyntax
     {

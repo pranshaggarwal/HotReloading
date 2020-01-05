@@ -1,4 +1,5 @@
 ﻿using HotReloading.Core;
+using HotReloading.Syntax;
 using Microsoft.CodeAnalysis;
 
 namespace StatementConverter.Extensions

@@ -1,7 +1,8 @@
-﻿using HotReloading.Core.Statements;
+﻿using System.Text;
+using HotReloading.CodeGenerator.Extensions;
 using HotReloading.Syntax;
 
-namespace HotReloading.Core
+namespace HotReloading.CodeGenerator.Generators
 {
     public class ParameterCodeGenerator : ICSharpCodeGenerator
     {

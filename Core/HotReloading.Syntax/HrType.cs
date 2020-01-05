@@ -1,7 +1,4 @@
-using System;
-using Newtonsoft.Json;
-
-namespace HotReloading.Core
+namespace HotReloading.Syntax
 {
     public class HrType : BaseHrType
     {

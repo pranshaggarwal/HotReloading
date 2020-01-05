@@ -12,6 +12,7 @@ using MQTTnet.Client;
 using MQTTnet.Client.Connecting;
 using MQTTnet.Client.Options;
 using System.Reflection;
+using HotReloading.Syntax;
 using Mqtt;
 using Serializer = HotReloading.Core.Serializer;
 

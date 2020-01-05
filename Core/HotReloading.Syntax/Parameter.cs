@@ -1,6 +1,6 @@
-using HotReloading.Core.Statements;
+using HotReloading.Syntax.Statements;
 
-namespace HotReloading.Core
+namespace HotReloading.Syntax
 {
     public class Parameter : IStatementCSharpSyntax
     {

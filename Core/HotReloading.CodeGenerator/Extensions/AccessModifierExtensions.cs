@@ -1,6 +1,7 @@
-﻿using HotReloading.Syntax;
+﻿using System;
+using HotReloading.Syntax;
 
-namespace HotReloading.Core
+namespace HotReloading.CodeGenerator.Extensions
 {
     public static class AccessModifierExtensions
     {

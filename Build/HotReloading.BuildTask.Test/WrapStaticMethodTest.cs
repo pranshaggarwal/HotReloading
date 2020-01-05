@@ -8,6 +8,7 @@ using FluentAssertions;
 using HotReloading.Core;
 using Moq;
 using NUnit.Framework;
+using HotReloading.Syntax;
 
 namespace HotReloading.BuildTask.Test
 {
@@ -43,7 +44,7 @@ namespace HotReloading.BuildTask.Test
                 Tracker.Call("new");
             };
 
-            var parameters = new List<Core.Parameter>();
+            var parameters = new List<Parameter>();
             SetupCodeChangeDelegate(type, @delegate, methodName, parameters);
 
             testMethod.Invoke(null, new object[] { });
@@ -74,11 +75,11 @@ namespace HotReloading.BuildTask.Test
                 return str + 1;
             };
 
-            var parameters = new List<Core.Parameter>()
+            var parameters = new List<Parameter>()
             {
-                new Core.Parameter
+                new Parameter
                 {
-                    Type = new Core.HrType
+                    Type = new HrType
                     {
                         Name = typeof(string).FullName,
                         AssemblyName = typeof(string).Assembly.GetName().Name
@@ -94,12 +95,12 @@ namespace HotReloading.BuildTask.Test
         }
 
 
-        private static void SetupCodeChangeDelegate(System.Type type, Delegate @delegate, string methodName, List<Core.Parameter> parameters)
+        private static void SetupCodeChangeDelegate(System.Type type, Delegate @delegate, string methodName, List<Parameter> parameters)
         {
             var methodContainer = new Mock<IMethodContainer>();
 
             methodContainer.Setup(x => x.GetDelegate()).Returns(@delegate);
-            methodContainer.SetupGet(x => x.Method).Returns(new HotReloading.Core.Method
+            methodContainer.SetupGet(x => x.Method).Returns(new Syntax.Method
             {
                 Name = methodName,
                 Parameters = parameters

@@ -4,7 +4,7 @@ using System.Reflection;
 using HotReloading.Core;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using HrType = HotReloading.Core.HrType;
+using HrType = HotReloading.Syntax.HrType;
 
 namespace StatementConverter.Extensions
 {

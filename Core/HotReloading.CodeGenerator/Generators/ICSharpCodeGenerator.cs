@@ -1,7 +1,7 @@
-﻿using HotReloading.Core.Statements;
+﻿using System;
 using HotReloading.Syntax;
 
-namespace HotReloading.Core
+namespace HotReloading.CodeGenerator.Generators
 {
     public interface ICSharpCodeGenerator
     {

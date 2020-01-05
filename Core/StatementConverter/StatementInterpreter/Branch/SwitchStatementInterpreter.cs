@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using HotReloading.Core.Statements;
+using HotReloading.Syntax.Statements;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace StatementConverter.StatementInterpreter

@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using HotReloading.Syntax;
 using HotReloading.Test.TestCodes;
 using NUnit.Framework;
 
@@ -28,7 +29,7 @@ namespace HotReloading.Test
 
             Runtime.HandleCodeChange(new Core.CodeChange
             {
-                Methods = new System.Collections.Generic.List<Core.Method>
+                Methods = new System.Collections.Generic.List<Method>
                 {
                     method
                 }
@@ -47,7 +48,7 @@ namespace HotReloading.Test
 
             Runtime.HandleCodeChange(new Core.CodeChange
             {
-                Methods = new System.Collections.Generic.List<Core.Method>
+                Methods = new System.Collections.Generic.List<Method>
                 {
                     newMethod, existingMethod
                 }
@@ -65,7 +66,7 @@ namespace HotReloading.Test
 
             Runtime.HandleCodeChange(new Core.CodeChange
             {
-                Methods = new System.Collections.Generic.List<Core.Method>
+                Methods = new System.Collections.Generic.List<Method>
                 {
                     method
                 }
@@ -83,7 +84,7 @@ namespace HotReloading.Test
 
             Runtime.HandleCodeChange(new Core.CodeChange
             {
-                Methods = new System.Collections.Generic.List<Core.Method>
+                Methods = new System.Collections.Generic.List<Method>
                 {
                     method
                 }
@@ -104,7 +105,7 @@ namespace HotReloading.Test
 
             Runtime.HandleCodeChange(new Core.CodeChange
             {
-                Methods = new System.Collections.Generic.List<Core.Method>
+                Methods = new System.Collections.Generic.List<Method>
                 {
                     existingMethod, newMethod
                 }
@@ -125,7 +126,7 @@ namespace HotReloading.Test
 
             Runtime.HandleCodeChange(new Core.CodeChange
             {
-                Methods = new System.Collections.Generic.List<Core.Method>
+                Methods = new System.Collections.Generic.List<Method>
                 {
                     instanceMethod, newMethod
                 }
@@ -145,7 +146,7 @@ namespace HotReloading.Test
 
             Runtime.HandleCodeChange(new Core.CodeChange
             {
-                Methods = new System.Collections.Generic.List<Core.Method>
+                Methods = new System.Collections.Generic.List<Method>
                 {
                     method
                 }
@@ -166,7 +167,7 @@ namespace HotReloading.Test
 
             Runtime.HandleCodeChange(new Core.CodeChange
             {
-                Methods = new System.Collections.Generic.List<Core.Method>
+                Methods = new System.Collections.Generic.List<Method>
                 {
                     method1, method2
                 }
@@ -185,7 +186,7 @@ namespace HotReloading.Test
 
             Runtime.HandleCodeChange(new Core.CodeChange
             {
-                Methods = new System.Collections.Generic.List<Core.Method>
+                Methods = new System.Collections.Generic.List<Method>
                 {
                     method1, method2
                 }
