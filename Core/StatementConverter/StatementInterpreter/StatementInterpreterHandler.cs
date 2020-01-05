@@ -222,7 +222,7 @@ namespace StatementConverter.StatementInterpreter
             parameters = declarationSyntax.ParameterList.Parameters.Select(x => GetStatement(x)).Cast<Parameter>().ToList();
             newMethodData.Parameters = parameters;
 
-            newMethodData.Block = new Block();
+            newMethodData.Body = new Block();
 
             var nodes = declarationSyntax.DescendantNodes();
 
@@ -235,12 +235,12 @@ namespace StatementConverter.StatementInterpreter
 
                 scopedLocalVariableDeclarations.Clear();
 
-                newMethodData.Block.Statements.Add(blockStatement);
+                newMethodData.Body.Statements.Add(blockStatement);
             }
             else if (firstStatement is ArrowExpressionClauseSyntax arrowExpression)
             {
                 var statement = GetStatement(arrowExpression);
-                newMethodData.Block.Statements.Add(statement);
+                newMethodData.Body.Statements.Add(statement);
             }
             else
             {

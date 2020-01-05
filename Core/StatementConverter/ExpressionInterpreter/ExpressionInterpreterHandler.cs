@@ -184,7 +184,7 @@ namespace StatementConverter.ExpressionInterpreter
 
         public CSharpLamdaExpression GetLamdaExpression()
         {
-            var interpreter = GetExpression(method.Block);
+            var interpreter = GetExpression(method.Body);
 
             var expression = interpreter;
 

@@ -11,7 +11,6 @@ namespace StatementConverter.StatementInterpreter
 {
     public class ParameterInterpreter : IStatementInterpreter
     {
-        private readonly MethodDeclarationSyntax methodDeclarationSyntax;
         private readonly ParameterSyntax parameterSyntax;
         private readonly SemanticModel semanticModel;
 
