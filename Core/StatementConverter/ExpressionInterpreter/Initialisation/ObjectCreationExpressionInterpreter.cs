@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using HotReloading.Core.Statements;
+using HotReloading.Syntax;
 using StatementConverter.Extensions;
 
 namespace StatementConverter.ExpressionInterpreter
@@ -127,7 +128,7 @@ namespace StatementConverter.ExpressionInterpreter
                         throw new NotSupportedException("This operation is not supported yet");
 
                     var bindingFlags = BindingFlags.Instance;
-                    bindingFlags |= ((MemberAccessStatement)statement.Left).AccessModifier == HotReloading.Core.AccessModifier.Public ?
+                    bindingFlags |= ((MemberAccessStatement)statement.Left).AccessModifier == AccessModifier.Public ?
                         BindingFlags.Public : BindingFlags.NonPublic;
 
                     var member = instanceType.GetMostSuitableMember(memberName, bindingFlags);

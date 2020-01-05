@@ -1,4 +1,4 @@
-﻿namespace HotReloading.Core.Statements
+namespace HotReloading.Syntax
 {
     public interface ICSharpSyntax
     {

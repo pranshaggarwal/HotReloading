@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using HotReloading.Core;
+using HotReloading.Syntax;
 using NUnit.Framework;
 
 namespace Tests

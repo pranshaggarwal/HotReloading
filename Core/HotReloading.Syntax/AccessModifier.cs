@@ -1,4 +1,4 @@
-﻿namespace HotReloading.Core
+namespace HotReloading.Syntax
 {
     public enum AccessModifier
     {

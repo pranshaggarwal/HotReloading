@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using HotReloading.Core.Statements;
+using HotReloading.Syntax;
 
 namespace StatementConverter.ExpressionInterpreter
 {
@@ -20,7 +21,7 @@ namespace StatementConverter.ExpressionInterpreter
         {
             var parent = interpreterHandler.GetExpression(statement.Parent);
             var bindingFlags = BindingFlags.Instance;
-            bindingFlags |= statement.AccessModifier == HotReloading.Core.AccessModifier.Public ?
+            bindingFlags |= statement.AccessModifier == AccessModifier.Public ?
                 BindingFlags.Public : BindingFlags.NonPublic;
 
             var field = parent.Type.GetField(statement.Name, bindingFlags);

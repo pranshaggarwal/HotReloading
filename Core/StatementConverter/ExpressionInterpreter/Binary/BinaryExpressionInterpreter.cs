@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using HotReloading.Core.Statements;
+using HotReloading.Syntax;
 
 namespace StatementConverter.ExpressionInterpreter
 {
@@ -34,7 +35,7 @@ namespace StatementConverter.ExpressionInterpreter
         {
             var bindingFlags = left is StaticEventMemberStatement ?
                                 BindingFlags.Static : BindingFlags.Instance;
-            bindingFlags |= ((MemberAccessStatement)left).AccessModifier == HotReloading.Core.AccessModifier.Public ?
+            bindingFlags |= ((MemberAccessStatement)left).AccessModifier == AccessModifier.Public ?
                 BindingFlags.Public : BindingFlags.NonPublic;
 
             EventInfo @event;

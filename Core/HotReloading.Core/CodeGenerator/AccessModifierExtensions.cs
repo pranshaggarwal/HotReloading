@@ -1,4 +1,6 @@
-﻿namespace HotReloading.Core
+﻿using HotReloading.Syntax;
+
+namespace HotReloading.Core
 {
     public static class AccessModifierExtensions
     {

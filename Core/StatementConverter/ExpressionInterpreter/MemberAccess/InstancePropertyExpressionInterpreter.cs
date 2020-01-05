@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using HotReloading.Core.Statements;
+using HotReloading.Syntax;
 using StatementConverter.Extensions;
 
 namespace StatementConverter.ExpressionInterpreter
@@ -22,7 +23,7 @@ namespace StatementConverter.ExpressionInterpreter
         {
             var parentExpression = interpreterHandler.GetExpression(statement.Parent);
             var bindingFlags = BindingFlags.Instance;
-            bindingFlags |= statement.AccessModifier == HotReloading.Core.AccessModifier.Public ?
+            bindingFlags |= statement.AccessModifier == AccessModifier.Public ?
                 BindingFlags.Public : BindingFlags.NonPublic;
             var property = parentExpression.Type.GetMostSuitableProperty(statement.Name, bindingFlags);
 

@@ -39,5 +39,6 @@
     <ProjectReference Include="..\ExpressionFuture\CSharpExpressions\CSharpExpressions.csproj" />
     <ProjectReference Include="..\Mqtt\Mqtt.csproj" />
     <ProjectReference Include="..\Log\Log.csproj" />
+    <ProjectReference Include="..\HotReloading.Syntax\HotReloading.Syntax.csproj" />
   </ItemGroup>
 </Project>

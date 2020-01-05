@@ -6,6 +6,7 @@ using System.Reflection;
 using CSharpExpressions.Microsoft.CSharp;
 using HotReloading.Core;
 using HotReloading.Core.Statements;
+using HotReloading.Syntax;
 using StatementConverter.Extensions;
 using Type = System.Type;
 
@@ -43,7 +44,7 @@ namespace StatementConverter.ExpressionInterpreter
 
             BindingFlags bindingFlags = instanceMember == null ? BindingFlags.Static : BindingFlags.Instance;
 
-            bindingFlags |= invocationStatement.Method.AccessModifier == HotReloading.Core.AccessModifier.Public ?
+            bindingFlags |= invocationStatement.Method.AccessModifier == AccessModifier.Public ?
                 BindingFlags.Public : BindingFlags.NonPublic;
 
             Type declareType = (Type)invocationStatement.Method.ParentType;
