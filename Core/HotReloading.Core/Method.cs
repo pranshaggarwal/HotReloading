@@ -37,10 +37,6 @@ namespace HotReloading.Core
         public List<Method> Methods { get; set; }
     }
 
-    public interface IClassMember
-    {
-    }
-
     public class Field : ICSharpSyntax
     {
         public AccessModifier AccessModifier { get; set; }
