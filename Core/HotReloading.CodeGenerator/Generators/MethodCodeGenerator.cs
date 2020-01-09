@@ -63,11 +63,11 @@ namespace HotReloading.CodeGenerator.Generators
 
                 if (method.Body != null)
                 {
-                    foreach (var statement in method.Body.Statements)
-                    {
-                        var statementFactory = CodeGeneratorFactory.Create(statement);
-                        methodStrBuilder.Append($"\t{statementFactory.Generate(statement)}");
-                    }
+                    //foreach (var statement in method.Body.Statements)
+                    //{
+                    //    var statementFactory = CodeGeneratorFactory.Create(statement);
+                    //    methodStrBuilder.Append($"\t{statementFactory.Generate(statement)}");
+                    //}
                 }
 
                 methodStrBuilder.Append("\n}");

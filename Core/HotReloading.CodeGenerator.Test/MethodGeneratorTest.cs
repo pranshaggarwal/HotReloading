@@ -3,6 +3,7 @@ using NUnit.Framework;
 
 namespace HotReloading.CodeGenerator.Test
 {
+    [TestFixture]
     public class MethodGeneratorTest
     {
         [Test]

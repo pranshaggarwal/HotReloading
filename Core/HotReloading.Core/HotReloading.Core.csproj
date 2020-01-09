@@ -14,11 +14,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models" />
+    <Folder Include="Statements\Declaration" />
     <Folder Include="Statements\Identifier\" />
     <Folder Include="Statements\MemberAccess\" />
     <Folder Include="Statements\Declaration\" />
     <Folder Include="Statements\Initialisation\" />
-    <Folder Include="Statements\Assignment\" />
     <Folder Include="Statements\Invocation\" />
     <Folder Include="Statements\Constant\" />
     <Folder Include="Statements\Branch\" />
