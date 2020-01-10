@@ -18,7 +18,8 @@ namespace HotReloading.CodeGenerator.Test
                 {
                     Name = typeof(void).FullName,
                     AssemblyName = typeof(void).Assembly.FullName
-                }
+                },
+                Body = new Block()
             };
 
             var generator = CodeGeneratorFactory.Create(method);
@@ -43,7 +44,8 @@ namespace HotReloading.CodeGenerator.Test
                 {
                     Name = typeof(void).FullName,
                     AssemblyName = typeof(void).Assembly.FullName
-                }
+                },
+                Body = new Block()
             };
 
             var generator = CodeGeneratorFactory.Create(method);
@@ -68,7 +70,8 @@ namespace HotReloading.CodeGenerator.Test
                 {
                     Name = typeof(void).FullName,
                     AssemblyName = typeof(void).Assembly.FullName
-                }
+                },
+                Body = new Block()
             };
 
             var generator = CodeGeneratorFactory.Create(method);
@@ -93,7 +96,8 @@ namespace HotReloading.CodeGenerator.Test
                 {
                     Name = typeof(void).FullName,
                     AssemblyName = typeof(void).Assembly.FullName
-                }
+                },
+                Body = new Block()
             };
 
             var generator = CodeGeneratorFactory.Create(method);
@@ -118,7 +122,8 @@ namespace HotReloading.CodeGenerator.Test
                 {
                     Name = typeof(void).FullName,
                     AssemblyName = typeof(void).Assembly.FullName
-                }
+                },
+                Body = new Block()
             };
 
             var generator = CodeGeneratorFactory.Create(method);
@@ -144,7 +149,8 @@ namespace HotReloading.CodeGenerator.Test
                 {
                     Name = typeof(void).FullName,
                     AssemblyName = typeof(void).Assembly.FullName
-                }
+                },
+                Body = new Block()
             };
 
             var generator = CodeGeneratorFactory.Create(method);
@@ -170,7 +176,8 @@ namespace HotReloading.CodeGenerator.Test
                 {
                     Name = typeof(void).FullName,
                     AssemblyName = typeof(void).Assembly.FullName
-                }
+                },
+                Body = new Block()
             };
 
             var generator = CodeGeneratorFactory.Create(method);
@@ -197,7 +204,8 @@ namespace HotReloading.CodeGenerator.Test
                 {
                     Name = typeof(void).FullName,
                     AssemblyName = typeof(void).Assembly.FullName
-                }
+                },
+                Body = new Block()
             };
 
             var generator = CodeGeneratorFactory.Create(method);
@@ -223,7 +231,8 @@ namespace HotReloading.CodeGenerator.Test
                 {
                     Name = typeof(void).FullName,
                     AssemblyName = typeof(void).Assembly.FullName
-                }
+                },
+                Body = new Block()
             };
 
             var generator = CodeGeneratorFactory.Create(method);
@@ -250,7 +259,8 @@ namespace HotReloading.CodeGenerator.Test
                 {
                     Name = typeof(void).FullName,
                     AssemblyName = typeof(void).Assembly.FullName
-                }
+                },
+                Body = new Block()
             };
 
             var generator = CodeGeneratorFactory.Create(method);
@@ -300,7 +310,8 @@ namespace HotReloading.CodeGenerator.Test
                 {
                     Name = typeof(void).FullName,
                     AssemblyName = typeof(void).Assembly.FullName
-                }
+                },
+                Body = new Block()
             };
 
             var generator = CodeGeneratorFactory.Create(method);
@@ -327,7 +338,8 @@ namespace HotReloading.CodeGenerator.Test
                 {
                     Name = typeof(void).FullName,
                     AssemblyName = typeof(void).Assembly.FullName
-                }
+                },
+                Body = new Block()
             };
 
             var generator = CodeGeneratorFactory.Create(method);
@@ -354,7 +366,8 @@ namespace HotReloading.CodeGenerator.Test
                 {
                     Name = typeof(void).FullName,
                     AssemblyName = typeof(void).Assembly.FullName
-                }
+                },
+                Body = new Block()
             };
 
             var generator = CodeGeneratorFactory.Create(method);
@@ -382,7 +395,8 @@ namespace HotReloading.CodeGenerator.Test
                 {
                     Name = typeof(void).FullName,
                     AssemblyName = typeof(void).Assembly.FullName
-                }
+                },
+                Body = new Block()
             };
 
             var generator = CodeGeneratorFactory.Create(method);

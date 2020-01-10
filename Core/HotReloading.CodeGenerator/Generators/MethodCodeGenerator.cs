@@ -60,18 +60,8 @@ namespace HotReloading.CodeGenerator.Generators
             }
             else
             {
-                methodStrBuilder.Append("\n{");
-
-                if (method.Body != null)
-                {
-                    foreach (var statement in method.Body.Statements)
-                    {
-                        var statementFactory = CodeGeneratorFactory.Create(statement);
-                        methodStrBuilder.Append($"\n\t{statementFactory.Generate(statement)}");
-                    }
-                }
-
-                methodStrBuilder.Append("\n}");
+                var statementFactory = CodeGeneratorFactory.Create(method.Body);
+                methodStrBuilder.Append(statementFactory.Generate(method.Body));
             }
 
             return methodStrBuilder.ToString();
