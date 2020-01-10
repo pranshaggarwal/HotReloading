@@ -7,7 +7,7 @@ namespace HotReloading.Syntax
     {
         public string Name { get; set; }
         public List<Parameter> Parameters { get; set; }
-        public IStatementCSharpSyntax Body { get; set; }
+        public Block Body { get; set; }
         public bool IsStatic { get; set; }
         public bool IsSealed { get; set; }
         public bool IsVirtual { get; set; }

@@ -237,12 +237,12 @@ namespace StatementConverter.StatementInterpreter
 
                 scopedLocalVariableDeclarations.Clear();
 
-                ((Block)newMethodData.Body).Statements.Add(blockStatement);
+                newMethodData.Body.Statements.Add(blockStatement);
             }
             else if (firstStatement is ArrowExpressionClauseSyntax arrowExpression)
             {
                 var statement = GetStatement(arrowExpression);
-                ((Block)newMethodData.Body).Statements.Add(statement);
+                newMethodData.Body.Statements.Add(statement);
             }
             else
             {

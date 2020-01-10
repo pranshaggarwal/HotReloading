@@ -2,6 +2,7 @@
 using System.Text;
 using HotReloading.CodeGenerator.Extensions;
 using HotReloading.Syntax;
+using HotReloading.Syntax.Statements;
 
 namespace HotReloading.CodeGenerator.Generators
 {
@@ -63,11 +64,11 @@ namespace HotReloading.CodeGenerator.Generators
 
                 if (method.Body != null)
                 {
-                    //foreach (var statement in method.Body.Statements)
-                    //{
-                    //    var statementFactory = CodeGeneratorFactory.Create(statement);
-                    //    methodStrBuilder.Append($"\t{statementFactory.Generate(statement)}");
-                    //}
+                    foreach (var statement in method.Body.Statements)
+                    {
+                        var statementFactory = CodeGeneratorFactory.Create(statement);
+                        methodStrBuilder.Append($"\n\t{statementFactory.Generate(statement)}");
+                    }
                 }
 
                 methodStrBuilder.Append("\n}");

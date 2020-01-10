@@ -1,4 +1,5 @@
 ﻿using HotReloading.Syntax;
+using HotReloading.Syntax.Statements;
 using NUnit.Framework;
 
 namespace HotReloading.CodeGenerator.Test
@@ -391,6 +392,44 @@ namespace HotReloading.CodeGenerator.Test
             var expectedOutput = @"public sealed override async void Test()
 {
 }";
+
+            Assert.AreEqual(expectedOutput, actualOutput);
+        }
+
+        [Test]
+        public void Generate_WhenMethodBodyDefine()
+        {
+            var method = new Method
+            {
+                AccessModifier = AccessModifier.Public,
+                Name = "Test",
+                ReturnType = new HrType
+                {
+                    Name = typeof(void).FullName,
+                    AssemblyName = typeof(void).Assembly.FullName
+                },
+                Body = new Block
+                {
+                    Statements = new System.Collections.Generic.List<IStatementCSharpSyntax>
+                    {
+                        new LocalVariableDeclaration
+                        {
+                            Type = new HrType
+                            {
+                                Name = typeof(int).FullName,
+                                AssemblyName = typeof(int).Assembly.FullName
+                            },
+                            Name = "test"
+                        }
+                    }
+                }
+            };
+
+            var generator = CodeGeneratorFactory.Create(method);
+
+
+            var actualOutput = generator.Generate(method);
+            var expectedOutput = "public void Test()\n{\n\tSystem.Int32 test;\n}";
 
             Assert.AreEqual(expectedOutput, actualOutput);
         }

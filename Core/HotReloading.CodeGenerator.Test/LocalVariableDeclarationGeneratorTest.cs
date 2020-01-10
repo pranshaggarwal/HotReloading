@@ -8,7 +8,7 @@ namespace HotReloading.CodeGenerator.Test
     public class LocalVariableDeclarationGeneratorTest
     {
         [Test]
-        public void Generate_WhenPrivateAccessModifier()
+        public void Generate_WhenIntLocalVariableDeclare()
         {
             var localVariableDeclaration = new LocalVariableDeclaration
             {
