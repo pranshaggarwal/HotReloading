@@ -7,4 +7,9 @@
   <ItemGroup>
     <Compile Remove="Class1.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Statements\Declaration\" />
+    <Folder Include="Statements\Constant\" />
+    <Folder Include="Statements\Invocation\" />
+  </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using HotReloading.Syntax.Statements;
 using Microsoft.CSharp.Expressions;
 
 namespace StatementConverter.ExpressionInterpreter
@@ -7,10 +8,10 @@ namespace StatementConverter.ExpressionInterpreter
     internal class UsingExpressionInterpreter : IExpressionInterpreter
     {
         private readonly ExpressionInterpreterHandler expressionInterpreterHandler;
-        private readonly HotReloading.Core.Statements.UsingStatement usingStatement;
+        private readonly UsingStatement usingStatement;
         private readonly System.Collections.Generic.List<ParameterExpression> scopedLocalVariable;
 
-        public UsingExpressionInterpreter(ExpressionInterpreterHandler expressionInterpreterHandler, HotReloading.Core.Statements.UsingStatement usingStatement, System.Collections.Generic.List<ParameterExpression> scopedLocalVariable)
+        public UsingExpressionInterpreter(ExpressionInterpreterHandler expressionInterpreterHandler, UsingStatement usingStatement, System.Collections.Generic.List<ParameterExpression> scopedLocalVariable)
         {
             this.expressionInterpreterHandler = expressionInterpreterHandler;
             this.usingStatement = usingStatement;

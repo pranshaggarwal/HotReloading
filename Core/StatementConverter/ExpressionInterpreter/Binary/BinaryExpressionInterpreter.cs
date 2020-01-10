@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using HotReloading.Core.Statements;
 using HotReloading.Syntax;
 using HotReloading.Syntax.Statements;
 

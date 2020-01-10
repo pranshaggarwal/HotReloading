@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using HotReloading.Core.Statements;
+using HotReloading.Syntax.Statements;
 
 namespace StatementConverter.ExpressionInterpreter
 {

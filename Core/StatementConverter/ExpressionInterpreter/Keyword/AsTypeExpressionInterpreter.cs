@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using HotReloading.Core.Statements;
+using HotReloading.Syntax.Statements;
 
 namespace StatementConverter.ExpressionInterpreter
 {

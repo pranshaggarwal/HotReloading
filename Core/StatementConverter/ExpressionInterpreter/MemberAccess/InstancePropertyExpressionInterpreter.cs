@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using HotReloading.Core.Statements;
 using HotReloading.Syntax;
+using HotReloading.Syntax.Statements;
 using StatementConverter.Extensions;
 
 namespace StatementConverter.ExpressionInterpreter

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using HotReloading.Core.Statements;
 using HotReloading.Syntax.Statements;
 
 namespace StatementConverter.ExpressionInterpreter

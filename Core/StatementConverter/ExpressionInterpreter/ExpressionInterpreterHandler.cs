@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using CSharpExpressions.Microsoft.CSharp;
 using HotReloading.Core;
-using HotReloading.Core.Statements;
 using HotReloading.Syntax;
 using HotReloading.Syntax.Statements;
 using Microsoft.CSharp.Expressions;

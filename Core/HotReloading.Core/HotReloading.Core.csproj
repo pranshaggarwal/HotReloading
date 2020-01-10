@@ -13,25 +13,6 @@
     <PackageReference Include="MQTTnet" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models" />
-    <Folder Include="Statements\Declaration" />
-    <Folder Include="Statements\Identifier\" />
-    <Folder Include="Statements\MemberAccess\" />
-    <Folder Include="Statements\Declaration\" />
-    <Folder Include="Statements\Initialisation\" />
-    <Folder Include="Statements\Invocation\" />
-    <Folder Include="Statements\Constant\" />
-    <Folder Include="Statements\Branch\" />
-    <Folder Include="Statements\Keyword\" />
-    <Folder Include="Statements\Pattern\" />
-    <Folder Include="Statements\Binary\" />
-    <Folder Include="Statements\Unary\" />
-    <Folder Include="Statements\Array\" />
-    <Folder Include="Statements\Loop\" />
-    <Folder Include="Statements\Using\" />
-    <Folder Include="Statements\Inheritance\" />
-    <Folder Include="Statements\TryCatch\" />
-    <Folder Include="Statements\Delegate\" />
     <Folder Include="Mqtt\" />
   </ItemGroup>
   <ItemGroup>
