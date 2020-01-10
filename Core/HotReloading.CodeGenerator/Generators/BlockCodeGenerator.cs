@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using HotReloading.Syntax;
 using HotReloading.Syntax.Statements;
 

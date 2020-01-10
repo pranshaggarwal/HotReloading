@@ -2,7 +2,6 @@
 using System.Text;
 using HotReloading.CodeGenerator.Extensions;
 using HotReloading.Syntax;
-using HotReloading.Syntax.Statements;
 
 namespace HotReloading.CodeGenerator.Generators
 {
