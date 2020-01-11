@@ -7,13 +7,13 @@ namespace HotReloading.CodeGenerator.Generators
     {
         public string Generate(ICSharpSyntax cSharpSyntax)
         {
-            var instancePropertuMember = (InstancePropertyMemberStatement)cSharpSyntax;
+            var instancePropertyMember = (InstancePropertyMemberStatement)cSharpSyntax;
 
-            var parentCodeGenerator = CodeGeneratorFactory.Create(instancePropertuMember.Parent);
+            var parentCodeGenerator = CodeGeneratorFactory.Create(instancePropertyMember.Parent);
 
-            var parent = parentCodeGenerator.Generate(instancePropertuMember.Parent);
+            var parent = parentCodeGenerator.Generate(instancePropertyMember.Parent);
 
-            return parent + "." + instancePropertuMember.Name;
+            return parent + "." + instancePropertyMember.Name;
         }
     }
 }
