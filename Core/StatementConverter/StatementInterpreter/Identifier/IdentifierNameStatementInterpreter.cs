@@ -172,6 +172,14 @@ namespace StatementConverter.StatementInterpreter
 
         private IStatementCSharpSyntax GetStatement(IMethodSymbol ms, string varName)
         {
+            if (parent != null)
+            {
+                if(parent.GetType().ToString() == "HotReloading.Syntax.Statements.InstanceFieldMemberStatement")
+                {
+
+                }
+                System.Diagnostics.Debug.WriteLine("InvocationParentType: " + parent.GetType());
+            }
             if (ms.IsStatic)
                 return new StaticMethodMemberStatement
                 {

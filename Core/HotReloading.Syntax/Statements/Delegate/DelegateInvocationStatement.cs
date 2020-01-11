@@ -6,5 +6,10 @@ namespace HotReloading.Syntax.Statements
     {
         public DelegateIdentifierStatement Delegate { get; set; }
         public IEnumerable<IStatementCSharpSyntax> Arguments { get; set; }
+
+        public DelegateInvocationStatement()
+        {
+            Arguments = new List<IStatementCSharpSyntax>();
+        }
     }
 }

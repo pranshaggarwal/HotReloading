@@ -19,6 +19,10 @@ namespace HotReloading.CodeGenerator.Generators
             {
                 var statementFactory = CodeGeneratorFactory.Create(statement);
                 codeStrBuilder.Append($"\n\t{statementFactory.Generate(statement)}");
+                if (!(statement is Block))
+                {
+                    codeStrBuilder.Append(";");   
+                }
             }
 
             codeStrBuilder.Append("\n}");

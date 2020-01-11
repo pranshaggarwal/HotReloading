@@ -1,4 +1,5 @@
-﻿using HotReloading.Syntax;
+﻿using System.Linq;
+using HotReloading.Syntax;
 using HotReloading.Syntax.Statements;
 
 namespace HotReloading.CodeGenerator.Generators

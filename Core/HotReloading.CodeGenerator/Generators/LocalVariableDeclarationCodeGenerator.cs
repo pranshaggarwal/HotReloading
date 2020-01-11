@@ -10,7 +10,7 @@ namespace HotReloading.CodeGenerator.Generators
         {
             var localVariableDeclaration = (LocalVariableDeclaration)cSharpSyntax;
 
-            return $"{localVariableDeclaration.Type.GenerateCode()} {localVariableDeclaration.Name};";
+            return $"{localVariableDeclaration.Type.GenerateCode()} {localVariableDeclaration.Name}";
         }
     }
 }

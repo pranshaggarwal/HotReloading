@@ -24,7 +24,7 @@ namespace HotReloading.CodeGenerator.Test
 
 
             var actualOutput = generator.Generate(localVariableDeclaration);
-            var expectedOutput = @"System.Int32 test;";
+            var expectedOutput = @"System.Int32 test";
 
             Assert.AreEqual(expectedOutput, actualOutput);
         }
