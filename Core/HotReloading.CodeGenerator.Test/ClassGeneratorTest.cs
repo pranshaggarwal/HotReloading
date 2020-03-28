@@ -172,16 +172,6 @@ namespace HotReloading.CodeGenerator.Test
         [Test]
         public void Generate_WhenClassWithMethod()
         {
-            var test = new Method
-            {
-                AccessModifier = AccessModifier.Public,
-                Name = "TestMethod",
-                ReturnType = new HrType
-                {
-                    Name = typeof(void).FullName,
-                    AssemblyName = typeof(void).Assembly.FullName
-                }
-            };
             var @class = new Class
             {
                 AccessModifier = AccessModifier.Public,
