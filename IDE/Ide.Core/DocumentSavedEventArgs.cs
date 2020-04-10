@@ -6,4 +6,9 @@ namespace Ide.Core
     {
         public Document Document { get; set; }
     }
+
+    public class DocumentAddedEventArgs
+    {
+        public Document Document { get; set; }
+    }
 }

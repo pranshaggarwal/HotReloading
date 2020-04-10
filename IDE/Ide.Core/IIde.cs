@@ -6,5 +6,6 @@ namespace Ide.Core
     {
         event EventHandler<DocumentSavedEventArgs> DocumentSaved;
         event EventHandler<DocumentChangedEventArgs> DocumentChanged;
+        event EventHandler<DocumentAddedEventArgs> DocumentAdded;
     }
 }

@@ -6,7 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.10.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.5.0" />
     <PackageReference Include="MQTTnet" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
@@ -14,6 +14,7 @@
     <ProjectReference Include="..\..\Core\HotReloading\HotReloading.csproj" />
     <ProjectReference Include="..\..\Core\Mqtt\Mqtt.csproj" />
     <ProjectReference Include="..\..\Core\Log\Log.csproj" />
+    <ProjectReference Include="..\..\Core\HotReloading.CodeGenerator\HotReloading.CodeGenerator.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Intrepreters\ArgumentInterpreter.cs" />

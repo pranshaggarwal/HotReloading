@@ -15,6 +15,7 @@ using System.Reflection;
 using HotReloading.Syntax;
 using Mqtt;
 using Serializer = HotReloading.Core.Serializer;
+using HotReloading.CodeGenerator;
 
 namespace Ide.Core
 {
@@ -30,6 +31,18 @@ namespace Ide.Core
 
             ide.DocumentSaved += Ide_DocumentSaved;
             ide.DocumentChanged += Ide_DocumentChanged;
+            ide.DocumentAdded += Ide_DocumentAdded;
+        }
+
+        private async void Ide_DocumentAdded(object sender, DocumentAddedEventArgs e)
+        {
+            var syntaxTree = await e.Document.GetSyntaxTreeAsync();
+            //var semanticModel = await e.Document.GetSemanticModelAsync();
+            var codeChangesVisitor = new CodeChangesVisitor();
+
+            codeChangesVisitor.Visit(syntaxTree, null);
+
+            var test = codeChangesVisitor.NewClassses;
         }
 
         public static CodeChangeHandler Instance { get; internal set; }

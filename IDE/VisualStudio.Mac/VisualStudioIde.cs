@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Ide.Core;
 using MonoDevelop.Core;
@@ -26,16 +27,32 @@ namespace VisualStudio.Mac
 
         void Workspace_ReferenceAddedToProject(object sender, MonoDevelop.Projects.ProjectReferenceEventArgs e)
         {
+            Debug.WriteLine("ReferenceAddedToProject");
         }
 
 
         void Workspace_FileChangedInProject(object sender, MonoDevelop.Projects.ProjectFileEventArgs e)
         {
+            Debug.WriteLine("FiledChangedInProject");
         }
 
 
-        void Workspace_FileAddedToProject(object sender, MonoDevelop.Projects.ProjectFileEventArgs e)
+        async void Workspace_FileAddedToProject(object sender, MonoDevelop.Projects.ProjectFileEventArgs e)
         {
+            Debug.WriteLine("FileAddedToProject");
+            var project = GetRoslynProject(e.First().Project);
+            var path = e.First().ProjectFile.FilePath;
+            Microsoft.CodeAnalysis.Document document;
+            while ((document = project.Documents.FirstOrDefault(x => x.FilePath == path)) == null)
+            {
+                Debug.WriteLine("Trying to get analysed document");
+                await Task.Delay(50);
+                project = GetRoslynProject(e.First().Project);
+            }
+            DocumentAdded?.Invoke(this, new DocumentAddedEventArgs
+            {
+                Document = document
+            });
         }
 
 
@@ -48,6 +65,7 @@ namespace VisualStudio.Mac
 
         public event EventHandler<DocumentSavedEventArgs> DocumentSaved;
         public event EventHandler<DocumentChangedEventArgs> DocumentChanged;
+        public event EventHandler<DocumentAddedEventArgs> DocumentAdded;
 
         private void Handle_ActiveDocumentChanged(object sender, EventArgs e)
         {
@@ -57,14 +75,12 @@ namespace VisualStudio.Mac
         private async void ActiveDocumentChanged()
         {
             var doc = IdeApp.Workbench.ActiveDocument;
-
             if (activeDocument == doc) return;
             if (activeDocument != null)
             {
                 activeDocument.Saved -= HandleDocumentSaved;
                 activeDocument = null;
             }
-            var test = doc?.IsCompileableInProject;
             var file = doc?.IsFile;
             var x = doc?.GetContent<string>();
             var ext = doc?.FileName.Extension;
@@ -90,13 +106,35 @@ namespace VisualStudio.Mac
         private async Task<Microsoft.CodeAnalysis.Document> GetAnalysisDocument()
         {
             if (activeDocument.FileName.Extension != ".cs") return null;
-            while (activeDocument.AnalysisDocument == null)
+
+            Microsoft.CodeAnalysis.Document document;
+            while ((document = GetRoslynDocument()) == null)
             {
                 Debug.WriteLine("Trying to get analysed document");
                 await Task.Delay(50);
             }
 
-            return activeDocument.AnalysisDocument;
+            return document;
         }
+
+        private Microsoft.CodeAnalysis.Document GetRoslynDocument()
+        {
+            var project = GetRoslynProject(activeDocument.DocumentContext?.Project);
+            return project.Documents.FirstOrDefault(x => x.FilePath == activeDocument.FilePath);
+        }
+
+        private Microsoft.CodeAnalysis.Project GetRoslynProject(MonoDevelop.Projects.Project activeProject)
+        {
+            if (activeProject == null)
+                return null;
+            var currentWorkspace = IdeServices.TypeSystemService.Workspace;
+            return currentWorkspace.CurrentSolution.Projects.FirstOrDefault<Microsoft.CodeAnalysis.Project>((p =>
+            {
+                if (((p.FilePath) == (activeProject).FileName))
+                    return p.Name == (activeProject).Name;
+                return false;
+            }));
+        }
+
     }
 }
